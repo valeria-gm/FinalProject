@@ -5,45 +5,26 @@ from mysql.connector import Error
 import bcrypt  # Para el manejo seguro de contraseñas
 from datetime import date
 import json
+from typing import Optional, Dict, Any, List, Tuple, cast
 
-# --- CONFIGURACIÓN DE CONEXIÓN A GOOGLE CLOUD SQL ---
 try:
-    # Intentar importación local primero
-    from cloud_config import get_db_config, is_cloud_sql
+    from cloud_config import get_db_config
 except ImportError:
     try:
-        # Intentar importación desde el directorio principal
-        from src.database.cloud_config import get_db_config, is_cloud_sql
+        from src.database.cloud_config import get_db_config
     except ImportError:
-        # Fallback: usar configuración directa desde variables de entorno
-        import os
-        from dotenv import load_dotenv
-        
-        # Cargar .env desde la raíz del proyecto
-        env_path = os.path.join(os.path.dirname(__file__), '..', '..', '..', '..', '.env')
-        if os.path.exists(env_path):
-            load_dotenv(env_path)
-        else:
-            load_dotenv()  # Buscar .env en directorio actual y padres
-        
         def get_db_config():
             return {
-                'host': os.getenv('DB_HOST', 'localhost'),
-                'port': int(os.getenv('DB_PORT', 3306)),
-                'user': os.getenv('DB_USER', 'root'),
-                'password': os.getenv('DB_PASSWORD', ''),
-                'database': os.getenv('DB_NAME', 'disfruleg'),
+                'host': '127.0.0.1',
+                'port': 3306,
+                'user': 'market_user',
+                'password': 'm4rK3t!!!',
+                'database': 'market',
                 'auth_plugin': 'mysql_native_password',
                 'charset': 'utf8mb4',
                 'collation': 'utf8mb4_unicode_ci'
             }
-        
-        def is_cloud_sql():
-            return os.getenv('DB_HOST') != 'localhost' and os.getenv('DB_HOST') is not None
-        
-        print("⚠️ Usando configuración directa de variables de entorno")
 
-# Obtener configuración de la base de datos
 db_config = get_db_config()
 
 def conectar():
@@ -71,7 +52,7 @@ def validar_usuario(username, password):
     try:
         query = "SELECT password_hash, rol FROM usuarios_sistema WHERE username = %s AND activo = TRUE"
         cursor.execute(query, (username,))
-        usuario = cursor.fetchone()
+        usuario = cast(Optional[Dict[str, Any]], cursor.fetchone())
 
         if usuario:
             # Compara la contraseña proporcionada con el hash almacenado
@@ -275,10 +256,10 @@ def obtener_siguiente_folio():
         # Usar la tabla folio_sequence para obtener el siguiente folio con bloqueo
         query = "SELECT next_val FROM folio_sequence WHERE id = 1 FOR UPDATE"
         cursor.execute(query)
-        resultado = cursor.fetchone()
+        resultado = cast(Optional[Tuple], cursor.fetchone())
         
         if resultado:
-            siguiente_folio = resultado[0]
+            siguiente_folio = int(resultado[0])
             
             # Actualizar el siguiente valor
             update_query = "UPDATE folio_sequence SET next_val = next_val + 1 WHERE id = 1"
@@ -593,7 +574,7 @@ if __name__ == '__main__':
     grupos = obtener_grupos()
     if grupos:
         print(f"Grupos encontrados: {grupos}")
-        id_grupo_prueba = grupos[0][0]  # Usar el primer grupo para las demás pruebas
+        id_grupo_prueba = cast(Tuple, grupos[0])[0]  # Usar el primer grupo para las demás pruebas
         
         print(f"\nObteniendo clientes del grupo ID {id_grupo_prueba}:")
         clientes = obtener_clientes_por_grupo(id_grupo_prueba)

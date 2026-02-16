@@ -35,7 +35,7 @@ def main():
     # Generar SQL statements
     for username, password in passwords.items():
         hashed = hash_password(password)
-        nombre = "Jared (Administrador)" if username == 'jared' else "Valeria (Administrador)"
+        nombre = "Valeria (Administrador)" 
         
         sql = f"INSERT INTO usuarios_sistema (username, password_hash, nombre_completo, rol) VALUES ('{username}', '{hashed}', '{nombre}', 'admin');"
         print(sql)

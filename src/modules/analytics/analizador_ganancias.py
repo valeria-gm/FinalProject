@@ -4,10 +4,11 @@ from tkinter import messagebox, ttk
 import mysql.connector
 from src.database.conexion import conectar
 from decimal import Decimal
+from typing import Any, List, Optional
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 from matplotlib.figure import Figure
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk  # type: ignore[attr-defined]
 from matplotlib.ticker import FuncFormatter
 from collections import defaultdict
 from reportlab.lib.pagesizes import letter
@@ -29,8 +30,8 @@ class AnalisisGananciasApp:
         
         # Connect to database
         try:
-            self.conn = conectar()
-            self.cursor = self.conn.cursor(dictionary=True)
+            self.conn: Any = conectar()
+            self.cursor: Any = self.conn.cursor(dictionary=True)
         except mysql.connector.Error as err:
             messagebox.showerror("Error de conexión", f"No se pudo conectar a la base de datos:\n{err}")
             self.root.destroy()
@@ -482,7 +483,7 @@ class AnalisisGananciasApp:
                         self.show_no_data_message(self.tabs["sales"]["container"])
                         return
                     
-                    fig = plt.Figure(figsize=(14, 10), tight_layout=True)
+                    fig = Figure(figsize=(14, 10), tight_layout=True)
                     
                     # Gráfico de productos rentables
                     if profitable_products:
@@ -1096,7 +1097,7 @@ class AnalisisGananciasApp:
                     self.all_clients = self.cursor.fetchall()
                     
                     # Inicializar variables
-                    self.selected_clients = []
+                    self.selected_clients: List[Any] = []
                     self.client_vars = [tk.StringVar() for _ in range(5)]
                     
                     # Frame para etiqueta y combos
@@ -1245,7 +1246,7 @@ class AnalisisGananciasApp:
                     top_clients = self.cursor.fetchall()
                     
                     # Limpiar y actualizar
-                    self.selected_clients = []
+                    self.selected_clients: List[Any] = []
                     for i in range(5):
                         if i < len(top_clients):
                             self.selected_clients.append(top_clients[i])

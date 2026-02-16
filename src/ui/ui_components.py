@@ -27,7 +27,7 @@ class UIComponents:
             
             # Main title
             title_label = tk.Label(header_content, 
-                                  text="DISFRULEG",
+                                  text="MARKET",
                                   font=("Arial", 24, "bold"),
                                   fg=COLORS['header_text'],
                                   bg=COLORS['header_bg'])

@@ -4,21 +4,22 @@ from tkinter import messagebox, ttk
 import mysql.connector
 from src.database.conexion import conectar
 from tkinter import simpledialog
+from typing import Any, List
 import re
 
 class ClientManagerApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Administrador de Clientes - Disfruleg")
+        self.root.title("Administrador de Clientes - Market")
         self.root.geometry("800x600")
         
         # Connect to database
-        self.conn = conectar()
-        self.cursor = self.conn.cursor(dictionary=True)
+        self.conn: Any = conectar()
+        self.cursor: Any = self.conn.cursor(dictionary=True)
 
         # Inicializar las listas antes de cargar los datos
-        self.groups = []
-        self.client_types = []
+        self.groups: List[Any] = []
+        self.client_types: List[Any] = []
         
         # Load groups and client types
         self.load_groups()

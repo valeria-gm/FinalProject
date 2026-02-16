@@ -1,15 +1,15 @@
 import bcrypt
 import mysql.connector
 from datetime import datetime, timedelta
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, cast
 import hashlib
 
-# Importar configuración de Cloud SQL
+# Importar configuración de base de datos local`
 from src.database.cloud_config import get_db_config
 
 class AuthManager:
     def __init__(self, db_host=None, db_name=None):
-        # Usar configuración de cloud_config en lugar de parámetros hardcodeados
+        # Usar configuración local de base de datos
         self.db_config = get_db_config()
         self.max_intentos = 3
         self.bloqueo_minutos = 15
@@ -17,8 +17,8 @@ class AuthManager:
     def _get_admin_connection(self):
         """Obtener conexión administrativa para validar usuarios"""
         try:
-            # Usar configuración desde .env (Cloud SQL o local)
-            conn = mysql.connector.connect(**self.db_config)
+            # Usar configuración local de MySQL
+            conn = cast(mysql.connector.MySQLConnection, mysql.connector.connect(**self.db_config))
             return conn
         except mysql.connector.Error as e:
             raise Exception(f"Error de conexión administrativa: {e}")
@@ -64,7 +64,7 @@ class AuthManager:
                 WHERE username = %s
             """, (username,))
             
-            result = cursor.fetchone()
+            result = cast(Optional[Dict[str, Any]], cursor.fetchone())
             conn.close()
             
             if not result:
@@ -99,7 +99,7 @@ class AuthManager:
                 WHERE username = %s
             """, (username,))
             
-            result = cursor.fetchone()
+            result = cast(Optional[tuple], cursor.fetchone())
             if result and result[0] >= self.max_intentos:
                 # Bloquear usuario
                 bloqueo_hasta = datetime.now() + timedelta(minutes=self.bloqueo_minutos)
@@ -143,7 +143,7 @@ class AuthManager:
         try:
             # Verificar si usuario está bloqueado
             is_blocked, blocked_until = self._check_user_blocked(username)
-            if is_blocked:
+            if is_blocked and blocked_until is not None:
                 remaining_time = blocked_until - datetime.now()
                 minutes = int(remaining_time.total_seconds() / 60)
                 message = f"Usuario bloqueado. Tiempo restante: {minutes} minutos"
@@ -166,7 +166,7 @@ class AuthManager:
                 WHERE username = %s
             """, (username,))
             
-            user = cursor.fetchone()
+            user = cast(Optional[Dict[str, Any]], cursor.fetchone())
             conn.close()
             
             if not user:
@@ -220,7 +220,6 @@ class AuthManager:
     def create_user_connection(self, username: str, password: str) -> mysql.connector.MySQLConnection:
         """
         Crear conexión a MySQL usando credenciales del usuario
-        Ahora usa la configuración de Cloud SQL
         """
         try:
             # Primero verificar si el usuario ya está autenticado en nuestro sistema
@@ -228,10 +227,9 @@ class AuthManager:
             if not auth_result['success']:
                 raise Exception(auth_result['message'])
             
-            # Usar las credenciales de Cloud SQL para todos los usuarios
+            # Usar las credenciales de MySQL local para todos los usuarios
             # Los usuarios de la aplicación se autentican contra la tabla usuarios_sistema
-            # pero las conexiones a MySQL usan las credenciales de Cloud SQL
-            conn = mysql.connector.connect(**self.db_config)
+            conn = cast(mysql.connector.MySQLConnection, mysql.connector.connect(**self.db_config))
             
             return conn
             
@@ -297,7 +295,7 @@ class AuthManager:
                 WHERE username = %s
             """, (username,))
             
-            user = cursor.fetchone()
+            user = cast(Optional[Dict[str, Any]], cursor.fetchone())
             conn.close()
             
             return user
@@ -318,7 +316,7 @@ class AuthManager:
                 WHERE id_usuario = %s
             """, (user_id,))
             
-            user = cursor.fetchone()
+            user = cast(Optional[Dict[str, Any]], cursor.fetchone())
             conn.close()
             
             return user
@@ -386,7 +384,7 @@ class AuthManager:
                 'message': f'Error al crear usuario: {str(e)}'
             }
     
-    def update_user(self, username: str, nombre_completo: str, rol: str, activo: bool, new_password: str = None) -> Dict[str, Any]:
+    def update_user(self, username: str, nombre_completo: str, rol: str, activo: bool, new_password: Optional[str] = None) -> Dict[str, Any]:
         """Actualizar usuario existente"""
         try:
             # Validar datos de entrada

@@ -68,6 +68,8 @@ class DatabaseManager:
         Obtener cursor de la conexión actual
         """
         conn = self.get_connection()
+        if  conn is None:
+            raise Exception("No hay conexión activa a la base de datos.")
         return conn.cursor(dictionary=dictionary)
     
     def close_connection(self):

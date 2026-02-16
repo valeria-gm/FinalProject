@@ -1,6 +1,6 @@
 import mysql.connector
 from mysql.connector import Error
-from .cloud_config import get_db_config, is_cloud_sql
+from .cloud_config import get_db_config
 
 # Variable global para estado de disponibilidad
 db_available = False
@@ -20,7 +20,7 @@ def conectar():
     try:
         config = get_db_config()
         
-        print(f"Conectando a: {'Cloud SQL' if is_cloud_sql() else 'Local'}")
+        print(f"Conectando a: MySQL Local")
         print(f"Host: {config['host']}")
         
         conn = mysql.connector.connect(**config)

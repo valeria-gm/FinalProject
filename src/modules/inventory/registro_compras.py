@@ -5,12 +5,13 @@ import mysql.connector
 from src.database.conexion import conectar
 from decimal import Decimal
 from datetime import datetime
+from typing import Any, List
 from src.auth.auth_manager import AuthManager
 
 class ComprasApp:
     def __init__(self, root, user_data):
         self.root = root
-        self.root.title("Registro de Compras - Disfruleg")
+        self.root.title("Registro de Compras - Market")
         self.root.geometry("800x600")
 
         # Datos del usuario autenticado
@@ -19,8 +20,8 @@ class ComprasApp:
         self.auth_manager = AuthManager()
         
         # Connect to database
-        self.conn = conectar()
-        self.cursor = self.conn.cursor(dictionary=True)
+        self.conn: Any = conectar()
+        self.cursor: Any = self.conn.cursor(dictionary=True)
         
         # Variables
         self.selected_product = tk.StringVar()
@@ -265,10 +266,11 @@ class ComprasApp:
         fecha_valida, resultado = self.validar_fecha(fecha)
         
         if not fecha_valida:
-            messagebox.showerror("Error de Fecha", resultado)
+            messagebox.showerror("Error de Fecha", str(resultado))
             return
         
         # Usar la fecha validada en lugar de la fecha actual
+        assert isinstance(resultado, datetime), "resultado debe ser datetime tras validación exitosa"
         fecha_compra = resultado.strftime("%Y-%m-%d")
         
         try:

@@ -1,5 +1,6 @@
 import os
 from datetime import datetime
+from typing import Any, Optional
 import openpyxl
 from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
 from openpyxl.utils import get_column_letter
@@ -27,7 +28,7 @@ def crear_excel_simple(nombre_restaurante, items_carrito):
 
         # 3. Crear el libro de trabajo y la hoja
         wb = openpyxl.Workbook()
-        ws = wb.active
+        ws: Any = wb.active
         ws.title = "Pedido"
 
         # 4. Configurar estilos
@@ -167,7 +168,7 @@ def crear_excel_con_secciones(nombre_restaurante, items_por_seccion, total_gener
 
         # 3. Crear el libro de trabajo y la hoja
         wb = openpyxl.Workbook()
-        ws = wb.active
+        ws: Any = wb.active
         ws.title = "Pedido por Secciones"
 
         # 4. Configurar estilos
@@ -330,7 +331,9 @@ def crear_excel_automatico(nombre_restaurante, items_carrito=None, items_por_sec
     """
     if items_por_seccion and len(items_por_seccion) > 1:
         # Hay múltiples secciones, usar formato con secciones
-        if isinstance(total, str):
+        if total is None:
+            total_float = 0.0
+        elif isinstance(total, str):
             total_float = float(total.replace('$', '').replace(',', ''))
         else:
             total_float = float(total)

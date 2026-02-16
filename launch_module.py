@@ -22,8 +22,8 @@ def launch_receipts_module(user_data=None):
         
         # Import required modules
         from src.modules.receipts.components.ventana_ordenes import abrir_ventana_ordenes
-        from src.modules.receipts.receipt_generator_refactored import ReciboAppMejorado
-        print("✅ Using VentanaOrdenes as main hub with ReciboAppMejorado integration")
+        from src.modules.receipts.receipt_generator import ReciboAppMejorado
+        print("Using VentanaOrdenes as main hub with ReciboAppMejorado integration")
         
         # Default user data if none provided
         if user_data is None:
@@ -42,7 +42,7 @@ def launch_receipts_module(user_data=None):
             try:
                 # Create new editor window as Toplevel (allows multiple editors)
                 editor_root = tk.Toplevel()
-                editor_root.title("Disfruleg - Nueva Orden")
+                editor_root.title("Martket - Nueva Orden")
                 editor_root.geometry("1100x750")
                 
                 # Function to handle window closing and refresh
@@ -65,11 +65,11 @@ def launch_receipts_module(user_data=None):
                 def on_orden_cambiada(event):
                     if ventana_ordenes:
                         ventana_ordenes.forzar_actualizacion()
-                        print("📨 Evento OrdenCambiada recibido - actualizando lista")
+                        print(" Evento OrdenCambiada recibido - actualizando lista")
                 
                 editor_root.bind("<<OrdenCambiada>>", on_orden_cambiada)
                 
-                print(f"✅ Nueva orden creada - Editor instancia #{len(editor_instances)}")
+                print(f"Nueva orden creada - Editor instancia #{len(editor_instances)}")
                 
             except Exception as e:
                 messagebox.showerror("Error", f"Error al crear nueva orden: {str(e)}")
@@ -80,7 +80,7 @@ def launch_receipts_module(user_data=None):
             try:
                 # Create editor window for specific order
                 editor_root = tk.Toplevel()
-                editor_root.title(f"Disfruleg - Editando Orden {folio:06d}")
+                editor_root.title(f"Market - Editando Orden {folio:06d}")
                 editor_root.geometry("1100x750")
                 
                 # Function to handle window closing and refresh
@@ -103,7 +103,7 @@ def launch_receipts_module(user_data=None):
                 def on_orden_cambiada(event):
                     if ventana_ordenes:
                         ventana_ordenes.forzar_actualizacion()
-                        print("📨 Evento OrdenCambiada recibido - actualizando lista")
+                        print("Evento OrdenCambiada recibido - actualizando lista")
                 
                 editor_root.bind("<<OrdenCambiada>>", on_orden_cambiada)
                 

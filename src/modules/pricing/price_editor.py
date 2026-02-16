@@ -4,12 +4,13 @@ from tkinter import messagebox, ttk, simpledialog
 import mysql.connector
 from src.database.conexion import conectar
 from decimal import Decimal
+from typing import Any, List
 from src.auth.auth_manager import AuthManager
 
 class PriceEditorApp:
     def __init__(self, root, user_data=None):
         self.root = root
-        self.root.title("Editor de Precios - Disfruleg")
+        self.root.title("Editor de Precios - Market")
         self.root.geometry("1000x700")
         
         # User data
@@ -17,15 +18,16 @@ class PriceEditorApp:
         self.es_admin = (self.user_data.get('rol', '') == 'admin')
         
         # Connect to database
-        self.conn = conectar()
-        self.cursor = self.conn.cursor(dictionary=True)
+        self.conn: Any = conectar()
+        self.cursor: Any = self.conn.cursor(dictionary=True)
         self.auth_manager = AuthManager()
         
         # Variables
         self.current_group = tk.IntVar(value=1)
         self.changes_made = False
-        self.groups = []
-        self.client_types = []
+        self.groups: List[Any] = []
+        self.client_types: List[Any] = []
+        self.all_products: List[Any] = []
         
         self.create_interface()
         self.load_groups()
@@ -232,7 +234,7 @@ class PriceEditorApp:
         
         for col, (heading, width, anchor) in columns_config.items():
             self.product_tree.heading(col, text=heading)
-            self.product_tree.column(col, width=width, anchor=anchor)
+            self.product_tree.column(col, width=width, anchor=anchor)  # type: ignore[arg-type]
         
         self.product_tree.pack(fill="both", expand=True)
         

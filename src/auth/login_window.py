@@ -4,6 +4,7 @@ import threading
 from datetime import datetime
 import locale
 import os
+from typing import Any
 
 # CRITICAL FIX: Force C locale to avoid decimal comma issues
 try:
@@ -28,6 +29,8 @@ try:
     DB_AVAILABLE = db_available
 except ImportError:
     print("Warning: DB components not available")
+    db_manager: Any = None
+    session_manager: Any = None
     DB_AVAILABLE = False
 
 class LoginWindow:
@@ -52,7 +55,7 @@ class LoginWindow:
         
     def setup_window(self):
         """Configurar ventana principal"""
-        self.root.title("DISFRULEG - Iniciar Sesión")
+        self.root.title("MARKET - Iniciar Sesión")
         
         # Use fixed geometry to avoid locale issues - VENTANA MÁS GRANDE
         self.root.geometry("450x650")  
@@ -251,7 +254,7 @@ class LoginWindow:
                 bg="#f0f0f0").pack()
         
         tk.Label(footer_frame,
-                text=f"© {datetime.now().year} DISFRULEG",
+                text=f"© {datetime.now().year} MARKET",
                 font=("Arial", 8),
                 fg="#BDC3C7",
                 bg="#f0f0f0").pack(pady=(5, 0))
@@ -296,7 +299,7 @@ class LoginWindow:
     def authenticate_user(self, username, password):
         """Autenticar usuario (ejecutado en hilo separado)"""
         try:
-            if DB_AVAILABLE:
+            if DB_AVAILABLE and db_manager is not None:
                 # Intentar autenticación real
                 result = db_manager.authenticate_and_connect(username, password)
             else:
@@ -335,7 +338,7 @@ class LoginWindow:
             self.user_data = result['user_data']
             
             # Iniciar sesión en session manager si está disponible
-            if DB_AVAILABLE:
+            if DB_AVAILABLE and session_manager is not None:
                 session_manager.start_session(self.user_data)
             
             # Guardar credenciales si está marcado
@@ -400,7 +403,7 @@ class LoginWindow:
     def save_credentials(self):
         """Guardar credenciales (solo username)"""
         try:
-            with open(".disfruleg_remember", "w") as f:
+            with open(".market_remember", "w") as f:
                 f.write(self.username_var.get())
         except:
             pass  # No es crítico si falla
@@ -408,7 +411,7 @@ class LoginWindow:
     def load_remembered_credentials(self):
         """Cargar credenciales guardadas"""
         try:
-            with open(".disfruleg_remember", "r") as f:
+            with open(".market_remember", "r") as f:
                 username = f.read().strip()
                 if username:
                     self.username_var.set(username)
@@ -420,8 +423,8 @@ class LoginWindow:
     def clear_saved_credentials(self):
         """Limpiar credenciales guardadas"""
         try:
-            if os.path.exists(".disfruleg_remember"):
-                os.remove(".disfruleg_remember")
+            if os.path.exists(".market_remember"):
+                os.remove(".market_remember")
         except:
             pass
     

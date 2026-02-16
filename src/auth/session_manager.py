@@ -96,7 +96,7 @@ class SessionManager:
         if callback in self.session_callbacks:
             self.session_callbacks.remove(callback)
     
-    def _notify_callbacks(self, event_type: str, user_data: Dict[str, Any]):
+    def _notify_callbacks(self, event_type: str, user_data: Optional[Dict[str, Any]]):
         """Notificar a todos los callbacks registrados"""
         for callback in self.session_callbacks:
             try:

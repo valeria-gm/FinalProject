@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-DISFRULEG - Sistema de Gestión Comercial
+MARKET - Sistema de Gestión Comercial
 Refactored modular version - Entry Point
 """
 

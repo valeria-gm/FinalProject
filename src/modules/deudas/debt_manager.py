@@ -1,5 +1,5 @@
 """
-DISFRULEG - Debt Manager Module
+MARKET - Debt Manager Module
 Gestor de deudas independiente que utiliza las vistas SQL existentes
 para el control y seguimiento de cuentas por cobrar.
 """
@@ -8,7 +8,7 @@ import mysql.connector
 from mysql.connector import Error
 from datetime import datetime, date
 from decimal import Decimal
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Any
 from src.database.conexion import conectar
 from src.config import debug_print
 
@@ -23,8 +23,8 @@ class DebtManager:
     """
     
     def __init__(self):
-        self.connection = None
-        self.cursor = None
+        self.connection: Any = None
+        self.cursor: Any = None
     
     def _get_connection(self):
         """Obtiene conexión a la base de datos"""
@@ -182,7 +182,7 @@ class DebtManager:
             self._close_connection()
     
     def registrar_pago(self, id_deuda: int, monto_pago: Decimal, metodo_pago: str, 
-                      referencia_pago: str = None, usuario: str = None) -> bool:
+                      referencia_pago: Optional[str] = None, usuario: Optional[str] = None) -> bool:
         """
         Registra un pago para una deuda específica.
         
@@ -269,8 +269,8 @@ class DebtManager:
         finally:
             self._close_connection()
     
-    def obtener_historial_pagos(self, id_cliente: int = None, 
-                               fecha_inicio: date = None, fecha_fin: date = None) -> List[Dict]:
+    def obtener_historial_pagos(self, id_cliente: Optional[int] = None, 
+                               fecha_inicio: Optional[date] = None, fecha_fin: Optional[date] = None) -> List[Dict]:
         """
         Obtiene el historial de pagos realizados.
         
