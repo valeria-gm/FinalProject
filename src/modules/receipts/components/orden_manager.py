@@ -20,7 +20,7 @@ class OrdenManager:
     """
     
     def __init__(self):
-        self.connection = None
+        self.connection: Any = None
     
     def _get_connection(self):
         """Obtiene conexión a la base de datos usando la configuración existente"""
@@ -228,7 +228,7 @@ class OrdenManager:
             return []
         
         cursor = conn.cursor(dictionary=True)
-        ordenes = []
+        ordenes: List[Dict[str, Any]] = []
         
         try:
             # Query base
@@ -552,14 +552,14 @@ class OrdenManager:
             # Cargar secciones
             secciones_data = datos_json.get('secciones', {})
             for seccion_id, seccion_data in secciones_data.items():
-                from .carrito_module import SeccionCarrito
+                from .carrito_module import SeccionCarrito  # type: ignore[import-not-found]
                 seccion = SeccionCarrito(seccion_data['id'], seccion_data['nombre'])
                 carrito_obj.secciones[seccion_id] = seccion
             
             # Cargar items - ¡CORREGIDO!
             items_data = datos_json.get('items', {})
             for key, item_data in items_data.items():
-                from .carrito_module import ItemCarrito
+                from .carrito_module import ItemCarrito  # type: ignore[import-not-found]
                 
                 # Asegurar que los tipos numéricos sean correctos
                 cantidad = float(item_data['cantidad']) if isinstance(item_data['cantidad'], (int, float, str)) else 0.0

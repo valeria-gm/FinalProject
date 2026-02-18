@@ -40,7 +40,7 @@ def crear_recibo_simple(nombre_restaurante, items_carrito, total_str, folio_nume
         # Header con título y folio
         if folio_numero:
             # Crear tabla para header con folio en esquina superior derecha
-            header_data = [["Bodega de Insumos 'Disfruleg'", f"FOLIO: {folio_numero:06d}"]]
+            header_data = [["Bodega de Insumos 'Market'", f"FOLIO: {folio_numero:06d}"]]
             header_table = Table(header_data, colWidths=[400, 150])
             header_style = TableStyle([
                 ('ALIGN', (0, 0), (0, 0), 'LEFT'),
@@ -57,7 +57,7 @@ def crear_recibo_simple(nombre_restaurante, items_carrito, total_str, folio_nume
             story.append(header_table)
         else:
             # Título principal sin folio
-            story.append(Paragraph("Bodega de Insumos 'Disfruleg'", styles['h1']))
+            story.append(Paragraph("Bodega de Insumos 'Market'", styles['h1']))
         
         story.append(Paragraph(f"Fecha: {datetime.now().strftime('%d/%m/%Y')}", styles['Normal']))
         story.append(Spacer(1, 24))
@@ -143,7 +143,7 @@ def crear_recibo_con_secciones(nombre_restaurante, items_por_seccion, total_gene
         # Header con título y folio
         if folio_numero:
             # Crear tabla para header con folio en esquina superior derecha
-            header_data = [["Bodega de Insumos 'Disfruleg'", f"FOLIO: {folio_numero:06d}"]]
+            header_data = [["Bodega de Insumos 'Market'", f"FOLIO: {folio_numero:06d}"]]
             header_table = Table(header_data, colWidths=[400, 150])
             header_style = TableStyle([
                 ('ALIGN', (0, 0), (0, 0), 'LEFT'),
@@ -160,7 +160,7 @@ def crear_recibo_con_secciones(nombre_restaurante, items_por_seccion, total_gene
             story.append(header_table)
         else:
             # Título principal sin folio
-            story.append(Paragraph("Bodega de Insumos 'Disfruleg'", styles['h1']))
+            story.append(Paragraph("Bodega de Insumos 'Market'", styles['h1']))
         
         story.append(Paragraph(f"Fecha: {datetime.now().strftime('%d/%m/%Y')}", styles['Normal']))
         story.append(Spacer(1, 24))
@@ -262,7 +262,9 @@ def crear_recibo_automatico(nombre_restaurante, items_carrito=None, items_por_se
     """
     if items_por_seccion and len(items_por_seccion) > 1:
         # Hay múltiples secciones, usar formato con secciones
-        if isinstance(total, str):
+        if total is None:
+            total_float = 0.0
+        elif isinstance(total, str):
             total_float = float(total.replace('$', '').replace(',', ''))
         else:
             total_float = float(total)

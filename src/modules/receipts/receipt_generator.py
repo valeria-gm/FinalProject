@@ -4,6 +4,7 @@ import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime, date
 import calendar
+from typing import Any, Dict
 from src.modules.receipts.components import database
 from src.modules.receipts.components import generador_pdf
 from src.modules.receipts.components.carrito_module import CarritoConSecciones, DialogoSeccion
@@ -37,7 +38,7 @@ class ReciboAppMejorado:
         self.username = self.user_data.get('username', 'usuario')
         self.es_admin = self.user_data.get('rol', '').lower() == 'admin'
         
-        self.root.title("Disfruleg - Sistema de Ventas con Órdenes Guardadas")
+        self.root.title("Market - Sistema de Ventas con Órdenes Guardadas")
         self.root.geometry("1100x750")
 
         self.style = ttk.Style(self.root)
@@ -49,7 +50,8 @@ class ReciboAppMejorado:
         self._setup_scrollable_interface()
 
         # Obtener grupos de cliente 
-        self.grupos_data = {nombre: g_id for g_id, nombre in database.obtener_grupos()}
+        grupos_raw: Any = database.obtener_grupos()
+        self.grupos_data: Dict[str, Any] = {nombre: g_id for g_id, nombre in grupos_raw}
         if not self.grupos_data:
             messagebox.showerror("Error de Base de Datos", "No se pudieron cargar los grupos de clientes.")
             if parent is None:
@@ -178,6 +180,8 @@ class ReciboAppMejorado:
     def _cargar_orden_al_inicio(self):
         """Carga una orden existente al inicializar la aplicación"""
         try:
+            if self.folio_actual is None:
+                return
             # Cargar datos de la orden
             self.orden_guardada = self.orden_manager.cargar_orden(self.folio_actual)
             
@@ -191,7 +195,7 @@ class ReciboAppMejorado:
                     self.root.after(100, lambda: self._cargar_orden_existente(self.folio_actual, widgets))
                     
                     # Actualizar título de la ventana
-                    self.root.title(f"Disfruleg - Editando Orden {self.folio_actual:06d}")
+                    self.root.title(f"Market - Editando Orden {self.folio_actual:06d}")
             else:
                 messagebox.showerror("Error", f"No se pudo cargar la orden con folio {self.folio_actual}")
                 self.folio_actual = None
@@ -272,7 +276,7 @@ class ReciboAppMejorado:
 
     def _crear_contenido_tab(self, tab_frame):
         """Crea el contenido de una pestaña"""
-        widgets = {"clientes_map": {}}
+        widgets: Dict[str, Any] = {"clientes_map": {}}
 
         # Frame de búsqueda y cliente
         frame_busqueda = ttk.LabelFrame(tab_frame, text="1. Cliente y Búsqueda", padding="10")
@@ -355,7 +359,6 @@ class ReciboAppMejorado:
         # Función de validación para fechas
         def validar_fecha(event, fecha_var=widgets['fecha_var']):
             try:
-                from datetime import datetime, date
                 fecha_str = fecha_var.get()
                 if fecha_str:
                     fecha_ingresada = datetime.strptime(fecha_str, "%Y-%m-%d").date()
@@ -569,7 +572,7 @@ class ReciboAppMejorado:
                 )
                 
                 # Actualizar título de ventana y pestaña
-                self.root.title(f"Disfruleg - Editando Orden {self.folio_actual:06d}")
+                self.root.title(f"Market - Editando Orden {self.folio_actual:06d}")
                 tab_actual = self.notebook.select()
                 self.notebook.tab(tab_actual, text=f"Orden {self.folio_actual:06d}")
                 
@@ -646,7 +649,7 @@ class ReciboAppMejorado:
                 if nombre_cliente in widgets['combo_clientes']['values']:
                     widgets['combo_clientes'].set(nombre_cliente)
                     # Actualizar el mapping de clientes
-                    if nombre_cliente not in widgets['clientes_map']:
+                    if nombre_cliente not in widgets['clientes_map'] and grupo_encontrado is not None:
                         # Reconstruir el mapping si es necesario
                         grupo_id = self.grupos_data[grupo_encontrado]
                         clientes = database.obtener_clientes_por_grupo(grupo_id)
@@ -920,7 +923,7 @@ class ReciboAppMejorado:
                 foreground="orange"
             )
             
-            self.root.title("Disfruleg - Sistema de Ventas con Órdenes Guardadas")
+            self.root.title("Market - Sistema de Ventas con Órdenes Guardadas")
 
     # ==================== MÉTODOS EXISTENTES (SIN CAMBIOS) ====================
 
@@ -954,7 +957,7 @@ class ReciboAppMejorado:
         
         # Si la búsqueda está vacía, mostrar todos los productos
         if not query:
-            resultados = database.buscar_todos_insumos(grupo_id)
+            resultados: list[Any] = database.buscar_todos_insumos(grupo_id)
         else:
             resultados = database.buscar_insumos(query, grupo_id)
         
@@ -982,7 +985,7 @@ class ReciboAppMejorado:
         
         # Obtener información adicional del producto
         grupo_id = self.grupos_data[widgets['combo_grupos'].get()]
-        productos = database.buscar_insumos(nombre_insumo, grupo_id)
+        productos: list[Any] = database.buscar_insumos(nombre_insumo, grupo_id)
         unidad_producto = "unidad"  # Valor por defecto
         es_especial = False
         

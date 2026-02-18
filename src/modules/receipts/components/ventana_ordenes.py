@@ -48,6 +48,10 @@ class VentanaOrdenes:
         self.filtro_busqueda = tk.StringVar()
         self.filtro_busqueda.trace('w', self._on_filtro_changed)
         
+        # Treeviews (creados dinámicamente en _crear_lista_ordenes)
+        self.tree_activas: Any = None
+        self.tree_historial: Any = None
+        
         # Crear ventana
         self.root = tk.Toplevel(parent) if parent else tk.Tk()
         self._configurar_ventana()
@@ -57,7 +61,7 @@ class VentanaOrdenes:
     
     def _configurar_ventana(self):
         """Configura las propiedades básicas de la ventana"""
-        self.root.title("Gestión de Órdenes - Disfruleg")
+        self.root.title("Gestión de Órdenes - Market")
         self.root.geometry("900x600")
         self.root.minsize(800, 500)
         
