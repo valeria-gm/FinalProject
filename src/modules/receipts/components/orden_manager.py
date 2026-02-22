@@ -65,17 +65,17 @@ class OrdenManager:
                 cursor.execute(update_query)
                 conn.commit()
                 
-                print(f"Siguiente folio disponible: {siguiente_folio}")
+                print(f"Next available folio: {siguiente_folio}")
             else:
                 # Inicializar la secuencia si no existe
                 insert_query = "INSERT INTO folio_sequence (id, next_val) VALUES (1, 1)"
                 cursor.execute(insert_query)
                 conn.commit()
                 siguiente_folio = 1
-                print(f"Inicializado folio_sequence, primer folio: {siguiente_folio}")
+                print(f"folio_sequence initialized, first folio: {siguiente_folio}")
             
         except Error as e:
-            print(f"Error al obtener siguiente folio: {e}")
+            print(f"Error obtaining next folio: {e}")
             conn.rollback()
         finally:
             cursor.close()
@@ -111,7 +111,7 @@ class OrdenManager:
             disponible = count_orden == 0
             
         except Error as e:
-            print(f"Error al verificar disponibilidad del folio {folio}: {e}")
+            print(f"Error checking folio availability {folio}: {e}")
         finally:
             cursor.close()
         
@@ -158,14 +158,14 @@ class OrdenManager:
             cursor.execute(query, (folio, id_cliente, usuario, carrito_json, total))
             conn.commit()
             
-            print(f"Folio {folio} reservado exitosamente para usuario {usuario}")
+            print(f"Folio {folio} reserved successfully for user {usuario}")
             return True
             
         except Error as e:
             if e.errno == 1062:  # Duplicate entry error
-                print(f"Error: El folio {folio} ya está siendo usado (conflicto de clave duplicada)")
+                print(f"Error: The folio {folio} is already being used (duplicate key conflict)")
             else:
-                print(f"Error al reservar folio {folio}: {e}")
+                print(f"Error reserving folio {folio}: {e}")
             conn.rollback()
             return False
         finally:
@@ -199,14 +199,14 @@ class OrdenManager:
             
             if cursor.rowcount > 0:
                 conn.commit()
-                print(f"Folio {folio} liberado exitosamente")
+                print(f"Folio {folio} released successfully")
                 return True
             else:
-                print(f"No se encontró orden guardada con folio {folio}")
+                print(f"No saved order found with folio {folio}")
                 return False
                 
         except Error as e:
-            print(f"Error al liberar folio {folio}: {e}")
+            print(f"Error releasing folio {folio}: {e}")
             conn.rollback()
             return False
         finally:
@@ -263,10 +263,10 @@ class OrdenManager:
                 if orden['fecha_modificacion']:
                     orden['fecha_modificacion_str'] = orden['fecha_modificacion'].strftime('%d/%m/%Y %H:%M')
             
-            print(f"Obtenidas {len(ordenes)} órdenes activas para usuario {usuario}")
+            print(f"{len(ordenes)} active orders for user {usuario}")
             
         except Error as e:
-            print(f"Error al obtener órdenes activas: {e}")
+            print(f"Error obtaining active orders: {e}")
         finally:
             cursor.close()
         
@@ -329,10 +329,10 @@ class OrdenManager:
                 if orden['fecha_modificacion']:
                     orden['fecha_modificacion_str'] = orden['fecha_modificacion'].strftime('%d/%m/%Y %H:%M')
             
-            print(f"Obtenido historial de {len(historial)} órdenes para usuario {usuario}")
+            print(f"Obtaining history of {len(historial)} orders for user {usuario}")
             
         except Error as e:
-            print(f"Error al obtener historial: {e}")
+            print(f"Error obtaining history: {e}")
         finally:
             cursor.close()
         
@@ -377,16 +377,16 @@ class OrdenManager:
                     datos_carrito = json.loads(resultado['datos_carrito'])
                     resultado['datos_carrito_obj'] = datos_carrito
                 except json.JSONDecodeError as e:
-                    print(f"Error al deserializar carrito del folio {folio}: {e}")
+                    print(f"Error deserializing cart for folio {folio}: {e}")
                     resultado['datos_carrito_obj'] = None
                 
                 orden = resultado
-                print(f"Orden {folio} cargada exitosamente")
+                print(f"Order {folio} loaded successfully")
             else:
-                print(f"No se encontró orden con folio {folio}")
+                print(f"No order found with folio {folio}")
         
         except Error as e:
-            print(f"Error al cargar orden {folio}: {e}")
+            print(f"Error loading order {folio}: {e}")
         finally:
             cursor.close()
         
@@ -428,14 +428,14 @@ class OrdenManager:
             
             if cursor.rowcount > 0:
                 conn.commit()
-                print(f"Orden {folio} actualizada exitosamente")
+                print(f"Order {folio} updated successfully")
                 return True
             else:
-                print(f"No se encontró orden guardada con folio {folio}")
+                print(f"No order found with folio {folio}")
                 return False
                 
         except Error as e:
-            print(f"Error al actualizar orden {folio}: {e}")
+            print(f"Error updating order {folio}: {e}")
             conn.rollback()
             return False
         finally:
@@ -469,14 +469,14 @@ class OrdenManager:
             
             if cursor.rowcount > 0:
                 conn.commit()
-                print(f"Orden {folio} marcada como registrada (venta ID: {id_venta})")
+                print(f"Order {folio} marked as registered (sale ID: {id_venta})")
                 return True
             else:
-                print(f"No se encontró orden guardada con folio {folio}")
+                print(f"No order found with folio {folio}")
                 return False
                 
         except Error as e:
-            print(f"Error al marcar orden {folio} como registrada: {e}")
+            print(f"Error marking order {folio} as registered: {e}")
             conn.rollback()
             return False
         finally:
@@ -525,7 +525,7 @@ class OrdenManager:
             return datos
             
         except Exception as e:
-            print(f"Error al convertir carrito a JSON: {e}")
+            print(f"Error converting cart to JSON: {e}")
             return {}
     
     @staticmethod
@@ -579,11 +579,11 @@ class OrdenManager:
             carrito_obj._actualizar_display()
             carrito_obj._notificar_cambio()
             
-            print("Carrito cargado exitosamente desde JSON")
+            print("Cart loaded successfully from JSON")
             return True
             
         except Exception as e:
-            print(f"Error al cargar carrito desde JSON: {e}")
+            print(f"Error loading cart from JSON: {e}")
             import traceback
             traceback.print_exc()  # Para debugging detallado
             return False
@@ -637,10 +637,10 @@ def limpiar_ordenes_antiguas(dias: int = 30) -> int:
         ordenes_limpiadas = cursor.rowcount
         conn.commit()
         
-        print(f"Limpiadas {ordenes_limpiadas} órdenes antiguas")
+        print(f"Cleaned {ordenes_limpiadas} old orders")
         
     except Error as e:
-        print(f"Error al limpiar órdenes antiguas: {e}")
+        print(f"Error cleaning old orders: {e}")
         conn.rollback()
     finally:
         cursor.close()
@@ -659,14 +659,14 @@ if __name__ == '__main__':
     
     # Probar obtener siguiente folio
     folio = manager.obtener_siguiente_folio_disponible()
-    print(f"Siguiente folio disponible: {folio}")
+    print(f"Next available folio: {folio}")
     
     # Probar obtener órdenes activas
     ordenes = manager.obtener_ordenes_activas("test_user", es_admin=True)
-    print(f"Órdenes activas encontradas: {len(ordenes)}")
+    print(f"Active orders found: {len(ordenes)}")
     
     # Probar obtener historial
     historial = manager.obtener_historial("test_user", es_admin=True, limite=10)
-    print(f"Registros en historial: {len(historial)}")
+    print(f"Records in history: {len(historial)}")
     
-    print("--- Pruebas completadas ---")
+    print("--- Tests completed ---")

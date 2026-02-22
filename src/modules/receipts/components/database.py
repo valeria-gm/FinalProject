@@ -33,7 +33,7 @@ def conectar():
         conn = mysql.connector.connect(**db_config)
         return conn
     except Error as e:
-        print(f"Error al conectar a MySQL: {e}")
+        print(f"Error connecting to MySQL: {e}")
         return None
 
 # --- Funciones de Autenticación ---
@@ -63,7 +63,7 @@ def validar_usuario(username, password):
                 cursor.execute(update_query, (username,))
                 conn.commit()
     except Error as e:
-        print(f"Error al validar usuario: {e}")
+        print(f"Error validating user: {e}")
     finally:
         cursor.close()
         conn.close()
@@ -83,7 +83,7 @@ def obtener_grupos():
         cursor.execute("SELECT id_grupo, clave_grupo FROM grupo ORDER BY clave_grupo")
         grupos = cursor.fetchall()
     except Error as e:
-        print(f"Error al obtener grupos: {e}")
+        print(f"Error obtaining groups: {e}")
     finally:
         cursor.close()
         conn.close()
@@ -101,7 +101,7 @@ def obtener_clientes_por_grupo(id_grupo):
         cursor.execute(query, (id_grupo,))
         clientes = cursor.fetchall()
     except Error as e:
-        print(f"Error al obtener clientes: {e}")
+        print(f"Error obtaining clients: {e}")
     finally:
         cursor.close()
         conn.close()
@@ -132,7 +132,7 @@ def buscar_productos_por_grupo(id_grupo, texto_busqueda):
         cursor.execute(query, valores)
         productos = cursor.fetchall()
     except Error as e:
-        print(f"Error al buscar productos: {e}")
+        print(f"Error searching for products: {e}")
     finally:
         cursor.close()
         conn.close()
@@ -161,7 +161,7 @@ def buscar_productos_por_grupo_con_especial(id_grupo, texto_busqueda):
         cursor.execute(query, valores)
         productos = cursor.fetchall()
     except Error as e:
-        print(f"Error al buscar productos con es_especial: {e}")
+        print(f"Error searching for products with es_especial: {e}")
     finally:
         cursor.close()
         conn.close()
@@ -196,7 +196,7 @@ def buscar_insumos(query, id_grupo):
         resultados = cursor.fetchall()
         
     except Error as e:
-        print(f"Error al buscar insumos: {e}")
+        print(f"Error searching for supplies: {e}")
     finally:
         cursor.close()
         conn.close()
@@ -230,7 +230,7 @@ def buscar_todos_insumos(id_grupo):
         resultados = cursor.fetchall()
         
     except Error as e:
-        print(f"Error al buscar todos los insumos: {e}")
+        print(f"Error searching for supplies: {e}")
     finally:
         cursor.close()
         conn.close()
@@ -273,7 +273,7 @@ def obtener_siguiente_folio():
             siguiente_folio = 1
             
     except Error as e:
-        print(f"Error al obtener siguiente folio: {e}")
+        print(f"Error obtaining next folio: {e}")
         conn.rollback()
     finally:
         cursor.close()
@@ -299,7 +299,7 @@ def crear_factura_completa(id_cliente, items_carrito, fecha_venta=None, folio_es
     
     # Validar que la fecha no sea futura
     if fecha_venta > date.today():
-        print("Error: No se pueden registrar ventas con fecha futura")
+        print("Error: Sales with a future date cannot be recorded")
         return None
     
     conn = conectar()
@@ -316,11 +316,11 @@ def crear_factura_completa(id_cliente, items_carrito, fecha_venta=None, folio_es
         # 1. Obtener el número de folio (específico o siguiente disponible)
         if folio_especifico is not None:
             folio_numero = folio_especifico
-            print(f"Usando folio específico para orden guardada: {folio_numero}")
+            print(f"Using specific folio for saved order: {folio_numero}")
         else:
             folio_numero = obtener_siguiente_folio()
             if folio_numero is None:
-                raise Error("No se pudo obtener el número de folio")
+                raise Error("Could not retrieve the folio number")
 
         # 2. Crear la factura con número de folio
         query_factura = """
@@ -357,10 +357,10 @@ def crear_factura_completa(id_cliente, items_carrito, fecha_venta=None, folio_es
         
         # Si todo fue exitoso, confirmar la transacción
         conn.commit()
-        print(f"Factura creada exitosamente: ID={id_factura_nueva}, Folio={folio_numero}")
+        print(f"Invoice created successfully: ID={id_factura_nueva}, Folio={folio_numero}")
 
     except Error as e:
-        print(f"Error en la transacción de facturación: {e}")
+        print(f"Error in billing transaction: {e}")
         # Si algo falla, revertir todos los cambios
         conn.rollback()
         id_factura_nueva = None
@@ -412,7 +412,7 @@ def guardar_orden(folio, id_cliente, usuario, datos_carrito, total_estimado):
         exito = True
         
     except Error as e:
-        print(f"Error al guardar orden: {e}")
+        print(f"Error saving order: {e}")
         conn.rollback()
     finally:
         cursor.close()
@@ -450,7 +450,7 @@ def cargar_orden(folio):
         orden = cursor.fetchone()
         
     except Error as e:
-        print(f"Error al cargar orden: {e}")
+        print(f"Error loading order: {e}")
     finally:
         cursor.close()
         conn.close()
@@ -485,7 +485,7 @@ def actualizar_orden(folio, datos_carrito, total_estimado):
         exito = cursor.rowcount > 0
         
     except Error as e:
-        print(f"Error al actualizar orden: {e}")
+        print(f"Error updating order: {e}")
         conn.rollback()
     finally:
         cursor.close()
@@ -515,7 +515,7 @@ def marcar_orden_como_completada(folio, id_factura):
         exito = cursor.rowcount > 0
         
     except Error as e:
-        print(f"Error al marcar orden como completada: {e}")
+        print(f"Error marking order as completed: {e}")
         conn.rollback()
     finally:
         cursor.close()
@@ -549,7 +549,7 @@ def verificar_folio_disponible(folio):
                 disponible = False
                 
     except Error as e:
-        print(f"Error al verificar folio: {e}")
+        print(f"Error verifying folio: {e}")
         disponible = False
     finally:
         cursor.close()
@@ -564,33 +564,33 @@ if __name__ == '__main__':
     # Probar conexión
     conn = conectar()
     if conn:
-        print("✓ Conexión exitosa a la base de datos")
+        print("✓ Successful database connection")
         conn.close()
     else:
-        print("✗ Error de conexión")
+        print("✗ Connection error")
     
     # Probar obtención de grupos
     print("\nObteniendo grupos:")
     grupos = obtener_grupos()
     if grupos:
-        print(f"Grupos encontrados: {grupos}")
+        print(f"Groups: {grupos}")
         id_grupo_prueba = cast(Tuple, grupos[0])[0]  # Usar el primer grupo para las demás pruebas
         
         print(f"\nObteniendo clientes del grupo ID {id_grupo_prueba}:")
         clientes = obtener_clientes_por_grupo(id_grupo_prueba)
-        print(f"Clientes encontrados: {clientes}")
+        print(f"Clients: {clientes}")
 
         print(f"\nBuscando productos para el grupo ID {id_grupo_prueba} que contengan 'a':")
         productos = buscar_productos_por_grupo(id_grupo_prueba, 'a')
-        print(f"Productos encontrados: {productos}")
+        print(f"Products: {productos}")
 
         print(f"\nBuscando productos (con 'es_especial') para el grupo ID {id_grupo_prueba} que contengan 'e':")
         productos_especiales = buscar_productos_por_grupo_con_especial(id_grupo_prueba, 'e')
-        print(f"Productos especiales encontrados: {productos_especiales}")
+        print(f"Special products: {productos_especiales}")
     else:
-        print("No se encontraron grupos. Asegúrate de tener datos en la BD.")
+        print("No groups found. Make sure there is data in the database.")
     
     # Probar obtención de folio
-    print(f"\nObteniendo siguiente folio:")
+    print(f"\nObtaining next folio:")
     folio = obtener_siguiente_folio()
-    print(f"Siguiente folio: {folio}")
+    print(f"Next folio: {folio}")

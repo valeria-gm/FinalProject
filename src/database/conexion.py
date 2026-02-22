@@ -20,21 +20,21 @@ def conectar():
     try:
         config = get_db_config()
         
-        print(f"Conectando a: MySQL Local")
+        print(f"Connecting to: Local MySQL")
         print(f"Host: {config['host']}")
         
         conn = mysql.connector.connect(**config)
         
         if conn.is_connected():
-            print("✓ Conexión exitosa a la base de datos")
+            print("Successfully connected to the database")
         
         return conn
         
     except Error as e:
-        print(f"Error de conexión: {e}")
+        print(f"Connection error: {e}")
         return None
     except Exception as e:
-        print(f"Error inesperado: {e}")
+        print(f"Unexpected error: {e}")
         return None
 
 # Verificar disponibilidad al importar

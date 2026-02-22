@@ -51,7 +51,7 @@ class SessionManager:
             self._notify_callbacks('session_ended', user_data)
     
     def update_activity(self):
-        """Actualizar timestamp de última actividad"""
+        """Refresh timestamp de última actividad"""
         if self.session_active:
             self.last_activity = datetime.now()
             
@@ -84,7 +84,7 @@ class SessionManager:
     
     def add_callback(self, callback: Callable):
         """
-        Agregar callback para eventos de sesión
+        Add callback para eventos de sesión
         
         callback signature: callback(event_type: str, user_data: dict)
         event_types: 'session_started', 'session_ended', 'session_timeout'
@@ -153,7 +153,7 @@ class SessionAwareWidget:
         pass
     
     def update_session_activity(self):
-        """Actualizar actividad de sesión"""
+        """Refresh actividad de sesión"""
         session_manager.update_activity()
 
 class SessionStatusBar(tk.Frame, SessionAwareWidget):
@@ -190,27 +190,27 @@ class SessionStatusBar(tk.Frame, SessionAwareWidget):
             self._update_display()
     
     def _update_display(self):
-        """Actualizar display de información"""
+        """Refresh display de información"""
         user = session_manager.get_current_user()
         
         if user:
-            self.user_var.set(f"Usuario: {user['nombre_completo']} ({user['rol']})")
+            self.user_var.set(f"Username: {user['nombre_completo']} ({user['rol']})")
             
             # Tiempo hasta timeout
             time_remaining = session_manager.get_time_until_timeout()
             if time_remaining:
                 minutes = int(time_remaining.total_seconds() / 60)
-                self.time_var.set(f"Sesión expira en {minutes} min")
+                self.time_var.set(f"Session expires in {minutes} min")
             else:
-                self.time_var.set("Sesión expirada")
+                self.time_var.set("Session expired")
         else:
-            self.user_var.set("No hay usuario autenticado")
+            self.user_var.set("No authenticated user")
             self.time_var.set("")
     
     def _start_update_timer(self):
         """Iniciar timer para actualizar display"""
         self._update_display()
-        # Actualizar cada minuto
+        # Refresh cada minuto
         self.after(60000, self._start_update_timer)
     
     def destroy(self):
@@ -224,9 +224,9 @@ def require_authentication(func):
     """
     def wrapper(*args, **kwargs):
         if not session_manager.is_active():
-            raise Exception("Función requiere autenticación. Por favor, inicie sesión.")
+            raise Exception("This function requires authentication. Please, log in.")
         
-        # Actualizar actividad
+        # Refresh actividad
         session_manager.update_activity()
         
         return func(*args, **kwargs)

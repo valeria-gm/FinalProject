@@ -21,7 +21,7 @@ class AuthManager:
             conn = cast(mysql.connector.MySQLConnection, mysql.connector.connect(**self.db_config))
             return conn
         except mysql.connector.Error as e:
-            raise Exception(f"Error de conexión administrativa: {e}")
+            raise Exception(f"Administrative connection error: {e}")
     
     def _hash_password(self, password: str) -> str:
         """Generar hash seguro de contraseña"""
@@ -146,9 +146,9 @@ class AuthManager:
             if is_blocked and blocked_until is not None:
                 remaining_time = blocked_until - datetime.now()
                 minutes = int(remaining_time.total_seconds() / 60)
-                message = f"Usuario bloqueado. Tiempo restante: {minutes} minutos"
+                message = f"Blocked user. Remaining time: {minutes} minutes"
                 
-                self._log_access_attempt(username, False, "Usuario bloqueado")
+                self._log_access_attempt(username, False, "Blocked user")
                 return {
                     'success': False,
                     'message': message,
@@ -170,31 +170,31 @@ class AuthManager:
             conn.close()
             
             if not user:
-                self._log_access_attempt(username, False, "Usuario no existe")
+                self._log_access_attempt(username, False, "User does not exist")
                 return {
                     'success': False,
-                    'message': "Usuario o contraseña incorrectos"
+                    'message': "Incorrect user or password"
                 }
             
             if not user['activo']:
-                self._log_access_attempt(username, False, "Usuario inactivo")
+                self._log_access_attempt(username, False, "Inactive user")
                 return {
                     'success': False,
-                    'message': "Usuario inactivo. Contacte al administrador."
+                    'message': "Inactive user. Please contact the administrator."
                 }
             
             # Verificar contraseña
             if not self._verify_password(password, user['password_hash']):
                 self._increment_failed_attempts(username)
-                self._log_access_attempt(username, False, "Contraseña incorrecta")
+                self._log_access_attempt(username, False, "Incorrect password")
                 return {
                     'success': False,
-                    'message': "Usuario o contraseña incorrectos"
+                    'message': "Incorrect user or password"
                 }
             
             # Login exitoso
             self._reset_failed_attempts(username)
-            self._log_access_attempt(username, True, "Login exitoso")
+            self._log_access_attempt(username, True, "Successful login")
             
             # Remover información sensible
             user_data = {
@@ -206,15 +206,15 @@ class AuthManager:
             
             return {
                 'success': True,
-                'message': "Autenticación exitosa",
+                'message': "Sucessful authentication",
                 'user_data': user_data
             }
             
         except Exception as e:
-            self._log_access_attempt(username, False, f"Error del sistema: {str(e)}")
+            self._log_access_attempt(username, False, f"System error: {str(e)}")
             return {
                 'success': False,
-                'message': "Error del sistema. Intente nuevamente."
+                'message': "System error. Please try again"
             }
     
     def create_user_connection(self, username: str, password: str) -> mysql.connector.MySQLConnection:
@@ -234,7 +234,7 @@ class AuthManager:
             return conn
             
         except mysql.connector.Error as e:
-            raise Exception(f"Error de conexión a base de datos: {e}")
+            raise Exception(f"Database connection error: {e}")
     
     def change_password(self, username: str, old_password: str, new_password: str) -> Dict[str, Any]:
         """Cambiar contraseña de usuario"""
@@ -244,14 +244,14 @@ class AuthManager:
             if not auth_result['success']:
                 return {
                     'success': False,
-                    'message': "Contraseña actual incorrecta"
+                    'message': "Incorrect password"
                 }
             
             # Validar nueva contraseña
             if len(new_password) < 8:
                 return {
                     'success': False,
-                    'message': "La nueva contraseña debe tener al menos 8 caracteres"
+                    'message': "The new password must be at least 8 characters long"
                 }
             
             # Generar hash de nueva contraseña
@@ -270,17 +270,17 @@ class AuthManager:
             conn.commit()
             conn.close()
             
-            self._log_access_attempt(username, True, "Contraseña cambiada")
+            self._log_access_attempt(username, True, "Password updated")
             
             return {
                 'success': True,
-                'message': "Contraseña actualizada exitosamente"
+                'message': "Password updated successfully"
             }
             
         except Exception as e:
             return {
                 'success': False,
-                'message': f"Error al cambiar contraseña: {str(e)}"
+                'message': f"Error changing password: {str(e)}"
             }
     
     def get_user_info(self, username: str) -> Optional[Dict[str, Any]]:
@@ -332,19 +332,19 @@ class AuthManager:
             if not username or not password or not nombre_completo:
                 return {
                     'success': False,
-                    'message': 'Todos los campos son requeridos'
+                    'message': 'All fields are required'
                 }
             
             if len(password) < 8:
                 return {
                     'success': False,
-                    'message': 'La contraseña debe tener al menos 8 caracteres'
+                    'message': 'The password must be at least 8 characters long'
                 }
             
             if rol not in ['admin', 'usuario']:
                 return {
                     'success': False,
-                    'message': 'Rol inválido'
+                    'message': 'Invalid rol'
                 }
             
             # Verificar si el usuario ya existe
@@ -356,7 +356,7 @@ class AuthManager:
                 conn.close()
                 return {
                     'success': False,
-                    'message': f'El usuario "{username}" ya existe'
+                    'message': f'The user "{username}" already exists'
                 }
             
             # Generar hash de contraseña
@@ -371,17 +371,17 @@ class AuthManager:
             conn.commit()
             conn.close()
             
-            self._log_access_attempt(username, True, f"Usuario creado por administrador")
+            self._log_access_attempt(username, True, f"User created by administrator")
             
             return {
                 'success': True,
-                'message': f'Usuario "{username}" creado exitosamente'
+                'message': f'User "{username}" created successfully'
             }
             
         except Exception as e:
             return {
                 'success': False,
-                'message': f'Error al crear usuario: {str(e)}'
+                'message': f'Error creating user: {str(e)}'
             }
     
     def update_user(self, username: str, nombre_completo: str, rol: str, activo: bool, new_password: Optional[str] = None) -> Dict[str, Any]:
@@ -391,13 +391,13 @@ class AuthManager:
             if not username or not nombre_completo:
                 return {
                     'success': False,
-                    'message': 'Username y nombre completo son requeridos'
+                    'message': 'Username and name are required'
                 }
             
             if rol not in ['admin', 'usuario']:
                 return {
                     'success': False,
-                    'message': 'Rol inválido'
+                    'message': 'Invalid rol'
                 }
             
             conn = self._get_admin_connection()
@@ -409,7 +409,7 @@ class AuthManager:
                 conn.close()
                 return {
                     'success': False,
-                    'message': f'El usuario "{username}" no existe'
+                    'message': f'The user "{username}" does not exist'
                 }
             
             # Actualizar usuario
@@ -418,7 +418,7 @@ class AuthManager:
                     conn.close()
                     return {
                         'success': False,
-                        'message': 'La nueva contraseña debe tener al menos 8 caracteres'
+                        'message': 'The new password must be at least 8 characters long'
                     }
                 
                 password_hash = self._hash_password(new_password)
@@ -437,19 +437,19 @@ class AuthManager:
             conn.commit()
             conn.close()
             
-            action_detail = "Usuario actualizado por administrador"
+            action_detail = "User updated by administrator"
             if new_password:
-                action_detail += " (contraseña cambiada)"
+                action_detail += " (password updated)"
             
             self._log_access_attempt(username, True, action_detail)
             
             return {
                 'success': True,
-                'message': f'Usuario "{username}" actualizado exitosamente'
+                'message': f'User "{username}" updated successfully'
             }
             
         except Exception as e:
             return {
                 'success': False,
-                'message': f'Error al actualizar usuario: {str(e)}'
+                'message': f'Error updating user: {str(e)}'
             }

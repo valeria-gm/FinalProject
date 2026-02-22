@@ -42,7 +42,7 @@ def launch_receipts_module(user_data=None):
             try:
                 # Create new editor window as Toplevel (allows multiple editors)
                 editor_root = tk.Toplevel()
-                editor_root.title("Martket - Nueva Orden")
+                editor_root.title("Martket - New Order")
                 editor_root.geometry("1100x750")
                 
                 # Function to handle window closing and refresh
@@ -65,14 +65,14 @@ def launch_receipts_module(user_data=None):
                 def on_orden_cambiada(event):
                     if ventana_ordenes:
                         ventana_ordenes.forzar_actualizacion()
-                        print(" Evento OrdenCambiada recibido - actualizando lista")
+                        print("OrdenCambiada event received - updating list")
                 
                 editor_root.bind("<<OrdenCambiada>>", on_orden_cambiada)
                 
-                print(f"Nueva orden creada - Editor instancia #{len(editor_instances)}")
+                print(f"New order created - Editor instance #{len(editor_instances)}")
                 
             except Exception as e:
-                messagebox.showerror("Error", f"Error al crear nueva orden: {str(e)}")
+                messagebox.showerror("Error", f"Error creating new order: {str(e)}")
                 print(f"Error creating new order: {e}")
         
         def callback_editar_orden(folio):
@@ -80,7 +80,7 @@ def launch_receipts_module(user_data=None):
             try:
                 # Create editor window for specific order
                 editor_root = tk.Toplevel()
-                editor_root.title(f"Market - Editando Orden {folio:06d}")
+                editor_root.title(f"Market - Editing Order {folio:06d}")
                 editor_root.geometry("1100x750")
                 
                 # Function to handle window closing and refresh
@@ -103,14 +103,14 @@ def launch_receipts_module(user_data=None):
                 def on_orden_cambiada(event):
                     if ventana_ordenes:
                         ventana_ordenes.forzar_actualizacion()
-                        print("Evento OrdenCambiada recibido - actualizando lista")
+                        print("OrdenCambiada event received - updating list")
                 
                 editor_root.bind("<<OrdenCambiada>>", on_orden_cambiada)
                 
-                print(f"✅ Editando orden {folio:06d} - Editor instancia #{len(editor_instances)}")
+                print(f"✅ Editing order {folio:06d} - Editor instance #{len(editor_instances)}")
                 
             except Exception as e:
-                messagebox.showerror("Error", f"Error al editar orden {folio}: {str(e)}")
+                messagebox.showerror("Error", f"Error editing order {folio}: {str(e)}")
                 print(f"Error editing order {folio}: {e}")
         
         # Create root window first to avoid tkinter initialization issues
@@ -129,7 +129,7 @@ def launch_receipts_module(user_data=None):
         ventana_ordenes.show()
         
     except Exception as e:
-        messagebox.showerror("Error", f"No se pudo cargar el módulo de recibos: {str(e)}")
+        messagebox.showerror("Error", f"Could not load receipts module: {str(e)}")
         print(f"Error launching receipts module: {e}")
         import traceback
         traceback.print_exc()
@@ -154,7 +154,7 @@ def launch_pricing_module(user_data=None):
         root.mainloop()
         
     except Exception as e:
-        messagebox.showerror("Error", f"No se pudo cargar el editor de precios: {str(e)}")
+        messagebox.showerror("Error", f"Could not load price editor: {str(e)}")
         print(f"Error launching pricing module: {e}")
 
 def launch_inventory_module(user_data=None):
@@ -176,7 +176,7 @@ def launch_inventory_module(user_data=None):
         root.mainloop()
         
     except Exception as e:
-        messagebox.showerror("Error", f"No se pudo cargar el registro de compras: {str(e)}")
+        messagebox.showerror("Error", f"Could not load purchase registry: {str(e)}")
         print(f"Error launching inventory module: {e}")
 
 def launch_analytics_module(user_data=None):
@@ -198,7 +198,7 @@ def launch_analytics_module(user_data=None):
         root.mainloop()
         
     except Exception as e:
-        messagebox.showerror("Error", f"No se pudo cargar el analizador de ganancias: {str(e)}")
+        messagebox.showerror("Error", f"Could not load profit analyzer: {str(e)}")
         print(f"Error launching analytics module: {e}")
 
 def launch_clients_module(user_data=None):
@@ -220,7 +220,7 @@ def launch_clients_module(user_data=None):
         root.mainloop()
         
     except Exception as e:
-        messagebox.showerror("Error", f"No se pudo cargar el administrador de clientes: {str(e)}")
+        messagebox.showerror("Error", f"Could not load client manager: {str(e)}")
         print(f"Error launching clients module: {e}")
 
 def launch_users_module(user_data=None):
@@ -242,7 +242,7 @@ def launch_users_module(user_data=None):
         root.mainloop()
         
     except Exception as e:
-        messagebox.showerror("Error", f"No se pudo cargar el administrador de usuarios: {str(e)}")
+        messagebox.showerror("Error", f"Could not load user manager: {str(e)}")
         print(f"Error launching users module: {e}")
         import traceback
         traceback.print_exc()
@@ -263,7 +263,7 @@ def launch_debts_module(user_data=None):
         launch_debt_window(user_data)
         
     except Exception as e:
-        messagebox.showerror("Error", f"No se pudo cargar el módulo de deudas: {str(e)}")
+        messagebox.showerror("Error", f"Could not load debt module: {str(e)}")
         print(f"Error launching debts module: {e}")
         import traceback
         traceback.print_exc()

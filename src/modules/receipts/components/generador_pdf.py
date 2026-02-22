@@ -40,7 +40,7 @@ def crear_recibo_simple(nombre_restaurante, items_carrito, total_str, folio_nume
         # Header con título y folio
         if folio_numero:
             # Crear tabla para header con folio en esquina superior derecha
-            header_data = [["Bodega de Insumos 'Market'", f"FOLIO: {folio_numero:06d}"]]
+            header_data = [["Market Supplies Warehouse", f"FOLIO: {folio_numero:06d}"]]
             header_table = Table(header_data, colWidths=[400, 150])
             header_style = TableStyle([
                 ('ALIGN', (0, 0), (0, 0), 'LEFT'),
@@ -57,18 +57,18 @@ def crear_recibo_simple(nombre_restaurante, items_carrito, total_str, folio_nume
             story.append(header_table)
         else:
             # Título principal sin folio
-            story.append(Paragraph("Bodega de Insumos 'Market'", styles['h1']))
+            story.append(Paragraph("Market Supplies Warehouse", styles['h1']))
         
-        story.append(Paragraph(f"Fecha: {datetime.now().strftime('%d/%m/%Y')}", styles['Normal']))
+        story.append(Paragraph(f"Date: {datetime.now().strftime('%d/%m/%Y')}", styles['Normal']))
         story.append(Spacer(1, 24))
 
         # Información del cliente
-        story.append(Paragraph(f"<b>Recibo para:</b> {nombre_restaurante}", styles['h2']))
+        story.append(Paragraph(f"<b>Receipt for:</b> {nombre_restaurante}", styles['h2']))
         story.append(Spacer(1, 12))
 
         # Crear la tabla con los productos
         # Encabezados de la tabla
-        datos_tabla = [['Cantidad', 'Producto', 'Precio Unit.', 'Subtotal']]
+        datos_tabla = [['Quantity', 'Product', 'Unit Price', 'Subtotal']]
         # Añadir las filas del carrito
         for item in items_carrito:
             datos_tabla.append(item)
@@ -95,9 +95,9 @@ def crear_recibo_simple(nombre_restaurante, items_carrito, total_str, folio_nume
 
         # Total final
         style_total = ParagraphStyle(name='TotalStyle', parent=styles['h3'], alignment=TA_RIGHT)
-        story.append(Paragraph(f"<b>Total a Pagar: {total_str}</b>", style_total))
+        story.append(Paragraph(f"<b>Total to pay: {total_str}</b>", style_total))
         story.append(Spacer(1, 12))
-        story.append(Paragraph("¡Gracias por su compra!", styles['Italic']))
+        story.append(Paragraph("Thank you for your purchase!", styles['Italic']))
 
         # 5. Generar (construir) el archivo PDF
         doc.build(story)
@@ -105,7 +105,7 @@ def crear_recibo_simple(nombre_restaurante, items_carrito, total_str, folio_nume
         return ruta_archivo
 
     except Exception as e:
-        print(f"Error al generar el PDF: {e}")
+        print(f"Error generating the PDF: {e}")
         return None
 
 def crear_recibo_con_secciones(nombre_restaurante, items_por_seccion, total_general, folio_numero=None):
@@ -115,7 +115,7 @@ def crear_recibo_con_secciones(nombre_restaurante, items_por_seccion, total_gene
     :param nombre_restaurante: Nombre del cliente/restaurante
     :param items_por_seccion: Dict con formato:
         {
-            "Nombre Sección": {
+            "Section Name": {
                 "items": [["cantidad", "producto", "precio_unit", "subtotal"], ...],
                 "subtotal": float
             }
@@ -143,7 +143,7 @@ def crear_recibo_con_secciones(nombre_restaurante, items_por_seccion, total_gene
         # Header con título y folio
         if folio_numero:
             # Crear tabla para header con folio en esquina superior derecha
-            header_data = [["Bodega de Insumos 'Market'", f"FOLIO: {folio_numero:06d}"]]
+            header_data = [["Market Supplies Warehouse", f"FOLIO: {folio_numero:06d}"]]
             header_table = Table(header_data, colWidths=[400, 150])
             header_style = TableStyle([
                 ('ALIGN', (0, 0), (0, 0), 'LEFT'),
@@ -160,13 +160,13 @@ def crear_recibo_con_secciones(nombre_restaurante, items_por_seccion, total_gene
             story.append(header_table)
         else:
             # Título principal sin folio
-            story.append(Paragraph("Bodega de Insumos 'Market'", styles['h1']))
+            story.append(Paragraph("Market Supplies Warehouse", styles['h1']))
         
-        story.append(Paragraph(f"Fecha: {datetime.now().strftime('%d/%m/%Y')}", styles['Normal']))
+        story.append(Paragraph(f"Date: {datetime.now().strftime('%d/%m/%Y')}", styles['Normal']))
         story.append(Spacer(1, 24))
 
         # Información del cliente
-        story.append(Paragraph(f"<b>Recibo para:</b> {nombre_restaurante}", styles['h2']))
+        story.append(Paragraph(f"<b>Receipt for:</b> {nombre_restaurante}", styles['h2']))
         story.append(Spacer(1, 12))
 
         # Procesar cada sección
@@ -186,7 +186,7 @@ def crear_recibo_con_secciones(nombre_restaurante, items_por_seccion, total_gene
             items_seccion = datos_seccion['items']
             if items_seccion:
                 # Encabezados de la tabla
-                datos_tabla = [['Cantidad', 'Producto', 'Precio Unit.', 'Subtotal']]
+                datos_tabla = [['Quantity', 'Product', 'Unit Price', 'Subtotal']]
                 datos_tabla.extend(items_seccion)
                 
                 tabla = Table(datos_tabla)
@@ -231,9 +231,9 @@ def crear_recibo_con_secciones(nombre_restaurante, items_por_seccion, total_gene
             textColor=colors.darkgreen,
             fontName='Helvetica-Bold'
         )
-        story.append(Paragraph(f"<b>TOTAL GENERAL: ${total_general:.2f}</b>", style_total))
+        story.append(Paragraph(f"<b>GRAND TOTAL: ${total_general:.2f}</b>", style_total))
         story.append(Spacer(1, 12))
-        story.append(Paragraph("¡Gracias por su compra!", styles['Italic']))
+        story.append(Paragraph("Thank you for your purchase!", styles['Italic']))
 
         # 5. Generar el archivo PDF
         doc.build(story)

@@ -15,7 +15,7 @@ class VentanaOrdenes:
     Ventana principal para gestión de órdenes guardadas.
     
     Funcionalidades:
-    - Vista de órdenes activas y historial
+    - Vista de active orders y historial
     - Búsqueda por folio
     - Creación, edición y eliminación de órdenes
     - Auto-refresh y filtros en tiempo real
@@ -61,7 +61,7 @@ class VentanaOrdenes:
     
     def _configurar_ventana(self):
         """Configura las propiedades básicas de la ventana"""
-        self.root.title("Gestión de Órdenes - Market")
+        self.root.title("Order Management - Market")
         self.root.geometry("900x600")
         self.root.minsize(800, 500)
         
@@ -106,13 +106,13 @@ class VentanaOrdenes:
         
         # Título principal
         titulo = ttk.Label(header_frame, 
-                          text="Gestión de Órdenes",
+                          text="Order Management",
                           style="Heading.TLabel",
                           font=("Arial", 16, "bold"))
         titulo.pack(side="left")
         
         # Información del usuario
-        user_info = f"Usuario: {self.user_data.get('nombre_completo', self.username)}"
+        user_info = f"Username: {self.user_data.get('nombre_completo', self.username)}"
         if self.es_admin:
             user_info += " (ADMIN)"
         
@@ -128,12 +128,12 @@ class VentanaOrdenes:
         search_frame = ttk.Frame(toolbar_frame)
         search_frame.pack(side="left", fill="x", expand=True)
         
-        ttk.Label(search_frame, text="Buscar por folio:").pack(side="left", padx=(0, 5))
+        ttk.Label(search_frame, text="Search by receipt #:").pack(side="left", padx=(0, 5))
         
         self.entry_busqueda = ttk.Entry(search_frame, textvariable=self.filtro_busqueda, width=15)
         self.entry_busqueda.pack(side="left", padx=(0, 5))
         
-        btn_buscar = ttk.Button(search_frame, text="🔍 Buscar", 
+        btn_buscar = ttk.Button(search_frame, text="🔍 Search", 
                                command=self._buscar_por_folio)
         btn_buscar.pack(side="left", padx=(0, 5))
         
@@ -142,16 +142,16 @@ class VentanaOrdenes:
         actions_frame = ttk.Frame(toolbar_frame)
         actions_frame.pack(side="right")
         
-        # Botón Nueva Orden (prominente)
+        # Botón Nueva Order (prominente)
         self.btn_nueva_orden = ttk.Button(actions_frame, 
-                                         text="➕ Nueva Orden",
+                                         text="➕ New Order",
                                          command=self._nueva_orden,
                                          style="Accent.TButton")
         self.btn_nueva_orden.pack(side="right", padx=(10, 0))
         
-        # Botón Actualizar
+        # Botón Refresh
         btn_actualizar = ttk.Button(actions_frame, 
-                           text="🔄 Actualizar",
+                           text="🔄 Refresh",
                            command=self._forzar_actualizacion_manual)
         btn_actualizar.pack(side="right", padx=(5, 0))
     
@@ -160,13 +160,13 @@ class VentanaOrdenes:
         self.notebook = ttk.Notebook(parent)
         self.notebook.pack(fill="both", expand=True, pady=(0, 10))
         
-        # Pestaña Órdenes Activas
+        # Pestaña Active Orders
         self.frame_activas = ttk.Frame(self.notebook, padding="5")
-        self.notebook.add(self.frame_activas, text="Órdenes Activas")
+        self.notebook.add(self.frame_activas, text="Active Orders")
         
         # Pestaña Historial
         self.frame_historial = ttk.Frame(self.notebook, padding="5")
-        self.notebook.add(self.frame_historial, text="Historial")
+        self.notebook.add(self.frame_historial, text="History")
         
         # Crear contenido de cada pestaña
         self._crear_lista_ordenes(self.frame_activas, "activas")
@@ -181,22 +181,22 @@ class VentanaOrdenes:
         if tipo == "activas":
             columnas = ("folio", "cliente", "total", "fecha_mod", "usuario", "acciones")
             headings = {
-                "folio": "Folio",
-                "cliente": "Cliente", 
+                "folio": "Receipt #",
+                "cliente": "Client", 
                 "total": "Total",
-                "fecha_mod": "Última Modificación",
-                "usuario": "Usuario",
-                "acciones": "Acciones"
+                "fecha_mod": "Last Modified",
+                "usuario": "User",
+                "acciones": "Actions"
             }
             tree_name = "tree_activas"
         else:
             columnas = ("folio", "cliente", "total", "fecha_reg", "usuario")
             headings = {
-                "folio": "Folio",
-                "cliente": "Cliente",
+                "folio": "Receipt #",
+                "cliente": "Client",
                 "total": "Total", 
-                "fecha_reg": "Fecha Registro",
-                "usuario": "Usuario"
+                "fecha_reg": "Registration Date",
+                "usuario": "User"
             }
             tree_name = "tree_historial"
         
@@ -241,7 +241,7 @@ class VentanaOrdenes:
         # Guardar referencia al tree
         setattr(self, tree_name, tree)
         
-        # Eventos para órdenes activas
+        # Eventos para active orders
         if tipo == "activas":
             tree.bind("<Double-1>", self._on_doble_click_activas)
             tree.bind("<Button-1>", self._on_click_activas)
@@ -252,10 +252,10 @@ class VentanaOrdenes:
         status_frame.pack(fill="x")
         
         # Información de conteo
-        self.lbl_count_activas = ttk.Label(status_frame, text="Órdenes activas: 0")
+        self.lbl_count_activas = ttk.Label(status_frame, text="Active orders: 0")
         self.lbl_count_activas.pack(side="left")
         
-        self.lbl_count_historial = ttk.Label(status_frame, text="| Historial: 0")
+        self.lbl_count_historial = ttk.Label(status_frame, text="| History: 0")
         self.lbl_count_historial.pack(side="left", padx=(10, 0))
         
         # Información de última actualización
@@ -269,16 +269,16 @@ class VentanaOrdenes:
         if self.on_nueva_orden:
             try:
                 self.on_nueva_orden()
-                # Actualizar lista después de crear
+                # Refresh lista después de crear
                 self.root.after(1000, self._actualizar_listas)
             except Exception as e:
-                messagebox.showerror("Error", f"Error al crear nueva orden: {str(e)}")
+                messagebox.showerror("Error", f"Error creating new order: {str(e)}")
         else:
-            messagebox.showinfo("No Implementado", 
+            messagebox.showinfo("Not Implemented", 
                               "Callback de nueva orden no configurado")
     
     def _on_doble_click_activas(self, event):
-        """Maneja doble clic en órdenes activas para editar"""
+        """Maneja doble clic en active orders para editar"""
         item = self.tree_activas.selection()[0] if self.tree_activas.selection() else None
         if item:
             valores = self.tree_activas.item(item, "values")
@@ -287,7 +287,7 @@ class VentanaOrdenes:
                 self._editar_orden(folio)
     
     def _on_click_activas(self, event):
-        """Maneja clic simple en órdenes activas para acciones"""
+        """Maneja clic simple en active orders para acciones"""
         # Identificar si se hizo clic en la columna de acciones
         item = self.tree_activas.identify_row(event.y)
         if not item:
@@ -303,9 +303,9 @@ class VentanaOrdenes:
     def _mostrar_menu_acciones(self, event, folio):
         """Muestra menú contextual con acciones para una orden"""
         menu = tk.Menu(self.root, tearoff=0)
-        menu.add_command(label="✏️ Editar", command=lambda: self._editar_orden(folio))
+        menu.add_command(label="✏️ Edit", command=lambda: self._editar_orden(folio))
         menu.add_separator()
-        menu.add_command(label="🗑️ Eliminar", command=lambda: self._eliminar_orden(folio))
+        menu.add_command(label="🗑️ Delete", command=lambda: self._eliminar_orden(folio))
         
         try:
             menu.tk_popup(event.x_root, event.y_root)
@@ -317,27 +317,27 @@ class VentanaOrdenes:
         if self.on_editar_orden:
             try:
                 self.on_editar_orden(folio)
-                # Actualizar lista después de editar
+                # Refresh lista después de editar
                 self.root.after(1000, self._actualizar_listas)
             except Exception as e:
-                messagebox.showerror("Error", f"Error al editar orden {folio}: {str(e)}")
+                messagebox.showerror("Error", f"Error editing order {folio}: {str(e)}")
         else:
-            messagebox.showinfo("No Implementado", 
-                              f"Callback de edición no configurado para folio {folio}")
+            messagebox.showinfo("Not Implemented", 
+                              f"Edit callback not configured for receipt # {folio}")
     
     def _eliminar_orden(self, folio):
         """Elimina una orden después de confirmación"""
-        if messagebox.askyesno("Confirmar Eliminación", 
-                              f"¿Está seguro de que desea eliminar la orden con folio {folio:06d}?\n\n"
-                              f"Esta acción liberará el folio y no se puede deshacer."):
+        if messagebox.askyesno("Confirm Deletion", 
+                              f"Are you sure you want to delete the order with folio {folio:06d}?\n\n"
+                              f"This action will release the folio and cannot be undone."):
             try:
                 if self.orden_manager.liberar_folio(folio):
-                    messagebox.showinfo("Éxito", f"Orden {folio:06d} eliminada exitosamente")
+                    messagebox.showinfo("Success", f"Order {folio:06d} deleted successfully")
                     self._actualizar_listas()
                 else:
-                    messagebox.showerror("Error", f"No se pudo eliminar la orden {folio}")
+                    messagebox.showerror("Error", f"Could not delete order {folio}")
             except Exception as e:
-                messagebox.showerror("Error", f"Error al eliminar orden: {str(e)}")
+                messagebox.showerror("Error", f"Error deleting order: {str(e)}")
     
     def _on_tab_changed(self, event):
         """Maneja cambio de pestaña"""
@@ -374,26 +374,26 @@ class VentanaOrdenes:
                 # Limpiar selecciones previas y highlights
                 self._limpiar_highlights()
                 
-                # Buscar en órdenes activas primero
-                encontrado = self._buscar_en_tree(self.tree_activas, folio_buscado, 0, "Órdenes Activas")
+                # Buscar en active orders primero
+                encontrado = self._buscar_en_tree(self.tree_activas, folio_buscado, 0, "Active Orders")
                 
                 # Si no se encuentra en activas, buscar en historial
                 if not encontrado:
-                    encontrado = self._buscar_en_tree(self.tree_historial, folio_buscado, 1, "Historial")
+                    encontrado = self._buscar_en_tree(self.tree_historial, folio_buscado, 1, "History")
                 
                 # Si no se encuentra en ningún lado
                 if not encontrado:
-                    messagebox.showinfo("No Encontrado", 
-                                    f"No se encontró orden con folio {folio_buscado:06d}")
+                    messagebox.showinfo("Not found", 
+                                    f"No order found with folio {folio_buscado:06d}")
             else:
                 # Si no es número, aplicar filtro de texto general
                 self._aplicar_filtro()
             
         except ValueError:
-            messagebox.showwarning("Búsqueda Inválida", 
-                                "Para buscar por folio, ingrese solo números")
+            messagebox.showwarning("Invalid Search", 
+                                "To search by folio, enter numbers only.")
         except Exception as e:
-            messagebox.showerror("Error", f"Error durante la búsqueda: {str(e)}")
+            messagebox.showerror("Error", f"Error during search: {str(e)}")
     
     def _buscar_en_tree(self, tree, folio_buscado, tab_index, tab_name):
         """
@@ -435,14 +435,14 @@ class VentanaOrdenes:
                         self.root.after(5000, lambda: self._remover_highlight(tree, item))
                         
                         # Mensaje de éxito
-                        print(f"✅ Folio {folio_buscado:06d} encontrado en {tab_name}")
+                        print(f"✅ Folio {folio_buscado:06d} found in {tab_name}")
                         
                         return True
             
             return False
             
         except Exception as e:
-            print(f"❌ Error buscando en {tab_name}: {e}")
+            print(f"❌ Error searching in {tab_name}: {e}")
             return False
     
     def _limpiar_highlights(self):
@@ -454,7 +454,7 @@ class VentanaOrdenes:
             for item in self.tree_historial.get_children():
                 self.tree_historial.item(item, tags=())
         except Exception as e:
-            print(f"Error limpiando highlights: {e}")
+            print(f"Error clearing the highlights: {e}")
     
     def _remover_highlight(self, tree, item):
         """Remueve el highlight de un item específico"""
@@ -462,14 +462,14 @@ class VentanaOrdenes:
             if tree.exists(item):
                 tree.item(item, tags=())
         except Exception as e:
-            print(f"Error removiendo highlight: {e}")
+            print(f"Error removing highlight: {e}")
         
     
     def _aplicar_filtro(self):
         """Aplica filtro a las listas según el texto de búsqueda"""
         filtro = self.filtro_busqueda.get().strip().lower()
         
-        # Filtrar órdenes activas
+        # Filtrar active orders
         self._filtrar_tree(self.tree_activas, filtro)
         
         # Filtrar historial
@@ -503,7 +503,7 @@ class VentanaOrdenes:
         self._cargar_historial()
     
     def _cargar_ordenes_activas(self):
-        """Carga las órdenes activas en el treeview"""
+        """Carga las active orders en el treeview"""
         try:
             # Limpiar tree
             for item in self.tree_activas.get_children():
@@ -518,7 +518,7 @@ class VentanaOrdenes:
                 cliente = orden['nombre_cliente']
                 total = f"${orden['total_estimado']:,.2f}"
                 
-                # Formatear fecha correctamente (sin tiempo si es solo fecha)
+                # Formatear fecha successfully (sin tiempo si es solo fecha)
                 fecha_mod = orden.get('fecha_modificacion_str', 'N/A')
                 if fecha_mod and ' ' in fecha_mod:
                     fecha_mod = fecha_mod.split(' ')[0]  # Solo la parte de la fecha
@@ -530,11 +530,11 @@ class VentanaOrdenes:
                     folio_str, cliente, total, fecha_mod, usuario, acciones
                 ))
             
-            # Actualizar contador
-            self.lbl_count_activas.config(text=f"Órdenes activas: {len(ordenes)}")
+            # Refresh contador
+            self.lbl_count_activas.config(text=f"Active orders: {len(ordenes)}")
             
         except Exception as e:
-            messagebox.showerror("Error", f"Error al cargar órdenes activas: {str(e)}")
+            messagebox.showerror("Error", f"Error loading active orders: {str(e)}")
     
     def _cargar_historial(self):
         """Carga el historial de órdenes en el treeview"""
@@ -552,7 +552,7 @@ class VentanaOrdenes:
                 cliente = orden['nombre_cliente']
                 total = f"${orden['total_estimado']:,.2f}"
                 
-                # Formatear fecha correctamente (sin tiempo si es solo fecha)
+                # Formatear fecha successfully (sin tiempo si es solo fecha)
                 fecha_reg = orden.get('fecha_creacion_str', 'N/A')
                 if fecha_reg and ' ' in fecha_reg:
                     fecha_reg = fecha_reg.split(' ')[0]  # Solo la parte de la fecha
@@ -563,25 +563,25 @@ class VentanaOrdenes:
                     folio_str, cliente, total, fecha_reg, usuario
                 ))
             
-            # Actualizar contador
-            self.lbl_count_historial.config(text=f"| Historial: {len(historial)}")
+            # Refresh contador
+            self.lbl_count_historial.config(text=f"| History: {len(historial)}")
             
         except Exception as e:
-            messagebox.showerror("Error", f"Error al cargar historial: {str(e)}")
+            messagebox.showerror("Error", f"Error loading history: {str(e)}")
     
     def _actualizar_listas(self):
         """Actualiza ambas listas de órdenes"""
         self._cargar_ordenes_activas()
         self._cargar_historial()
         
-        # Actualizar timestamp
+        # Refresh timestamp
         ahora = datetime.now().strftime("%H:%M:%S")
-        self.lbl_ultima_actualizacion.config(text=f"Actualizado: {ahora}")
+        self.lbl_ultima_actualizacion.config(text=f"Updated: {ahora}")
     
     def _forzar_actualizacion_manual(self):
         """Fuerza actualización manual cuando se presiona el botón"""
         try:
-            print("🔄 Actualizando listas manualmente...")
+            print("🔄 Updating lists manually...")
 
             # NUEVO: Forzar nueva conexión para evitar cache
             self.orden_manager._close_connection()
@@ -600,41 +600,41 @@ class VentanaOrdenes:
                 self.filtro_busqueda.set(filtro_actual)
                 self._aplicar_filtro()
             
-            # Actualizar timestamp
+            # Refresh timestamp
             from datetime import datetime
             ahora = datetime.now().strftime("%H:%M:%S")
-            self.lbl_ultima_actualizacion.config(text=f"Actualizado: {ahora}")
+            self.lbl_ultima_actualizacion.config(text=f"Updated: {ahora}")
             
             # Mensaje visual opcional
             self.lbl_ultima_actualizacion.config(foreground="green")
             self.root.after(2000, lambda: self.lbl_ultima_actualizacion.config(foreground="black"))
             
-            print("✅ Actualización completada exitosamente")
+            print("✅ Update completed successfully")
             
         except Exception as e:
-            print(f"❌ Error en actualización manual: {e}")
+            print(f"❌ during manual update: {e}")
             import traceback
             traceback.print_exc()
-            messagebox.showerror("Error", f"Error al actualizar: {str(e)}")
+            messagebox.showerror("Error", f"Error refreshing: {str(e)}")
             
     def forzar_actualizacion(self):
         """Fuerza la actualización de las listas desde el exterior"""
         try:
             self._actualizar_listas()
-            print("🔄 Lista de órdenes actualizada desde ventana externa")
+            print("🔄 Order list updated from external window")
         except Exception as e:
-            print(f"Error al forzar actualización: {e}")
+            print(f"Error forcing update: {e}")
     
     def _on_focus_in(self, event):
         """Se ejecuta cuando la ventana recibe el foco"""
         # Solo actualizar si el evento es para la ventana principal, no widgets internos
         if event.widget == self.root:
-            # Actualizar con un pequeño delay para evitar múltiples actualizaciones
+            # Refresh con un pequeño delay para evitar múltiples actualizaciones
             self.root.after(100, self.forzar_actualizacion)
     
     def _on_orden_cambiada(self, event):
         """Maneja el evento personalizado de orden cambiada"""
-        print("📨 Evento OrdenCambiada recibido en VentanaOrdenes")
+        print("📨 OrdenCambiada event received in VentanaOrdenes")
         self.forzar_actualizacion()
     
     # ==================== AUTO-REFRESH ====================
@@ -701,12 +701,12 @@ if __name__ == '__main__':
     }
     
     def callback_nueva_orden():
-        print("Callback: Nueva orden solicitada")
-        messagebox.showinfo("Prueba", "Callback de nueva orden ejecutado")
+        print("Callback: New order requested")
+        messagebox.showinfo("Test", "New order callback executed")
     
     def callback_editar_orden(folio):
-        print(f"Callback: Editar orden {folio}")
-        messagebox.showinfo("Prueba", f"Callback de edición ejecutado para folio {folio}")
+        print(f"Callback: Edit order {folio}")
+        messagebox.showinfo("Test", f"Edit callback executed for receipt # {folio}")
     
     # Crear ventana de prueba
     root = tk.Tk()

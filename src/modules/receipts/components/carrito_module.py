@@ -73,13 +73,13 @@ class CarritoConSecciones:
         cols = ("cantidad",  "unidad", "precio_unitario", "total", "del")
         self.tree = ttk.Treeview(tree_frame, columns=cols, show="tree headings")
 
-        self.tree.heading("#0", text="Producto / Sección")
+        self.tree.heading("#0", text="Product / Section")
         self.tree.column("#0", width=200, stretch=True)
-        self.tree.heading("cantidad", text="Cantidad")
+        self.tree.heading("cantidad", text="Quantity")
         self.tree.column("cantidad", width=80, anchor="center")
-        self.tree.heading("unidad", text="Unidad")
+        self.tree.heading("unidad", text="Unit")
         self.tree.column("unidad", width=60, anchor="center")
-        self.tree.heading("precio_unitario", text="Precio Unitario")
+        self.tree.heading("precio_unitario", text="Unit Price")
         self.tree.column("precio_unitario", width=110, anchor="e")
         self.tree.heading("total", text="Total")
         self.tree.column("total", width=110, anchor="e")
@@ -137,9 +137,9 @@ class CarritoConSecciones:
                     self._actualizar_display()
                     self._notificar_cambio()
                 else:
-                    messagebox.showwarning("Valor inválido", "La cantidad debe ser un número positivo.")
+                    messagebox.showwarning("Invalid Value", "Quantity must be a positive number.")
             except ValueError:
-                messagebox.showwarning("Entrada inválida", "Por favor, ingrese un número válido.")
+                messagebox.showwarning("Invalid Input", "Please enter a valid number.")
             finally:
                 entry.destroy()
 
@@ -259,7 +259,7 @@ class CarritoConSecciones:
         if not self.items:
             return
             
-        if messagebox.askyesno("Confirmar", "¿Limpiar todo el carrito?"):
+        if messagebox.askyesno("Confirm", "Clear entire cart?"):
             self.items.clear()
             self._actualizar_display()
             self._notificar_cambio()
@@ -280,15 +280,15 @@ class CarritoConSecciones:
         
         if items_en_seccion:
             if len(self.secciones) == 1:
-                messagebox.showerror("Error", "No se puede eliminar la única sección")
+                messagebox.showerror("Error", "Cannot delete the only section")
                 return False
             
             respuesta = messagebox.askyesnocancel(
-                "Sección con productos",
-                f"La sección '{self.secciones[seccion_id].nombre}' contiene {len(items_en_seccion)} productos.\n\n"
-                "Sí = Mover a otra sección\n"
-                "No = Eliminar productos\n"
-                "Cancelar = No eliminar sección"
+                "Section with products",
+                f"Section '{self.secciones[seccion_id].nombre}' contains {len(items_en_seccion)} productos.\n\n"
+                "Yes = Move to another section\n"
+                "No = Eliminar products."
+                "Cancel = Do not delete section"
             )
             
             if respuesta is None:
@@ -371,7 +371,7 @@ class CarritoConSecciones:
                 key = tags[0]
                 if key in self.items:
                     nombre_prod = self.items[key].nombre_producto
-                    if messagebox.askyesno("Confirmar", f"¿Eliminar '{nombre_prod}' del carrito?"):
+                    if messagebox.askyesno("Confirm", f"Remove '{nombre_prod}' from cart?"):
                         del self.items[key]
                         self._actualizar_display()
                         self._notificar_cambio()
@@ -387,12 +387,12 @@ class DialogoSeccion:
         self.on_seleccionar = on_seleccionar
         
         self.dialog = tk.Toplevel(parent)
-        self.dialog.title("Seleccionar Sección")
+        self.dialog.title("Select Section")
         self.dialog.geometry("300x150")
         self.dialog.transient(parent)
         self.dialog.grab_set()
         
-        ttk.Label(self.dialog, text="Seleccione una sección:", font=("Arial", 11)).pack(pady=10)
+        ttk.Label(self.dialog, text="Select a section:", font=("Arial", 11)).pack(pady=10)
         
         self.seccion_var = tk.StringVar()
         self.combo_secciones = ttk.Combobox(self.dialog, textvariable=self.seccion_var, 
@@ -406,8 +406,8 @@ class DialogoSeccion:
         frame_botones = ttk.Frame(self.dialog)
         frame_botones.pack(pady=10)
         
-        ttk.Button(frame_botones, text="Aceptar", command=self._aceptar).pack(side="left", padx=5)
-        ttk.Button(frame_botones, text="Cancelar", command=self.dialog.destroy).pack(side="left", padx=5)
+        ttk.Button(frame_botones, text="Accept", command=self._aceptar).pack(side="left", padx=5)
+        ttk.Button(frame_botones, text="Cancel", command=self.dialog.destroy).pack(side="left", padx=5)
 
     def _aceptar(self):
         nombre_seccion = self.seccion_var.get()
@@ -421,7 +421,7 @@ class GestorSecciones:
         self.carrito = carrito
         
         self.dialog = tk.Toplevel(parent)
-        self.dialog.title("Gestionar Secciones")
+        self.dialog.title("Manage Sections")
         self.dialog.geometry("400x300")
         self.dialog.transient(parent)
         self.dialog.grab_set()
@@ -431,7 +431,7 @@ class GestorSecciones:
 
     def _crear_interfaz(self):
         """Crea la interfaz del gestor"""
-        ttk.Label(self.dialog, text="Secciones:", font=("Arial", 11, "bold")).pack(pady=(10, 5))
+        ttk.Label(self.dialog, text="Sections:", font=("Arial", 11, "bold")).pack(pady=(10, 5))
         
         list_frame = ttk.Frame(self.dialog)
         list_frame.pack(fill="both", expand=True, padx=10, pady=5)
@@ -446,10 +446,10 @@ class GestorSecciones:
         frame_botones = ttk.Frame(self.dialog)
         frame_botones.pack(fill="x", padx=10, pady=10)
         
-        ttk.Button(frame_botones, text="Agregar Sección", command=self._agregar_seccion).pack(side="left", padx=5)
-        ttk.Button(frame_botones, text="Renombrar", command=self._renombrar_seccion).pack(side="left", padx=5)
-        ttk.Button(frame_botones, text="Eliminar", command=self._eliminar_seccion).pack(side="left", padx=5)
-        ttk.Button(frame_botones, text="Cerrar", command=self.dialog.destroy).pack(side="right", padx=5)
+        ttk.Button(frame_botones, text="Add Section", command=self._agregar_seccion).pack(side="left", padx=5)
+        ttk.Button(frame_botones, text="Renamer", command=self._renombrar_seccion).pack(side="left", padx=5)
+        ttk.Button(frame_botones, text="Delete", command=self._eliminar_seccion).pack(side="left", padx=5)
+        ttk.Button(frame_botones, text="Close", command=self.dialog.destroy).pack(side="right", padx=5)
 
     def _actualizar_lista(self):
         """Actualiza la lista de secciones"""
@@ -464,7 +464,7 @@ class GestorSecciones:
 
     def _agregar_seccion(self):
         """Agrega una nueva sección"""
-        nombre = simpledialog.askstring("Nueva Sección", "Nombre de la sección:")
+        nombre = simpledialog.askstring("New Section", "Section name:")
         if nombre and nombre.strip():
             self.carrito.agregar_seccion(nombre.strip())
             self._actualizar_lista()
@@ -473,14 +473,14 @@ class GestorSecciones:
         """Renombra la sección seleccionada"""
         seleccion = self.listbox.curselection()
         if not seleccion:
-            messagebox.showwarning("Selección requerida", "Seleccione una sección para renombrar")
+            messagebox.showwarning("Selection Required", "Select a section to rename")
             return
         
         seccion_id = self.seccion_ids[seleccion[0]]
         nombre_actual = self.carrito.secciones[seccion_id].nombre
         
-        nuevo_nombre = simpledialog.askstring("Renombrar Sección", 
-                                              "Nuevo nombre:", initialvalue=nombre_actual)
+        nuevo_nombre = simpledialog.askstring("Rename Section", 
+                                              "New name:", initialvalue=nombre_actual)
         if nuevo_nombre and nuevo_nombre.strip():
             self.carrito.renombrar_seccion(seccion_id, nuevo_nombre.strip())
             self._actualizar_lista()
@@ -489,7 +489,7 @@ class GestorSecciones:
         """Elimina la sección seleccionada"""
         seleccion = self.listbox.curselection()
         if not seleccion:
-            messagebox.showwarning("Selección requerida", "Seleccione una sección para eliminar")
+            messagebox.showwarning("Selection Required", "Select a section to delete")
             return
         
         seccion_id = self.seccion_ids[seleccion[0]]

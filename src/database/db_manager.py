@@ -32,7 +32,7 @@ class DatabaseManager:
                 
                 return {
                     'success': True,
-                    'message': 'Conexión establecida exitosamente',
+                    'message': 'Connection successfully established',
                     'user_data': self.current_user
                 }
             else:
@@ -41,7 +41,7 @@ class DatabaseManager:
         except Exception as e:
             return {
                 'success': False,
-                'message': f'Error de conexión: {str(e)}'
+                'message': f'Connection error: {str(e)}'
             }
     
     def get_connection(self) -> Optional[mysql.connector.MySQLConnection]:
@@ -49,7 +49,7 @@ class DatabaseManager:
         Obtener conexión actual del usuario autenticado
         """
         if not self.current_connection:
-            raise Exception("No hay usuario autenticado. Debe hacer login primero.")
+            raise Exception("No authenticated user. You must log in first.")
         
         # Verificar que la conexión sigue activa
         try:
@@ -59,9 +59,9 @@ class DatabaseManager:
             # Reconectar si es necesario
             if self.current_user:
                 # Intentar reconectar (necesitaríamos almacenar credenciales o manejar de otra forma)
-                raise Exception("Conexión perdida. Por favor, inicie sesión nuevamente.")
+                raise Exception("Connection lost. Please, log in again.")
             else:
-                raise Exception("No hay usuario autenticado.")
+                raise Exception("No authenticated user.")
     
     def get_cursor(self, dictionary: bool = True):
         """
@@ -69,7 +69,7 @@ class DatabaseManager:
         """
         conn = self.get_connection()
         if  conn is None:
-            raise Exception("No hay conexión activa a la base de datos.")
+            raise Exception("No active database connection.")
         return conn.cursor(dictionary=dictionary)
     
     def close_connection(self):
@@ -104,7 +104,7 @@ class DatabaseManager:
         if not self.current_user:
             return {
                 'success': False,
-                'message': 'No hay usuario autenticado'
+                'message': 'No authenticated user'
             }
         
         return self.auth_manager.change_password(

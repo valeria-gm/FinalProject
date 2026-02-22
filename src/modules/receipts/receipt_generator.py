@@ -38,7 +38,7 @@ class ReciboAppMejorado:
         self.username = self.user_data.get('username', 'usuario')
         self.es_admin = self.user_data.get('rol', '').lower() == 'admin'
         
-        self.root.title("Market - Sistema de Ventas con Órdenes Guardadas")
+        self.root.title("Market - Sales System with Saved Orders")
         self.root.geometry("1100x750")
 
         self.style = ttk.Style(self.root)
@@ -53,7 +53,7 @@ class ReciboAppMejorado:
         grupos_raw: Any = database.obtener_grupos()
         self.grupos_data: Dict[str, Any] = {nombre: g_id for g_id, nombre in grupos_raw}
         if not self.grupos_data:
-            messagebox.showerror("Error de Base de Datos", "No se pudieron cargar los grupos de clientes.")
+            messagebox.showerror("Database Error", "Could not load client groups.")
             if parent is None:
                 self.root.destroy()
             return
@@ -79,7 +79,7 @@ class ReciboAppMejorado:
         
         # Configurar el scrolling
         def on_frame_configure(event):
-            # Actualizar scroll region
+            # Refresh scroll region
             self.main_canvas.configure(scrollregion=self.main_canvas.bbox("all"))
             # Mostrar/ocultar scrollbar según sea necesario
             self._update_scrollbar_visibility()
@@ -194,14 +194,14 @@ class ReciboAppMejorado:
                     # Usar root.after para asegurar que la interfaz esté completamente inicializada
                     self.root.after(100, lambda: self._cargar_orden_existente(self.folio_actual, widgets))
                     
-                    # Actualizar título de la ventana
-                    self.root.title(f"Market - Editando Orden {self.folio_actual:06d}")
+                    # Refresh título de la ventana
+                    self.root.title(f"Market - Editing Order {self.folio_actual:06d}")
             else:
-                messagebox.showerror("Error", f"No se pudo cargar la orden con folio {self.folio_actual}")
+                messagebox.showerror("Error", f"Could not load order with receipt # {self.folio_actual}")
                 self.folio_actual = None
                 
         except Exception as e:
-            messagebox.showerror("Error", f"Error al cargar orden: {str(e)}")
+            messagebox.showerror("Error", f"Error loading order: {str(e)}")
             self.folio_actual = None
 
     def _crear_widgets_principales(self):
@@ -216,7 +216,7 @@ class ReciboAppMejorado:
         # Label para mostrar información de la orden
         self.lbl_orden_info = ttk.Label(
             info_frame, 
-            text="Nueva Orden", 
+            text="New Order", 
             font=("Arial", 12, "bold"),
             foreground="blue"
         )
@@ -224,7 +224,7 @@ class ReciboAppMejorado:
         
         btn_agregar_tab = ttk.Button(
             info_frame, 
-            text="➕ Agregar Nuevo Pedido", 
+            text="➕ Add New Order", 
             command=self._agregar_pestaña
         )
         btn_agregar_tab.pack(side="right")
@@ -232,7 +232,7 @@ class ReciboAppMejorado:
         # Información sobre secciones
         info_label = ttk.Label(
             frame_superior, 
-            text="💡 Tip: Active 'Habilitar Secciones' para organizar productos por categorías",
+            text="💡 Tip: Active 'Enable Sections' to organize products by category",
             font=("Arial", 9),
             foreground="gray"
         )
@@ -244,7 +244,7 @@ class ReciboAppMejorado:
     def _agregar_pestaña(self):
         """Agrega una nueva pestaña de pedido"""
         if self.contador_pestañas >= 5:
-            messagebox.showinfo("Límite Alcanzado", "No se pueden agregar más de 5 pedidos.")
+            messagebox.showinfo("Limit Reached", "Cannot add more than 5 orders.")
             return
             
         self.contador_pestañas += 1
@@ -254,7 +254,7 @@ class ReciboAppMejorado:
         if self.folio_actual and self.contador_pestañas == 1:
             titulo_tab = f"Orden {self.folio_actual:06d}"
         else:
-            titulo_tab = f"Pedido {self.contador_pestañas}"
+            titulo_tab = f"Order {self.contador_pestañas}"
             
         self.notebook.add(nueva_pestaña, text=titulo_tab)
         widgets = self._crear_contenido_tab(nueva_pestaña)
@@ -279,25 +279,25 @@ class ReciboAppMejorado:
         widgets: Dict[str, Any] = {"clientes_map": {}}
 
         # Frame de búsqueda y cliente
-        frame_busqueda = ttk.LabelFrame(tab_frame, text="1. Cliente y Búsqueda", padding="10")
+        frame_busqueda = ttk.LabelFrame(tab_frame, text="1. Client & Search", padding="10")
         frame_busqueda.pack(fill="x")
         frame_busqueda.columnconfigure(1, weight=1)
 
         # Widgets de selección de cliente
-        ttk.Label(frame_busqueda, text="Grupo:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+        ttk.Label(frame_busqueda, text="Group:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
         widgets['combo_grupos'] = ttk.Combobox(frame_busqueda, values=list(self.grupos_data.keys()), state="readonly")
         widgets['combo_grupos'].grid(row=0, column=1, padx=5, pady=5, sticky="ew")
         
-        ttk.Label(frame_busqueda, text="Cliente:").grid(row=1, column=0, padx=5, pady=5, sticky="w")
+        ttk.Label(frame_busqueda, text="Client:").grid(row=1, column=0, padx=5, pady=5, sticky="w")
         widgets['combo_clientes'] = ttk.Combobox(frame_busqueda, state="disabled")
         widgets['combo_clientes'].grid(row=1, column=1, padx=5, pady=5, sticky="ew")
         
         # Widgets de búsqueda
-        ttk.Label(frame_busqueda, text="Buscar Producto:").grid(row=2, column=0, padx=5, pady=5, sticky="w")
+        ttk.Label(frame_busqueda, text="Search Product:").grid(row=2, column=0, padx=5, pady=5, sticky="w")
         widgets['entry_busqueda'] = ttk.Entry(frame_busqueda)
         widgets['entry_busqueda'].grid(row=2, column=1, padx=5, pady=5, sticky="ew")
         
-        widgets['btn_buscar'] = ttk.Button(frame_busqueda, text="🔍 Buscar")
+        widgets['btn_buscar'] = ttk.Button(frame_busqueda, text="🔍 Search")
         widgets['btn_buscar'].grid(row=2, column=2, padx=5, pady=5)
         
         # Frame central para resultados y carrito
@@ -308,7 +308,7 @@ class ReciboAppMejorado:
         frame_central.rowconfigure(1, weight=1)
         
         # Resultados de búsqueda
-        ttk.Label(frame_central, text="Resultados de Búsqueda (Doble clic para agregar)").grid(
+        ttk.Label(frame_central, text="Search Results (Double-click to add)").grid(
             row=0, column=0, sticky="w", pady=(0, 5)
         )
         
@@ -318,7 +318,7 @@ class ReciboAppMejorado:
         frame_resultados.rowconfigure(0, weight=1)
         frame_resultados.columnconfigure(0, weight=1)
         
-        cols_resultados = ("Producto", "Precio")
+        cols_resultados = ("Product", "Price")
         widgets['tree_resultados'] = ttk.Treeview(
             frame_resultados, 
             columns=cols_resultados, 
@@ -328,7 +328,7 @@ class ReciboAppMejorado:
         
         for col in cols_resultados: 
             widgets['tree_resultados'].heading(col, text=col)
-        widgets['tree_resultados'].column("Precio", width=100, anchor="e")
+        widgets['tree_resultados'].column("Price", width=100, anchor="e")
         widgets['tree_resultados'].grid(row=0, column=0, sticky="nsew")
         
         # Scrollbar para resultados
@@ -341,11 +341,11 @@ class ReciboAppMejorado:
         scrollbar_resultados.grid(row=0, column=1, sticky="ns")
 
         # Frame fecha
-        frame_fecha = ttk.LabelFrame(tab_frame, text="Fecha de Registro", padding="10")
+        frame_fecha = ttk.LabelFrame(tab_frame, text="Registration Date", padding="10")
         frame_fecha.pack(fill="x", pady=(5, 0))
         frame_fecha.columnconfigure(1, weight=1)
 
-        ttk.Label(frame_fecha, text="Fecha:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
+        ttk.Label(frame_fecha, text="Date:").grid(row=0, column=0, padx=5, pady=5, sticky="w")
         widgets['fecha_var'] = tk.StringVar()
         # Establecer fecha actual como default
         from datetime import date
@@ -363,13 +363,13 @@ class ReciboAppMejorado:
                 if fecha_str:
                     fecha_ingresada = datetime.strptime(fecha_str, "%Y-%m-%d").date()
                     if fecha_ingresada > date.today():
-                        messagebox.showwarning("Fecha Inválida", 
-                                            "No se pueden usar fechas futuras.\n"
-                                            "Se establecerá la fecha de hoy.")
+                        messagebox.showwarning("Invalid Date", 
+                                            "Future dates are not allowed.\n"
+                                            "Today's date will be set.")
                         fecha_var.set(date.today().strftime("%Y-%m-%d"))
             except ValueError:
-                messagebox.showwarning("Formato Inválido", 
-                                    "Use el formato YYYY-MM-DD")
+                messagebox.showwarning("Invalid Format", 
+                                    "Use the format YYYY-MM-DD")
                 fecha_var.set(date.today().strftime("%Y-%m-%d"))
 
         # Vincular validación al entry de fecha
@@ -377,7 +377,7 @@ class ReciboAppMejorado:
         widgets['entry_fecha'].bind('<Return>', validar_fecha)
 
         # **CARRITO CON SECCIONES**
-        frame_carrito = ttk.LabelFrame(frame_central, text="Carrito de Compras", padding="5")
+        frame_carrito = ttk.LabelFrame(frame_central, text="Shopping Cart", padding="5")
         frame_carrito.grid(row=0, column=1, rowspan=2, sticky="nsew", padx=(5, 0))
         
         # Crear el carrito con secciones
@@ -387,7 +387,7 @@ class ReciboAppMejorado:
         )
 
         # Frame de total y acciones
-        frame_acciones = ttk.LabelFrame(tab_frame, text="2. Total del Pedido", padding="10")
+        frame_acciones = ttk.LabelFrame(tab_frame, text="2. Order Total", padding="10")
         frame_acciones.pack(fill="x", pady=(10, 0))
         
         # Total
@@ -400,7 +400,7 @@ class ReciboAppMejorado:
         widgets['lbl_contador'].pack(side="left")
         
         # Frame de botones finales
-        frame_final = ttk.LabelFrame(tab_frame, text="3. Finalizar Venta", padding="10")
+        frame_final = ttk.LabelFrame(tab_frame, text="3. Finalize Sale", padding="10")
         frame_final.pack(fill="x", pady=10)
         
         # *** BOTONES EXISTENTES Y NUEVOS ***
@@ -414,7 +414,7 @@ class ReciboAppMejorado:
         # NUEVOS BOTONES DE ÓRDENES
         widgets['btn_guardar_orden'] = ttk.Button(
             frame_botones_superior, 
-            text="💾 Guardar Orden",
+            text="💾 Save Order",
             command=lambda w=widgets: self._guardar_orden_actual(w),
             style="Success.TButton"
         )
@@ -422,7 +422,7 @@ class ReciboAppMejorado:
         
         widgets['btn_ver_ordenes'] = ttk.Button(
             frame_botones_superior, 
-            text="📋 Ver Órdenes",
+            text="📋 View Orders",
             command=self._abrir_ventana_ordenes
         )
         widgets['btn_ver_ordenes'].pack(side="left", padx=(0, 10))
@@ -433,7 +433,7 @@ class ReciboAppMejorado:
         # Información de orden actual
         widgets['lbl_folio_info'] = ttk.Label(
             frame_botones_superior, 
-            text="Nueva orden", 
+            text="New order", 
             font=("Arial", 10, "italic"),
             foreground="blue"
         )
@@ -445,28 +445,28 @@ class ReciboAppMejorado:
         
         widgets['btn_limpiar'] = ttk.Button(
             frame_botones_inferior, 
-            text="🗑️ Limpiar Carrito",
+            text="🗑️ Clear cart",
             command=lambda w=widgets: self._limpiar_carrito(w)
         )
         widgets['btn_limpiar'].pack(side="left", padx=(0, 10))
 
         widgets['btn_generar_excel'] = ttk.Button(
             frame_botones_inferior, 
-            text="📊 Generar Excel",
+            text="📊 Generate Excel",
             command=lambda w=widgets: self._generar_excel(w)
         )
         widgets['btn_generar_excel'].pack(side="left", padx=(0, 10))
         
         widgets['btn_generar_pdf'] = ttk.Button(
             frame_botones_inferior, 
-            text="📄 Generar PDF",
+            text="📄 Generate PDF",
             command=lambda w=widgets: self._generar_pdf_solo(w)
         )
         widgets['btn_generar_pdf'].pack(side="left", padx=(0, 10))
         
         widgets['btn_procesar_venta'] = ttk.Button(
             frame_botones_inferior, 
-            text="✅ Registrar Venta",
+            text="✅ Register Sale",
             style="Accent.TButton"
         )
         widgets['btn_procesar_venta'].pack(side="right")
@@ -493,13 +493,13 @@ class ReciboAppMejorado:
             # Verificar que hay cliente seleccionado
             nombre_cliente = widgets['combo_clientes'].get()
             if not nombre_cliente:
-                messagebox.showwarning("Falta Cliente", "Por favor, selecciona un cliente antes de guardar.")
+                messagebox.showwarning("Missing Client", "Please, select a client before saving.")
                 return
 
             # Verificar que el carrito no está vacío
             carrito = widgets['carrito_obj']
             if not carrito.items:
-                messagebox.showwarning("Carrito Vacío", "No hay productos en el carrito para guardar.")
+                messagebox.showwarning("Empty Cart", "No products in the cart to save.")
                 return
 
             id_cliente = widgets['clientes_map'][nombre_cliente]
@@ -520,19 +520,19 @@ class ReciboAppMejorado:
                 for intento in range(max_intentos_folio):
                     folio_candidato = self.orden_manager.obtener_siguiente_folio_disponible()
                     if not folio_candidato:
-                        messagebox.showerror("Error", "No se pudo obtener un folio disponible.")
+                        messagebox.showerror("Error", "Could not get an available receipt #.")
                         return
                     
                     # Verificar disponibilidad inmediatamente antes de usar
                     if self.orden_manager._verificar_folio_disponible(folio_candidato):
                         folio_a_usar = folio_candidato
-                        print(f"✓ Folio {folio_a_usar} obtenido y verificado como disponible")
+                        print(f"✓ Folio {folio_a_usar} obtained and verified as available")
                         break
                     else:
-                        print(f"⚠ Folio {folio_candidato} ya no disponible, reintentando... ({intento + 1}/{max_intentos_folio})")
+                        print(f"⚠ Folio {folio_candidato} is no longer available, retrying... ({intento + 1}/{max_intentos_folio})")
                         
                 if not folio_a_usar:
-                    messagebox.showerror("Error", "No se pudo obtener un folio único después de múltiples intentos.")
+                    messagebox.showerror("Error", "Could not get a unique receipt # after multiple attempts.")
                     return
                     
             else:
@@ -544,58 +544,58 @@ class ReciboAppMejorado:
 
             # Guardar en base de datos
             if self.orden_guardada and self.folio_actual == folio_a_usar:
-                # Actualizar orden existente
+                # Refresh orden existente
                 exito = self.orden_manager.actualizar_orden(folio_a_usar, datos_carrito, total)
-                mensaje_exito = "Orden actualizada exitosamente"
+                mensaje_exito = "Order updated successfully"
             else:
                 # Crear nueva orden con validación adicional
                 # Doble verificación antes de reservar
                 if not self.orden_manager._verificar_folio_disponible(folio_a_usar):
-                    messagebox.showerror("Error", f"El folio {folio_a_usar} ya no está disponible. Intente nuevamente.")
+                    messagebox.showerror("Error", f"Receipt # {folio_a_usar} is no longer available. Please try again.")
                     return
                     
                 exito = self.orden_manager.reservar_folio(
                     folio_a_usar, id_cliente, self.username, datos_carrito, total
                 )
-                mensaje_exito = "Orden guardada exitosamente"
+                mensaje_exito = "Order saved successfully"
 
             if exito:
-                # Actualizar estado interno SOLO si fue exitoso
+                # Refresh estado interno SOLO si fue exitoso
                 self.folios_pestanas[tab_id] = folio_a_usar
                 self.folio_actual = folio_a_usar  # Mantener para compatibilidad
                 self.orden_guardada = True
                 
-                # Actualizar interfaz
+                # Refresh interfaz
                 widgets['lbl_folio_info'].config(
-                    text=f"Orden guardada - Folio: {self.folio_actual:06d}",
+                    text=f"Order saved - Receipt #: {self.folio_actual:06d}",
                     foreground="green"
                 )
                 
-                # Actualizar título de ventana y pestaña
-                self.root.title(f"Market - Editando Orden {self.folio_actual:06d}")
+                # Refresh título de ventana y pestaña
+                self.root.title(f"Market - Editing Order {self.folio_actual:06d}")
                 tab_actual = self.notebook.select()
-                self.notebook.tab(tab_actual, text=f"Orden {self.folio_actual:06d}")
+                self.notebook.tab(tab_actual, text=f"Order {self.folio_actual:06d}")
                 
-                # Actualizar label principal
+                # Refresh label principal
                 self.lbl_orden_info.config(
-                    text=f"Editando Orden {self.folio_actual:06d}",
+                    text=f"Editing Order {self.folio_actual:06d}",
                     foreground="green"
                 )
 
-                messagebox.showinfo("Éxito", 
+                messagebox.showinfo("Success", 
                                 f"{mensaje_exito}\n\n"
-                                f"Folio asignado: {self.folio_actual:06d}\n"
-                                f"Cliente: {nombre_cliente}\n"
+                                f"Folio assigned: {self.folio_actual:06d}\n"
+                                f"Client: {nombre_cliente}\n"
                                 f"Total: ${total:,.2f}")
                 
                 # Notificar al padre sobre el cambio si estamos en contexto de launcher
                 if self.is_launcher_context:
                     self._notificar_cambio_orden()
             else:
-                messagebox.showerror("Error", f"No se pudo guardar la orden con folio {folio_a_usar}.")
+                messagebox.showerror("Error", f"Could not save order with receipt # {folio_a_usar}.")
 
         except Exception as e:
-            messagebox.showerror("Error", f"Error al guardar orden: {str(e)}")
+            messagebox.showerror("Error", f"Error saving order: {str(e)}")
             import traceback
             traceback.print_exc()  # Para debugging
     
@@ -605,9 +605,9 @@ class ReciboAppMejorado:
             # Crear evento personalizado en la ventana raíz
             if hasattr(self.root, 'master') and self.root.master:
                 self.root.master.event_generate("<<OrdenCambiada>>")
-                print("📤 Notificación de cambio de orden enviada")
+                print("📤 Order change notification sent")
         except Exception as e:
-            print(f"Error al notificar cambio de orden: {e}")
+            print(f"Error notifying order change: {e}")
 
     def _cargar_orden_existente(self, folio, widgets):
         """Carga una orden existente en la interfaz"""
@@ -616,10 +616,10 @@ class ReciboAppMejorado:
             orden_data = self.orden_manager.cargar_orden(folio)
             
             if not orden_data:
-                messagebox.showerror("Error", f"No se encontró la orden con folio {folio}")
+                messagebox.showerror("Error", f"Order not found with receipt # {folio}")
                 return False
 
-            # Actualizar estado interno
+            # Refresh estado interno
             self.folio_actual = folio
             self.orden_guardada = True
 
@@ -648,7 +648,7 @@ class ReciboAppMejorado:
             def seleccionar_cliente():
                 if nombre_cliente in widgets['combo_clientes']['values']:
                     widgets['combo_clientes'].set(nombre_cliente)
-                    # Actualizar el mapping de clientes
+                    # Refresh el mapping de clientes
                     if nombre_cliente not in widgets['clientes_map'] and grupo_encontrado is not None:
                         # Reconstruir el mapping si es necesario
                         grupo_id = self.grupos_data[grupo_encontrado]
@@ -663,30 +663,30 @@ class ReciboAppMejorado:
             if datos_carrito_obj:
                 OrdenManager.json_a_carrito(datos_carrito_obj, widgets['carrito_obj'])
             
-            # Actualizar interfaz
+            # Refresh interfaz
             widgets['lbl_folio_info'].config(
-                text=f"Orden cargada - Folio: {folio:06d}",
+                text=f"Order loaded - Receipt #: {folio:06d}",
                 foreground="green"
             )
             
             self.lbl_orden_info.config(
-                text=f"Editando Orden {folio:06d}",
+                text=f"Editing Order {folio:06d}",
                 foreground="green"
             )
 
-            # Actualizar total
+            # Refresh total
             self._actualizar_total(widgets)
 
-            # Actualizar folio de la pestaña actual
+            # Refresh folio de la pestaña actual
             tab_actual = self.notebook.select()
             tab_id = tab_actual.split(".")[-1] 
             self.folios_pestanas[tab_id] = folio
 
-            print(f"Orden {folio} cargada exitosamente")
+            print(f"Orden {folio} uploaded successfully")
             return True
 
         except Exception as e:
-            messagebox.showerror("Error", f"Error al cargar orden: {str(e)}")
+            messagebox.showerror("Error", f"Error loading order: {str(e)}")
             return False
 
     def _serializar_estado_carrito(self, widgets):
@@ -701,7 +701,7 @@ class ReciboAppMejorado:
             # Usar el método estático del OrdenManager
             datos_carrito = OrdenManager.carrito_a_json(carrito)
             
-            # Agregar información adicional
+            # Add información adicional
             datos_carrito['cliente_info'] = {
                 'id_cliente': id_cliente,
                 'nombre_cliente': nombre_cliente,
@@ -711,7 +711,7 @@ class ReciboAppMejorado:
             return datos_carrito
 
         except Exception as e:
-            print(f"Error al serializar carrito: {e}")
+            print(f"Error serializing cart: {e}")
             return {}
 
     def _abrir_ventana_ordenes(self):
@@ -720,7 +720,7 @@ class ReciboAppMejorado:
             # Si estamos en contexto de launcher, simplemente cerrar esta ventana
             # para retornar al hub principal de VentanaOrdenes
             if self.is_launcher_context:
-                print("🔄 Retornando al hub principal de órdenes...")
+                print("🔄 Returning to the main orders hub...")
                 self.root.destroy()
                 return
             
@@ -770,7 +770,7 @@ class ReciboAppMejorado:
             )
 
         except Exception as e:
-            messagebox.showerror("Error", f"Error al abrir ventana de órdenes: {str(e)}")
+            messagebox.showerror("Error", f"Error opening orders window: {str(e)}")
 
     # ==================== MÉTODOS EXISTENTES (MODIFICADOS PARA ÓRDENES) ====================
 
@@ -778,25 +778,25 @@ class ReciboAppMejorado:
         """Registra la venta en la base de datos y opcionalmente genera PDF"""
         nombre_cliente = widgets['combo_clientes'].get()
         if not nombre_cliente:
-            messagebox.showwarning("Falta Cliente", "Por favor, selecciona un cliente.")
+            messagebox.showwarning("Missing Client", "Please, select a client.")
             return
 
         carrito = widgets['carrito_obj']
         if not carrito.items:
-            messagebox.showwarning("Carrito Vacío", "No hay productos en el carrito.")
+            messagebox.showwarning("Empty Cart", "No products in the cart.")
             return
         
         total = carrito.obtener_total()
         
         # Mensaje diferente si es una orden guardada
         if self.folio_actual and self.orden_guardada:
-            mensaje_confirmacion = f"¿Registrar la orden {self.folio_actual:06d} como venta completada?\n\n"
+            mensaje_confirmacion = f"Register order {self.folio_actual:06d} as a completed sale?\n\n"
         else:
-            mensaje_confirmacion = f"¿Registrar esta venta para '{nombre_cliente}'?\n\n"
+            mensaje_confirmacion = f"Register order to '{nombre_cliente}'?\n\n"
         
         mensaje_confirmacion += f"Total: ${total:.2f}"
         
-        if not messagebox.askyesno("Confirmar Venta", mensaje_confirmacion):
+        if not messagebox.askyesno("Confirm Sale", mensaje_confirmacion):
             return
 
         try:
@@ -820,7 +820,7 @@ class ReciboAppMejorado:
                 from datetime import datetime
                 fecha_venta = datetime.strptime(fecha_str, "%Y-%m-%d").date()
             except ValueError:
-                messagebox.showerror("Fecha Inválida", "Por favor use el formato YYYY-MM-DD")
+                messagebox.showerror("Invalid Date", "Please use the format YYYY-MM-DD")
                 return
 
             # Registrar venta en BD con fecha específica
@@ -837,7 +837,7 @@ class ReciboAppMejorado:
                 if self.folio_actual and self.orden_guardada:
                     self.orden_manager.marcar_como_completada(self.folio_actual, venta_id)
                 
-                # Generar PDF automáticamente
+                # Generate PDF automáticamente
                 self._generar_pdf_venta(widgets, venta_id, folio_factura)
                 
                 # Limpiar carrito directamente sin confirmaciones después de venta exitosa
@@ -859,28 +859,28 @@ class ReciboAppMejorado:
 
                 # Si era una orden guardada, mostrar confirmación y cerrar ventana automáticamente
                 if era_orden_guardada:
-                    messagebox.showinfo("Venta Completada",
-                                    f"Venta registrada exitosamente\n"
+                    messagebox.showinfo("Sale Completed",
+                                    f"Sale registered successfully\n"
                                     f"ID de factura: {venta_id}\n"
                                     f"Folio: {folio_factura:06d}\n"
-                                    f"Orden {folio_orden:06d} marcada como completada.\n\n"
-                                    f"La ventana se cerrará automáticamente.")
+                                    f"Order {folio_orden:06d} marked as completed.\n\n"
+                                    f"The window will close automatically.")
 
                     # Notificar al padre y cerrar ventana automáticamente
                     if self.is_launcher_context:
                         self._notificar_cambio_orden()
                     self.root.destroy()
                 else:
-                    messagebox.showinfo("Venta Exitosa",
-                                      f"Venta registrada exitosamente\n"
+                    messagebox.showinfo("Sale Successful",
+                                      f"Sale registered successfully\n"
                                       f"ID: {venta_id}\n"
                                       f"Folio: {folio_factura:06d}\n\n"
-                                      f"El carrito ha sido limpiado automáticamente.")
+                                      f"The cart has been cleared automatically.")
             else:
-                messagebox.showerror("Error", "No se pudo registrar la venta en la base de datos.")
+                messagebox.showerror("Error", "Could not register the sale in the database.")
                 
         except Exception as e:
-            messagebox.showerror("Error", f"Error al procesar la venta: {str(e)}")
+            messagebox.showerror("Error", f"Error processing sale: {str(e)}")
             import traceback
             traceback.print_exc()  # Para debugging
 
@@ -889,8 +889,8 @@ class ReciboAppMejorado:
         if not widgets['carrito_obj'].items:
             return
             
-        if not messagebox.askyesno("Confirmar Limpieza", 
-                                 "¿Estás seguro de que quieres limpiar el carrito?"):
+        if not messagebox.askyesno("Confirm Clear", 
+                                 "Are you sure you want to clear the cart?"):
             return
             
         widgets['carrito_obj'].limpiar_carrito()
@@ -908,22 +908,22 @@ class ReciboAppMejorado:
             if self.folio_actual == folio_actual_pestana:
                 self.folio_actual = None
             
-            # Actualizar interfaz
+            # Refresh interfaz
             widgets['lbl_folio_info'].config(
-                text="Nueva orden (cambios no guardados)",
+                text="New order (unsaved changes)",
                 foreground="orange"
             )
             
-            # Actualizar título de pestaña
+            # Refresh título de pestaña
             tab_actual = self.notebook.select()
-            self.notebook.tab(tab_actual, text="Pedido 1")
+            self.notebook.tab(tab_actual, text="Order 1")
             
             self.lbl_orden_info.config(
-                text="Nueva Orden (cambios no guardados)",
+                text="New order (unsaved changes)",
                 foreground="orange"
             )
             
-            self.root.title("Market - Sistema de Ventas con Órdenes Guardadas")
+            self.root.title("Market - Sales System with Saved Orders")
 
     # ==================== MÉTODOS EXISTENTES (SIN CAMBIOS) ====================
 
@@ -950,7 +950,7 @@ class ReciboAppMejorado:
         
         grupo_seleccionado = widgets['combo_grupos'].get()
         if not grupo_seleccionado:
-            messagebox.showwarning("Falta Grupo", "Por favor, selecciona un grupo primero.")
+            messagebox.showwarning("Missing Group", "Please select a group first.")
             return
             
         grupo_id = self.grupos_data[grupo_seleccionado]
@@ -997,7 +997,7 @@ class ReciboAppMejorado:
         
         # Abrir diálogo de cantidad
         dialogo = tk.Toplevel(self.root)
-        dialogo.title(f"Cantidad - {nombre_insumo}")
+        dialogo.title(f"Quantity - {nombre_insumo}")
         
         # Ajustar tamaño según si es especial o no
         if es_especial:
@@ -1010,21 +1010,21 @@ class ReciboAppMejorado:
         dialogo.grab_set()
         
         # Información del producto
-        ttk.Label(dialogo, text=f"Producto: {nombre_insumo}").pack(pady=10)
+        ttk.Label(dialogo, text=f"Product: {nombre_insumo}").pack(pady=10)
         
         # Mostrar si es producto especial
         if es_especial:
-            ttk.Label(dialogo, text="⭐ PRODUCTO ESPECIAL", 
+            ttk.Label(dialogo, text="⭐ SPECIAL PRODUCT", 
                     font=("Arial", 10, "bold"), 
                     foreground="orange").pack()
         
-        ttk.Label(dialogo, text=f"Precio base: ${precio:.2f}").pack()
+        ttk.Label(dialogo, text=f"Base price: ${precio:.2f}").pack()
         
         # Frame para cantidad
         frame_cantidad = ttk.Frame(dialogo)
         frame_cantidad.pack(pady=10)
         
-        ttk.Label(frame_cantidad, text="Cantidad:").pack(side="left")
+        ttk.Label(frame_cantidad, text="Quantity:").pack(side="left")
         cantidad_var = tk.DoubleVar(value=1.0)
         spinbox = ttk.Spinbox(frame_cantidad, from_=0.1, to=10000.0, increment=0.1, 
                             textvariable=cantidad_var, width=10)
@@ -1037,26 +1037,26 @@ class ReciboAppMejorado:
             frame_precio = ttk.Frame(dialogo)
             frame_precio.pack(pady=10)
             
-            ttk.Label(frame_precio, text="Precio personalizado:").pack(side="left")
+            ttk.Label(frame_precio, text="Custom price:").pack(side="left")
             entry_precio = ttk.Entry(frame_precio, textvariable=precio_var, width=10)
             entry_precio.pack(side="left", padx=5)
             ttk.Label(frame_precio, text="$").pack(side="left")
             
             # Nota explicativa
-            ttk.Label(dialogo, text="💡 Puede modificar el precio para este producto especial",
+            ttk.Label(dialogo, text="💡 You can modify the price for this special product",
                     font=("Arial", 8), foreground="gray").pack(pady=(5, 0))
         
         def agregar_al_carrito():
             cantidad = cantidad_var.get()
             if cantidad <= 0:
-                messagebox.showwarning("Cantidad Inválida", "La cantidad debe ser mayor a 0.")
+                messagebox.showwarning("Invalid Quantity", "Quantity must be greater than 0.")
                 return
             
             # Obtener precio final (personalizado si es especial, original si no)
             precio_final = precio_var.get() if es_especial else precio
             
             if es_especial and precio_final <= 0:
-                messagebox.showwarning("Precio Inválido", "El precio debe ser mayor a 0.")
+                messagebox.showwarning("Invalid Price", "Price must be greater than 0.")
                 return
                 
             # Verificar si hay secciones habilitadas
@@ -1072,18 +1072,18 @@ class ReciboAppMejorado:
                     )
                 )
             else:
-                # Agregar directamente al carrito
+                # Add directamente al carrito
                 self._agregar_a_seccion(int(id_insumo), nombre_insumo, cantidad, precio_final, unidad_producto, None, widgets)
                 dialogo.destroy()
         
-        # Botón Agregar - SIEMPRE visible
+        # Botón Add - SIEMPRE visible
         frame_botones = ttk.Frame(dialogo)
         frame_botones.pack(pady=15)
         
-        btn_agregar = ttk.Button(frame_botones, text="Agregar", command=agregar_al_carrito)
+        btn_agregar = ttk.Button(frame_botones, text="Add", command=agregar_al_carrito)
         btn_agregar.pack(side="left", padx=5)
         
-        btn_cancelar = ttk.Button(frame_botones, text="Cancelar", command=dialogo.destroy)
+        btn_cancelar = ttk.Button(frame_botones, text="Cancel", command=dialogo.destroy)
         btn_cancelar.pack(side="left", padx=5)
         
         # Centrar diálogo
@@ -1117,10 +1117,10 @@ class ReciboAppMejorado:
         widgets['lbl_total_valor'].config(text=f"${total:.2f}")
         widgets['lbl_contador'].config(text=f"{cantidad_total} productos")
         
-        # Actualizar estado de botones según si hay cambios no guardados
+        # Refresh estado de botones según si hay unsaved changes
         if self.folio_actual and self.orden_guardada:
             widgets['lbl_folio_info'].config(
-                text=f"Orden {self.folio_actual:06d} (cambios no guardados)",
+                text=f"Order {self.folio_actual:06d} (unsaved changes)",
                 foreground="orange"
             )
 
@@ -1157,12 +1157,12 @@ class ReciboAppMejorado:
                 )
             
             if ruta_pdf:
-                messagebox.showinfo("PDF Generado", f"PDF guardado en: {ruta_pdf}")
+                messagebox.showinfo("PDF generated", f"PDF saved to: {ruta_pdf}")
             else:
-                messagebox.showerror("Error", "No se pudo generar el PDF")
+                messagebox.showerror("Error", "Could not generate PDF")
                 
         except Exception as e:
-            messagebox.showerror("Error", f"Error al generar PDF: {str(e)}")
+            messagebox.showerror("Error", f"Error generating PDF: {str(e)}")
             import traceback
             traceback.print_exc()
 
@@ -1171,12 +1171,12 @@ class ReciboAppMejorado:
         try:
             nombre_cliente = widgets['combo_clientes'].get()
             if not nombre_cliente:
-                messagebox.showwarning("Falta Cliente", "Por favor, selecciona un cliente.")
+                messagebox.showwarning("Missing Client", "Please, select a client.")
                 return
 
             carrito = widgets['carrito_obj']
             if not carrito.items:
-                messagebox.showwarning("Carrito Vacío", "No hay productos en el carrito.")
+                messagebox.showwarning("Empty Cart", "No products in the cart.")
                 return
             
             total = carrito.obtener_total()
@@ -1210,12 +1210,12 @@ class ReciboAppMejorado:
                 )
             
             if ruta_pdf:
-                messagebox.showinfo("PDF Generado", f"PDF guardado en: {ruta_pdf}")
+                messagebox.showinfo("PDF generated", f"PDF saved to: {ruta_pdf}")
             else:
-                messagebox.showerror("Error", "No se pudo generar el PDF")
+                messagebox.showerror("Error", "Could not generate PDF")
                 
         except Exception as e:
-            messagebox.showerror("Error", f"Error al generar PDF: {str(e)}")
+            messagebox.showerror("Error", f"Error generating PDF: {str(e)}")
             import traceback
             traceback.print_exc()
 
@@ -1224,12 +1224,12 @@ class ReciboAppMejorado:
         try:
             nombre_cliente = widgets['combo_clientes'].get()
             if not nombre_cliente:
-                messagebox.showwarning("Falta Cliente", "Por favor, selecciona un cliente.")
+                messagebox.showwarning("Missing Client", "Please, select a client")
                 return
 
             carrito = widgets['carrito_obj']
             if not carrito.items:
-                messagebox.showwarning("Carrito Vacío", "No hay productos en el carrito.")
+                messagebox.showwarning("Empty Cart", "No products in the cart.")
                 return
             
             total = carrito.obtener_total()
@@ -1263,12 +1263,12 @@ class ReciboAppMejorado:
                 ruta_excel = generador_excel.crear_excel_simple(nombre_cliente, items_carrito)
             
             if ruta_excel:
-                messagebox.showinfo("Excel Generado", f"Excel guardado en: {ruta_excel}")
+                messagebox.showinfo("Excel generated", f"Excel saved to: {ruta_excel}")
             else:
-                messagebox.showerror("Error", "No se pudo generar el Excel")
+                messagebox.showerror("Error", "Could not generate Excel")
                 
         except Exception as e:
-            messagebox.showerror("Error", f"Error al generar Excel: {str(e)}")
+            messagebox.showerror("Error", f"Error generating Excel: {str(e)}")
             import traceback
             traceback.print_exc()
 

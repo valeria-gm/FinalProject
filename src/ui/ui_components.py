@@ -34,7 +34,7 @@ class UIComponents:
             title_label.pack(pady=(5, 0))
             
             # User information
-            user_info = f"Bienvenido, {self.user_data['nombre_completo']} ({self.user_data['rol'].upper()})"
+            user_info = f"Welcome, {self.user_data['nombre_completo']} ({self.user_data['rol'].upper()})"
             user_label = tk.Label(header_content,
                                  text=user_info,
                                  font=("Arial", 12),
@@ -45,7 +45,7 @@ class UIComponents:
             # Logout button (only if real login is used)
             if USE_LOGIN:
                 logout_btn = tk.Button(header_content,
-                                      text="Cerrar Sesión",
+                                      text="Log Out",
                                       command=logout_callback,
                                       font=("Arial", 10),
                                       bg=COLORS['logout_btn'],
@@ -96,7 +96,7 @@ class UIComponents:
             
             # Button
             access_btn = tk.Button(inner_frame,
-                                  text="ABRIR MÓDULO",
+                                  text="OPEN MODULE",
                                   font=('Arial', 10, 'bold'),
                                   bg='white',
                                   fg=module['bg_color'],
@@ -150,13 +150,13 @@ class UIComponents:
                 status_frame = tk.Frame(self.root, relief=tk.SUNKEN, bd=1)
                 status_frame.pack(side=tk.BOTTOM, fill=tk.X)
                 
-                user_info = f"Usuario: {self.user_data['nombre_completo']}"
+                user_info = f"User: {self.user_data['nombre_completo']}"
                 status_label = tk.Label(status_frame, text=user_info, anchor=tk.W)
                 status_label.pack(side=tk.LEFT, padx=5, pady=2)
                 
                 # Exit button
                 exit_btn = tk.Button(status_frame,
-                                    text="Salir",
+                                    text="Exit",
                                     command=close_callback,
                                     bg=COLORS['exit_btn'],
                                     fg=COLORS['button_text'],

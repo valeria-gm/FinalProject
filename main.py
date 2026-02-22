@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """
 MARKET - Sistema de Gestión Comercial
-Refactored modular version - Entry Point
 """
 
 import sys
@@ -30,7 +29,7 @@ def main():
         debug_print(f"Fatal error: {e}")
         import traceback
         traceback.print_exc()
-        messagebox.showerror("Error Fatal", f"Error inesperado: {str(e)}")
+        messagebox.showerror("Fatal Error", f"Unexpected error: {str(e)}")
         sys.exit(1)
 
 if __name__ == "__main__":

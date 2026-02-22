@@ -55,7 +55,7 @@ class LoginWindow:
         
     def setup_window(self):
         """Configurar ventana principal"""
-        self.root.title("MARKET - Iniciar Sesión")
+        self.root.title("MARKET - Sign In")
         
         # Use fixed geometry to avoid locale issues - VENTANA MÁS GRANDE
         self.root.geometry("450x650")  
@@ -130,7 +130,7 @@ class LoginWindow:
                 pady=20).pack()
         
         tk.Label(title_frame,
-                text="Sistema de Gestión Comercial",
+                text="Business Management System",
                 font=("Arial", 12),
                 fg="#BDC3C7",
                 bg="#2C3E50",
@@ -138,7 +138,7 @@ class LoginWindow:
         
         # Subtitle
         tk.Label(header_frame,
-                text="Iniciar Sesión",
+                text="Sign In",
                 font=("Arial", 18, "bold"),
                 fg="#2C3E50",
                 bg="#f0f0f0").pack()
@@ -155,7 +155,7 @@ class LoginWindow:
         
         # Username field
         tk.Label(inner_frame, 
-                text="Usuario:", 
+                text="Username:", 
                 font=("Arial", 12, "bold"),
                 bg="white",
                 fg="#2C3E50").pack(anchor="w", pady=(0, 5))
@@ -171,7 +171,7 @@ class LoginWindow:
         
         # Password field
         tk.Label(inner_frame, 
-                text="Contraseña:", 
+                text="Password:", 
                 font=("Arial", 12, "bold"),
                 bg="white",
                 fg="#2C3E50").pack(anchor="w", pady=(0, 5))
@@ -205,7 +205,7 @@ class LoginWindow:
         remember_frame.pack(fill="x", pady=(0, 20))
         
         tk.Checkbutton(remember_frame,
-                      text="Recordar credenciales",
+                      text="Remember credentials",
                       variable=self.remember_var,
                       font=("Arial", 10),
                       bg="white",
@@ -214,7 +214,7 @@ class LoginWindow:
         
         # Login button - SOLO UN BOTÓN AZUL
         self.login_btn = tk.Button(inner_frame,
-                                 text="INICIAR SESIÓN",
+                                 text="SIGN IN",
                                  command=self.handle_login,
                                  font=("Arial", 12, "bold"),
                                  bg="#3498DB",
@@ -248,7 +248,7 @@ class LoginWindow:
         
         # System info
         tk.Label(footer_frame,
-                text="Sistema de Autenticación Segura",
+                text="Secure Authentication System",
                 font=("Arial", 9),
                 fg="#7F8C8D",
                 bg="#f0f0f0").pack()
@@ -277,18 +277,18 @@ class LoginWindow:
         
         # Validaciones básicas
         if not username:
-            self.show_error("Por favor, ingrese su usuario")
+            self.show_error("Please, enter your username")
             self.username_entry.focus_set()
             return
             
         if not password:
-            self.show_error("Por favor, ingrese su contraseña")
+            self.show_error("Please, ingrese su contraseña")
             self.password_entry.focus_set()
             return
         
         # Deshabilitar botón y mostrar progreso
-        self.login_btn.config(state="disabled", text="VERIFICANDO...")
-        self.status_var.set("Verificando credenciales...")
+        self.login_btn.config(state="disabled", text="VERIFYING...")
+        self.status_var.set("Verifying credentials...")
         self.root.update()
         
         # Realizar autenticación en hilo separado
@@ -304,7 +304,7 @@ class LoginWindow:
                 result = db_manager.authenticate_and_connect(username, password)
             else:
                 # Simulación para pruebas
-                if username in ['jared', 'valeria', 'test'] and password:
+                if username in ['valeria', 'test'] and password:
                     result = {
                         'success': True,
                         'user_data': {
@@ -316,7 +316,7 @@ class LoginWindow:
                 else:
                     result = {
                         'success': False,
-                        'message': 'Credenciales incorrectas'
+                        'message': 'Incorrect credentials'
                     }
             
             # Volver al hilo principal para actualizar UI
@@ -325,14 +325,14 @@ class LoginWindow:
         except Exception as e:
             error_result = {
                 'success': False,
-                'message': f'Error de conexión: {str(e)}'
+                'message': f'Connection error: {str(e)}'
             }
             self.root.after(0, self.handle_auth_result, error_result)
     
     def handle_auth_result(self, result):
         """Manejar resultado de autenticación"""
         # Rehabilitar botón
-        self.login_btn.config(state="normal", text="INICIAR SESIÓN")
+        self.login_btn.config(state="normal", text="SIGN IN")
         
         if result['success']:
             self.user_data = result['user_data']
@@ -347,7 +347,7 @@ class LoginWindow:
             else:
                 self.clear_saved_credentials()
             
-            self.show_success(f"¡Bienvenido, {self.user_data['nombre_completo']}!")
+            self.show_success(f"Welcome, {self.user_data['nombre_completo']}!")
             
             # Esperar un momento y cerrar
             self.root.after(1500, self.close_with_success)
@@ -373,7 +373,7 @@ class LoginWindow:
             else:
                 remaining = blocked_until - datetime.now()
                 minutes = int(remaining.total_seconds() / 60)
-                self.status_var.set(f"Usuario bloqueado. Tiempo restante: {minutes} min")
+                self.status_var.set(f"User blocked. Time remaining: {minutes} min")
                 self.root.after(60000, check_unblock)  # Verificar cada minuto
         
         check_unblock()

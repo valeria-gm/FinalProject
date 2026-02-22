@@ -29,7 +29,7 @@ def crear_excel_simple(nombre_restaurante, items_carrito):
         # 3. Crear el libro de trabajo y la hoja
         wb = openpyxl.Workbook()
         ws: Any = wb.active
-        ws.title = "Pedido"
+        ws.title = "Order"
 
         # 4. Configurar estilos
         # Estilo para el título
@@ -57,7 +57,7 @@ def crear_excel_simple(nombre_restaurante, items_carrito):
         # 5. Escribir el contenido
         # Título principal
         ws.merge_cells('A1:C1')
-        ws['A1'] = "Bodega de Insumos 'Disfruleg'"
+        ws['A1'] = "Market Supplies Warehouse"
         ws['A1'].font = titulo_font
         ws['A1'].fill = titulo_fill
         ws['A1'].alignment = titulo_alignment
@@ -65,17 +65,17 @@ def crear_excel_simple(nombre_restaurante, items_carrito):
 
         # Información del cliente y fecha
         ws.merge_cells('A3:C3')
-        ws['A3'] = f"Cliente: {nombre_restaurante}"
+        ws['A3'] = f"Client: {nombre_restaurante}"
         ws['A3'].font = Font(name='Arial', size=12, bold=True)
         ws['A3'].alignment = Alignment(horizontal='left')
 
         ws.merge_cells('A4:C4')
-        ws['A4'] = f"Fecha: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}"
+        ws['A4'] = f"Date: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}"
         ws['A4'].font = Font(name='Arial', size=10)
         ws['A4'].alignment = Alignment(horizontal='left')
 
         # Encabezados de la tabla (fila 6)
-        headers = ['Producto', 'Cantidad', 'Precio Unitario']
+        headers = ['Product', 'Quantity', 'Unit Price']
         for col, header in enumerate(headers, 1):
             cell = ws.cell(row=6, column=col, value=header)
             cell.font = header_font
@@ -112,7 +112,7 @@ def crear_excel_simple(nombre_restaurante, items_carrito):
             total_general += float(subtotal_str.replace('$', ''))
             current_row += 1
 
-        # 7. Agregar total
+        # 7. Add total
         current_row += 1
         ws.merge_cells(f'A{current_row}:B{current_row}')
         total_cell = ws.cell(row=current_row, column=1, value="TOTAL:")
@@ -139,7 +139,7 @@ def crear_excel_simple(nombre_restaurante, items_carrito):
         return ruta_archivo
 
     except Exception as e:
-        print(f"Error al generar el Excel: {e}")
+        print(f"Error generating Excel: {e}")
         return None
 
 def crear_excel_con_secciones(nombre_restaurante, items_por_seccion, total_general):
@@ -149,7 +149,7 @@ def crear_excel_con_secciones(nombre_restaurante, items_por_seccion, total_gener
     :param nombre_restaurante: Nombre del cliente/restaurante
     :param items_por_seccion: Dict con formato:
         {
-            "Nombre Sección": {
+            "Section Name": {
                 "items": [["cantidad", "producto", "precio_unit", "subtotal"], ...],
                 "subtotal": float
             }
@@ -169,7 +169,7 @@ def crear_excel_con_secciones(nombre_restaurante, items_por_seccion, total_gener
         # 3. Crear el libro de trabajo y la hoja
         wb = openpyxl.Workbook()
         ws: Any = wb.active
-        ws.title = "Pedido por Secciones"
+        ws.title = "Sectioned Order"
 
         # 4. Configurar estilos
         # Estilo para el título
@@ -208,7 +208,7 @@ def crear_excel_con_secciones(nombre_restaurante, items_por_seccion, total_gener
 
         # Título principal
         ws.merge_cells(f'A{current_row}:C{current_row}')
-        ws[f'A{current_row}'] = "Bodega de Insumos 'Disfruleg'"
+        ws[f'A{current_row}'] = "Market Supplies Warehouse"
         ws[f'A{current_row}'].font = titulo_font
         ws[f'A{current_row}'].fill = titulo_fill
         ws[f'A{current_row}'].alignment = titulo_alignment
@@ -217,13 +217,13 @@ def crear_excel_con_secciones(nombre_restaurante, items_por_seccion, total_gener
 
         # Información del cliente y fecha
         ws.merge_cells(f'A{current_row}:C{current_row}')
-        ws[f'A{current_row}'] = f"Cliente: {nombre_restaurante}"
+        ws[f'A{current_row}'] = f"Client: {nombre_restaurante}"
         ws[f'A{current_row}'].font = Font(name='Arial', size=12, bold=True)
         ws[f'A{current_row}'].alignment = Alignment(horizontal='left')
         current_row += 1
 
         ws.merge_cells(f'A{current_row}:C{current_row}')
-        ws[f'A{current_row}'] = f"Fecha: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}"
+        ws[f'A{current_row}'] = f"Date: {datetime.now().strftime('%d/%m/%Y %H:%M:%S')}"
         ws[f'A{current_row}'].font = Font(name='Arial', size=10)
         ws[f'A{current_row}'].alignment = Alignment(horizontal='left')
         current_row += 2
@@ -240,7 +240,7 @@ def crear_excel_con_secciones(nombre_restaurante, items_por_seccion, total_gener
             current_row += 1
 
             # Encabezados de la tabla
-            headers = ['Producto', 'Cantidad', 'Precio Unitario']
+            headers = ['Product', 'Quantity', 'Unit Price']
             for col, header in enumerate(headers, 1):
                 cell = ws.cell(row=current_row, column=col, value=header)
                 cell.font = header_font
@@ -292,7 +292,7 @@ def crear_excel_con_secciones(nombre_restaurante, items_por_seccion, total_gener
 
         # 7. Total general
         ws.merge_cells(f'A{current_row}:B{current_row}')
-        total_label = ws.cell(row=current_row, column=1, value="TOTAL GENERAL:")
+        total_label = ws.cell(row=current_row, column=1, value="GRAND TOTAL:")
         total_label.font = Font(name='Arial', size=14, bold=True)
         total_label.alignment = Alignment(horizontal='right', vertical='center')
         total_label.border = thin_border
@@ -316,7 +316,7 @@ def crear_excel_con_secciones(nombre_restaurante, items_por_seccion, total_gener
         return ruta_archivo
 
     except Exception as e:
-        print(f"Error al generar el Excel con secciones: {e}")
+        print(f"Error generating Excel with sections: {e}")
         return None
 
 def crear_excel_automatico(nombre_restaurante, items_carrito=None, items_por_seccion=None, total=None):

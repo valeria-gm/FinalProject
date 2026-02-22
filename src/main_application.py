@@ -64,7 +64,7 @@ class MainApplication:
                 return False
         except Exception as e:
             debug_print(f"Login error: {e}")
-            messagebox.showerror("Error", f"Error en sistema de login: {e}")
+            messagebox.showerror("Error", f"Login system error: {e}")
             return False
     
     def on_login_success(self, user_data):
@@ -116,7 +116,7 @@ class MainApplication:
             session_manager.start_session(self.user_data)
         except Exception as e:
             debug_print(f"Session manager error: {e}")
-            messagebox.showwarning("Advertencia", f"Session manager no disponible: {e}")
+            messagebox.showwarning("Warning", f"Session manager not available: {e}")
     
     def center_window(self):
         """Center window on screen"""
@@ -243,16 +243,16 @@ class MainApplication:
         debug_print(f"Session event: {event_type}")
         
         if event_type == 'session_timeout':
-            messagebox.showwarning("Sesión Expirada", 
-                                 "Su sesión ha expirado por inactividad.")
+            messagebox.showwarning("Session Expired", 
+                                 "Your session has expired due to inactivity.")
             self.force_logout()
         elif event_type == 'session_ended':
             self.close_application()
     
     def logout(self):
         """Logout user"""
-        if messagebox.askyesno("Cerrar Sesión", 
-                             "¿Está seguro que desea cerrar su sesión?"):
+        if messagebox.askyesno("Log Out", 
+                             "Are you sure you want to log out?"):
             self.force_logout()
     
     def force_logout(self):
@@ -290,7 +290,7 @@ class MainApplication:
     
     def on_closing(self):
         """Handle window closing"""
-        if messagebox.askyesno("Salir", "¿Está seguro que desea salir del sistema?"):
+        if messagebox.askyesno("Exit", "Are you sure you want to exit the system?"):
             self.force_logout()
     
     def run_main_loop(self):

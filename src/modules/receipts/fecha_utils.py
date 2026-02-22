@@ -7,7 +7,7 @@ def agregar_calendario_popup(parent_widget, fecha_var):
     try:
         def mostrar_calendario():
             cal_window = tk.Toplevel()
-            cal_window.title("Seleccionar Fecha")
+            cal_window.title("Select Date")
             cal_window.geometry("250x200")
             cal_window.transient(parent_widget.winfo_toplevel())
             cal_window.grab_set()
@@ -24,26 +24,26 @@ def agregar_calendario_popup(parent_widget, fecha_var):
             mes_var = tk.IntVar(value=mes_actual)
             
             # Spinbox para año
-            ttk.Label(frame_nav, text="Año:").grid(row=0, column=0, padx=5)
+            ttk.Label(frame_nav, text="Year:").grid(row=0, column=0, padx=5)
             spin_año = tk.Spinbox(frame_nav, from_=2020, to=2030, 
                                  textvariable=año_var, width=6)
             spin_año.grid(row=0, column=1, padx=5)
             
             # Combobox para mes
-            ttk.Label(frame_nav, text="Mes:").grid(row=0, column=2, padx=5)
-            meses = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-                    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"]
+            ttk.Label(frame_nav, text="Month:").grid(row=0, column=2, padx=5)
+            meses = ["January", "February", "March", "April", "May", "June",
+                    "July", "August", "September", "October", "November", "December"]
             combo_mes = ttk.Combobox(frame_nav, values=meses, state="readonly", width=10)
             combo_mes.set(meses[mes_actual-1])
             combo_mes.grid(row=0, column=3, padx=5)
             
             # Botón para cerrar
-            ttk.Button(frame_nav, text="Cerrar", 
+            ttk.Button(frame_nav, text="Close", 
                       command=cal_window.destroy).grid(row=0, column=4, padx=10)
             
             # Ejemplo básico - en una implementación real usarías tkcalendar
             label_info = ttk.Label(cal_window, 
-                                  text="Use formato YYYY-MM-DD\nEjemplo: 2024-12-25")
+                                  text="Use format YYYY-MM-DD\nExample: 2024-12-25")
             label_info.pack(pady=20)
         
         # Botón para abrir calendario

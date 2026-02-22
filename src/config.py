@@ -11,7 +11,7 @@ USE_CANVAS_SCROLL = True
 USE_HOVER_EFFECTS = True
 
 # Application Constants
-APP_TITLE = "Sistema de Gestión"
+APP_TITLE = "Management System"
 WINDOW_WIDTH = 900
 WINDOW_HEIGHT = 700
 WINDOW_BG_COLOR = "#f5f5f5"
