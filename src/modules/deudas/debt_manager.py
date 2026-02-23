@@ -80,11 +80,11 @@ class DebtManager:
             
             # Mantener como Decimal para precisión financiera en operaciones monetarias
             
-            debug_print(f"Clientes con deudas encontrados: {len(result)}")
+            debug_print(f"Clients with debts found: {len(result)}")
             return result
             
         except Error as e:
-            debug_print(f"Error obteniendo clientes con deudas: {e}")
+            debug_print(f"Error obtaining customers with debts: {e}")
             raise
         finally:
             self._close_connection()
@@ -127,11 +127,11 @@ class DebtManager:
 
             # Mantener como Decimal para precisión financiera en operaciones monetarias
             
-            debug_print(f"Deudas encontradas para cliente {id_cliente}: {len(result)}")
+            debug_print(f"Debts found for client {id_cliente}: {len(result)}")
             return result
             
         except Error as e:
-            debug_print(f"Error obteniendo deudas del cliente {id_cliente}: {e}")
+            debug_print(f"Error obtaining client's debts {id_cliente}: {e}")
             raise
         finally:
             self._close_connection()
@@ -176,7 +176,7 @@ class DebtManager:
             return result
             
         except Error as e:
-            debug_print(f"Error obteniendo deuda {id_deuda}: {e}")
+            debug_print(f"Error obtaining debts {id_deuda}: {e}")
             raise
         finally:
             self._close_connection()
@@ -194,7 +194,7 @@ class DebtManager:
             usuario (str, optional): Usuario que registra el pago
             
         Returns:
-            bool: True si el pago se registró correctamente
+            bool: True si el pago se registró successfully
         """
         try:
             self._get_connection()
@@ -205,12 +205,12 @@ class DebtManager:
             self.cursor.execute(query_deuda, (id_deuda,))
             deuda_actual = self.cursor.fetchone()
             if not deuda_actual:
-                raise ValueError(f"Deuda {id_deuda} no encontrada")
+                raise ValueError(f"Deuda {id_deuda} not found")
             
             # Validar que el monto no exceda el saldo pendiente
             saldo_pendiente = deuda_actual['saldo_pendiente']
             if monto_pago > saldo_pendiente:
-                raise ValueError(f"El monto del pago ({monto_pago}) excede el saldo pendiente ({saldo_pendiente})")
+                raise ValueError(f"The payment amount ({monto_pago}) exceeds balance due ({saldo_pendiente})")
             
             # Calcular nuevo monto pagado
             nuevo_monto_pagado = Decimal(str(deuda_actual['monto_pagado'])) + monto_pago
@@ -220,14 +220,14 @@ class DebtManager:
             pagado_completo = nuevo_saldo <= 0.01  # Considerar margen de error de centavos
             
             # Preparar descripción del pago
-            descripcion = f"Pago registrado: {monto_pago} via {metodo_pago}"
+            descripcion = f"Recorded payment: {monto_pago} via {metodo_pago}"
             if referencia_pago:
                 descripcion += f" - Ref: {referencia_pago}"
             if usuario:
-                descripcion += f" - Operador: {usuario}"
-            descripcion += f" - Fecha: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+                descripcion += f" - Operator: {usuario}"
+            descripcion += f" - Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
             
-            # Actualizar la deuda
+            # Refresh la deuda
             update_query = """
             UPDATE deuda 
             SET 
@@ -256,15 +256,15 @@ class DebtManager:
             
             self.connection.commit()
             
-            debug_print(f"Pago registrado para deuda {id_deuda}: {monto_pago}")
-            debug_print(f"Nuevo estado: pagado={pagado_completo}, saldo={nuevo_saldo}")
+            debug_print(f"Payment recorded for debt {id_deuda}: {monto_pago}")
+            debug_print(f"NNew status: paid={pagado_completo}, balance={nuevo_saldo}")
             
             return True
             
         except (Error, ValueError) as e:
             if self.connection:
                 self.connection.rollback()
-            debug_print(f"Error registrando pago: {e}")
+            debug_print(f"Error registering payment: {e}")
             raise
         finally:
             self._close_connection()
@@ -326,11 +326,11 @@ class DebtManager:
 
             # Mantener como Decimal para precisión financiera en operaciones monetarias
             
-            debug_print(f"Historial de pagos encontrado: {len(result)} registros")
+            debug_print(f"Payment history found: {len(result)} records")
             return result
             
         except Error as e:
-            debug_print(f"Error obteniendo historial de pagos: {e}")
+            debug_print(f"Error obtaining payment history: {e}")
             raise
         finally:
             self._close_connection()
@@ -362,11 +362,11 @@ class DebtManager:
 
             # Mantener como Decimal para precisión financiera en operaciones monetarias
             
-            debug_print("Estadísticas de deudas obtenidas")
+            debug_print("Debt statistics obtaining")
             return result or {}
             
         except Error as e:
-            debug_print(f"Error obteniendo estadísticas de deudas: {e}")
+            debug_print(f"Error obtaining debt statistics: {e}")
             raise
         finally:
             self._close_connection()

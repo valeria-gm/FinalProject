@@ -10,7 +10,7 @@ from src.auth.auth_manager import AuthManager
 class PriceEditorApp:
     def __init__(self, root, user_data=None):
         self.root = root
-        self.root.title("Editor de Precios - Market")
+        self.root.title("Price Editor - Market")
         self.root.geometry("1000x700")
         
         # User data
@@ -44,13 +44,13 @@ class PriceEditorApp:
         title_frame.pack(fill="x", pady=(0, 15))
         
         tk.Label(title_frame, 
-                text="EDITOR DE PRECIOS", 
+                text="Price Editor", 
                 font=("Arial", 18, "bold"),
                 fg="white", bg="#2C3E50").pack(pady=10)
         
         # User info
         if self.user_data:
-            user_info = f"Usuario: {self.user_data.get('nombre_completo', '')} | Rol: {self.user_data.get('rol', '')}"
+            user_info = f"Username: {self.user_data.get('nombre_completo', '')} | Rol: {self.user_data.get('rol', '')}"
             tk.Label(title_frame, 
                     text=user_info, 
                     font=("Arial", 10),
@@ -61,7 +61,7 @@ class PriceEditorApp:
         group_frame.pack(fill="x", pady=(0, 10))
         
         tk.Label(group_frame, 
-                text="1. Seleccionar Grupo para Editar Precios:", 
+                text="1. Select Group for Edit Prices:", 
                 font=("Arial", 12, "bold"),
                 bg="#f0f0f0").pack(side="left", padx=5)
         
@@ -73,12 +73,12 @@ class PriceEditorApp:
         client_type_info_frame.pack(fill="x", pady=(0, 10))
         
         tk.Label(client_type_info_frame, 
-                text="2. Información de Tipos de Cliente (Descuentos):", 
+                text="2. Client Type Info (Discounts):", 
                 font=("Arial", 12, "bold"),
                 bg="#f0f0f0").pack(side="left", padx=5)
         
         self.client_type_info_label = tk.Label(client_type_info_frame, 
-                text="(Seleccione un grupo primero)", 
+                text="(Select a group first)", 
                 font=("Arial", 10),
                 fg="gray", bg="#f0f0f0")
         self.client_type_info_label.pack(side="left", padx=10)
@@ -88,7 +88,7 @@ class PriceEditorApp:
         info_frame.pack(side="right")
         
         tk.Label(info_frame, 
-                text="🔧 Para editar grupos/tipos, usar 'Administrador de Clientes'", 
+                text="🔧 To edit groups/types, use 'Customer Manager'", 
                 font=("Arial", 9, "italic"),
                 fg="#666", bg="#f0f0f0").pack()
         
@@ -101,7 +101,7 @@ class PriceEditorApp:
         search_frame.pack(side="left")
         
         tk.Label(search_frame, 
-                text="3. 🔍 Buscar producto:", 
+                text="3. 🔍 Search product:", 
                 font=("Arial", 12),
                 bg="#f0f0f0").pack(side="left")
         
@@ -110,7 +110,7 @@ class PriceEditorApp:
         self.search_entry.bind("<KeyRelease>", self.filter_products)
         
         tk.Button(search_frame, 
-                 text="Limpiar", 
+                 text="Clear", 
                  command=self.clear_search,
                  bg="#95A5A6", fg="white", padx=10).pack(side="left", padx=5)
         
@@ -119,17 +119,17 @@ class PriceEditorApp:
         btn_frame.pack(side="right")
         
         tk.Button(btn_frame, 
-                 text="➕ Agregar Producto", 
+                 text="➕ Add Product", 
                  command=self.add_product_dialog,
                  bg="#2ECC71", fg="white", padx=15, pady=3).pack(side="left", padx=5)
         
         tk.Button(btn_frame, 
-                 text="✏️ Editar Precio Base", 
+                 text="✏️ Edit Price Base", 
                  command=self.edit_selected_price,
                  bg="#3498DB", fg="white", padx=15, pady=3).pack(side="left", padx=5)
         
         tk.Button(btn_frame, 
-                 text="🗑️ Eliminar Producto", 
+                 text="🗑️ Delete Product", 
                  command=self.delete_product,
                  bg="#E74C3C", fg="white", padx=15, pady=3).pack(side="left", padx=5)
         
@@ -145,12 +145,12 @@ class PriceEditorApp:
         bottom_buttons_frame.pack(fill="x", pady=(10, 0))
         
         tk.Button(bottom_buttons_frame,
-                 text="💾 Guardar Cambios",
+                 text="💾 Save Changes",
                  command=self.save_changes,
                  bg="#27AE60", fg="white", padx=15, pady=5).pack(side="left", padx=5)
         
         tk.Button(bottom_buttons_frame,
-                 text="❌ Cancelar Cambios",
+                 text="❌ Cancel changes",
                  command=self.cancel_changes,
                  bg="#E74C3C", fg="white", padx=15, pady=5).pack(side="right", padx=5)
         
@@ -159,13 +159,13 @@ class PriceEditorApp:
         info_bottom_frame.pack(fill="x", pady=(10, 0))
         
         tk.Label(info_bottom_frame, 
-                text="💡 Tip: Doble clic en un producto para editar precio base del grupo | Los descuentos se aplican según el tipo de cliente", 
+                text="💡 Tip: Double-click a product to edit group base price | Discounts are applied based on client type", 
                 font=("Arial", 9, "italic"),
                 fg="#666", bg="#f0f0f0").pack(side="left")
         
         # Status bar
         self.status_var = tk.StringVar()
-        self.status_var.set("Listo")
+        self.status_var.set("Ready")
         status_bar = tk.Label(self.root, 
                             textvariable=self.status_var,
                             bd=1, relief=tk.SUNKEN, 
@@ -178,25 +178,25 @@ class PriceEditorApp:
         try:
             self.conn.commit()
             self.changes_made = False
-            messagebox.showinfo("Éxito", "Todos los cambios han sido guardados correctamente")
-            self.status_var.set("Cambios guardados correctamente")
+            messagebox.showinfo("Success", "All changes have been saved successfully")
+            self.status_var.set("Changes saved successfully")
         except Exception as e:
-            messagebox.showerror("Error", f"No se pudieron guardar los cambios: {str(e)}")
-            self.status_var.set("Error al guardar cambios")
+            messagebox.showerror("Error", f"Could not save changes: {str(e)}")
+            self.status_var.set("Error saving changes")
 
     def cancel_changes(self):
-        """Cancelar todos los cambios no guardados"""
+        """Cancel todos los cambios no guardados"""
         if self.changes_made:
-            if messagebox.askyesno("Confirmar", "¿Está seguro que desea descartar todos los cambios no guardados?"):
+            if messagebox.askyesno("Confirm", "Are you sure you want to discard all unsaved changes?"):
                 try:
                     self.conn.rollback()
                     self.changes_made = False
                     self.load_products()  # Recargar datos originales
-                    self.status_var.set("Cambios cancelados - Se recargaron los datos originales")
+                    self.status_var.set("Changes cancelled - Originak data reloaded")
                 except Exception as e:
-                    messagebox.showerror("Error", f"No se pudieron cancelar los cambios: {str(e)}")
+                    messagebox.showerror("Error", f"Could not cancel changes: {str(e)}")
         else:
-            messagebox.showinfo("Información", "No hay cambios pendientes por guardar")
+            messagebox.showinfo("Information", "No pending changes to save")
             
     def create_products_table(self, parent):
         """Crear tabla de productos con scrollbars"""
@@ -224,12 +224,12 @@ class PriceEditorApp:
         # Configure columns
         columns_config = {
             "id": ("ID", 50, "center"),
-            "nombre": ("Producto", 280, "w"),
-            "unidad": ("Unidad", 80, "center"),
+            "nombre": ("Product", 280, "w"),
+            "unidad": ("Unit", 80, "center"),
             "precio_base": ("Precio Base", 120, "e"),
             "clientes_afectados": ("Clientes Afectados", 150, "center"),
             "stock": ("Stock", 80, "e"),
-            "especial": ("Especial", 80, "center")
+            "especial": ("Special", 80, "center")
         }
         
         for col, (heading, width, anchor) in columns_config.items():
@@ -253,7 +253,7 @@ class PriceEditorApp:
             values = self.product_tree.item(selected_item, "values")
             if values:
                 product_name = values[1]
-                self.status_var.set(f"Producto seleccionado: {product_name}")
+                self.status_var.set(f"Selected products: {product_name}")
     
     def clear_search(self):
         """Limpiar campo de búsqueda"""
@@ -264,7 +264,7 @@ class PriceEditorApp:
         """Editar precio del producto seleccionado"""
         selected_item = self.product_tree.focus()
         if not selected_item:
-            messagebox.showwarning("Advertencia", "Por favor seleccione un producto para editar")
+            messagebox.showwarning("Warning", "Please, select a product to edit")
             return
         
         # Llamar al método de edición existente
@@ -301,7 +301,7 @@ class PriceEditorApp:
         self.load_products()
         
     def update_client_type_info(self):
-        """Actualizar información de tipos de cliente"""
+        """Refresh información de tipos de cliente"""
         group_id = self.current_group.get()
         
         # Get the client type associated with this group
@@ -320,7 +320,7 @@ class PriceEditorApp:
             type_info = f"Tipo: {result['nombre_tipo']} (Descuento: {result['descuento']}%) - {result['num_clientes']} clientes"
             self.client_type_info_label.config(text=type_info, fg="blue")
         else:
-            self.client_type_info_label.config(text="(Grupo sin tipo de cliente asignado)", fg="red")
+            self.client_type_info_label.config(text="(Group without assigned client type)", fg="red")
     
     def load_products(self):
         """Cargar productos desde la base de datos"""
@@ -365,7 +365,7 @@ class PriceEditorApp:
                     product["id_producto"],
                     product["nombre_producto"],
                     product["unidad_producto"],
-                    f"${precio_base:.2f}" if precio_base > 0 else "Sin precio",
+                    f"${precio_base:.2f}" if precio_base > 0 else "No price",
                     f"{client_count} clientes",
                     f"{product['stock']:.2f}",
                     "🔒 Sí" if product['es_especial'] else "No"
@@ -378,7 +378,7 @@ class PriceEditorApp:
         self.product_tree.tag_configure('no_price', background='#FFE5E5')
         
         group_name = self.get_current_group_name()
-        self.status_var.set(f"Mostrando {len(self.all_products)} productos para grupo: {group_name}")
+        self.status_var.set(f"Showing {len(self.all_products)} products for group: {group_name}")
     
     def get_current_group_name(self):
         """Obtener nombre del grupo actual"""
@@ -426,7 +426,7 @@ class PriceEditorApp:
                         product["id_producto"],
                         product["nombre_producto"],
                         product["unidad_producto"],
-                        f"${precio_base:.2f}" if precio_base > 0 else "Sin precio",
+                        f"${precio_base:.2f}" if precio_base > 0 else "No price",
                         f"{client_count} clientes",
                         f"{product['stock']:.2f}",
                         "🔒 Sí" if product['es_especial'] else "No"
@@ -442,7 +442,7 @@ class PriceEditorApp:
     def add_product_dialog(self):
         """Mostrar popup para agregar nuevo producto"""
         popup = tk.Toplevel(self.root)
-        popup.title("Agregar Producto")
+        popup.title("Add Product")
         popup.geometry("450x400")
         popup.transient(self.root)
         popup.grab_set()
@@ -459,14 +459,14 @@ class PriceEditorApp:
         main_frame.pack(fill="both", expand=True)
         
         # Título
-        tk.Label(main_frame, text="➕ Agregar Nuevo Producto", 
+        tk.Label(main_frame, text="➕ Add New Product", 
                 font=("Arial", 14, "bold")).pack(pady=(0, 15))
         
         # Campos del formulario
         fields = [
-            ("Nombre del Producto:", name_var, "entry"),
-            ("Unidad de Medida:", unit_var, "combo"),
-            ("Stock Inicial:", stock_var, "entry")
+            ("Product name:", name_var, "entry"),
+            ("Unit of Measurement:", unit_var, "combo"),
+            ("Initial Stock:", stock_var, "entry")
         ]
         
         for i, (label, var, widget_type) in enumerate(fields):
@@ -475,9 +475,9 @@ class PriceEditorApp:
             
             tk.Label(frame, text=label, width=18, anchor="w").pack(side="left")
             
-            if widget_type == "combo" and label == "Unidad de Medida:":
+            if widget_type == "combo" and label == "Unit of Measurement:":
                 combo = ttk.Combobox(frame, textvariable=var, width=25,
-                            values=["kg", "g", "lb", "pz", "unidad", "L", "ml", "docena", "paquete", "manojo", "caja", "botella"])
+                            values=["kg", "g", "lb", "pz", "unidad", "L", "ml", "dozen", "package", "bundle", "box", "bottle"])
                 combo.pack(side="left", fill="x", expand=True, padx=(5, 0))
                 if i == 0:  # First field gets focus
                     combo.focus_set()
@@ -492,7 +492,7 @@ class PriceEditorApp:
         special_frame.pack(fill="x", pady=10)
         
         check = tk.Checkbutton(special_frame, 
-                     text="🔒 Producto Especial (requiere permisos de administrador)",
+                     text="🔒 Special Product (requires administrator privileges)",
                      variable=special_var,
                      font=("Arial", 10))
         check.pack(side="left")
@@ -502,13 +502,13 @@ class PriceEditorApp:
         button_frame.pack(side="bottom", fill="x", pady=(20, 0))
         
         tk.Button(button_frame, 
-                text="💾 Guardar", 
+                text="💾 Save", 
                 command=lambda: self.save_new_product(popup, name_var.get(), unit_var.get(), 
                                                     stock_var.get(), special_var.get()),
                 bg="#4CAF50", fg="white", width=12, pady=5).pack(side="left", padx=5)
         
         tk.Button(button_frame, 
-                text="❌ Cancelar", 
+                text="❌ Cancel", 
                 command=popup.destroy,
                 bg="#F44336", fg="white", width=12, pady=5).pack(side="right", padx=5)
         
@@ -528,20 +528,20 @@ class PriceEditorApp:
         """Guardar nuevo producto en la base de datos"""
         # Validaciones
         if not name.strip():
-            messagebox.showerror("Error", "El nombre del producto es obligatorio", parent=popup)
+            messagebox.showerror("Error", "Product name is required", parent=popup)
             return
             
         if not unit.strip():
-            messagebox.showerror("Error", "La unidad de medida es obligatoria", parent=popup)
+            messagebox.showerror("Error", "Unit of measurement is required", parent=popup)
             return
         
         try:
             stock = Decimal(stock)
             if stock < 0:
-                messagebox.showerror("Error", "El stock no puede ser negativo", parent=popup)
+                messagebox.showerror("Error", "Stock can't be negative", parent=popup)
                 return
         except:
-            messagebox.showerror("Error", "Ingrese un valor de stock válido", parent=popup)
+            messagebox.showerror("Error", "Enter a valid stock value", parent=popup)
             return
         
         # Verificar permisos para productos especiales
@@ -559,23 +559,23 @@ class PriceEditorApp:
             self.changes_made = True
             popup.destroy()
             self.load_products()
-            self.status_var.set(f"✅ Producto '{name}' agregado correctamente. Use 'Editar Precio' para asignar precio base para el grupo.")
+            self.status_var.set(f"✅ Product '{name}' successfully added. Use 'Edit Price' to asign base price for the group.")
             
         except mysql.connector.Error as err:
             self.conn.rollback()
             if err.errno == 1062:  # Duplicate entry
-                messagebox.showerror("Error", "Ya existe un producto con ese nombre", parent=popup)
+                messagebox.showerror("Error", "A product with that name already exists", parent=popup)
             else:
-                messagebox.showerror("Error", f"Error al guardar producto: {err}", parent=popup)
+                messagebox.showerror("Error", f"Error saving product: {err}", parent=popup)
         except Exception as e:
             self.conn.rollback()
-            messagebox.showerror("Error", f"Error inesperado: {str(e)}", parent=popup)
+            messagebox.showerror("Error", f"Unexpected error: {str(e)}", parent=popup)
     
     def edit_product_price(self, event):
         """Editar precio base de un producto para el grupo seleccionado"""
         item = self.product_tree.focus()
         if not item:
-            messagebox.showwarning("Advertencia", "Por favor seleccione un producto para editar")
+            messagebox.showwarning("Warning", "Please select a product to edit")
             return
             
         values = self.product_tree.item(item, "values")
@@ -592,7 +592,7 @@ class PriceEditorApp:
                 return
         
         popup = tk.Toplevel(self.root)
-        popup.title(f"Editar Precio Base - {product_name}")
+        popup.title(f"Edit Price Base - {product_name}")
         popup.geometry("600x600")
         popup.transient(self.root)
         popup.grab_set()
@@ -603,24 +603,24 @@ class PriceEditorApp:
         
         # Título
         group_name = self.get_current_group_name()
-        title_text = f"✏️ Editar Precio Base para Grupo: {group_name}"
+        title_text = f"✏️ Edit Price Base for Group: {group_name}"
         if is_special:
-            title_text += " (Producto Especial)"
+            title_text += " (Special Product)"
         tk.Label(main_frame, text=title_text, font=("Arial", 14, "bold")).pack(pady=(0, 15))
         
         # Info del producto
-        info_frame = tk.LabelFrame(main_frame, text="Información del Producto", padx=10, pady=10)
+        info_frame = tk.LabelFrame(main_frame, text="Product Information", padx=10, pady=10)
         info_frame.pack(fill="x", pady=(0, 15))
         
-        tk.Label(info_frame, text=f"Producto: {product_name}", font=("Arial", 10)).pack(anchor="w")
-        tk.Label(info_frame, text=f"Unidad: {product_unit}", font=("Arial", 10)).pack(anchor="w")
-        tk.Label(info_frame, text=f"Stock actual: {current_stock}", font=("Arial", 10)).pack(anchor="w")
-        tk.Label(info_frame, text=f"Precio base actual: {current_price}", font=("Arial", 10, "bold"), fg="blue").pack(anchor="w")
+        tk.Label(info_frame, text=f"Product: {product_name}", font=("Arial", 10)).pack(anchor="w")
+        tk.Label(info_frame, text=f"Unit: {product_unit}", font=("Arial", 10)).pack(anchor="w")
+        tk.Label(info_frame, text=f"Current stock: {current_stock}", font=("Arial", 10)).pack(anchor="w")
+        tk.Label(info_frame, text=f"Current base price: {current_price}", font=("Arial", 10, "bold"), fg="blue").pack(anchor="w")
         if is_special:
-            tk.Label(info_frame, text="🔒 Producto Especial", font=("Arial", 10, "bold"), fg="red").pack(anchor="w")
+            tk.Label(info_frame, text="🔒 Special Product", font=("Arial", 10, "bold"), fg="red").pack(anchor="w")
         
         # Precio base
-        price_frame = tk.LabelFrame(main_frame, text="Precio Base del Grupo", padx=10, pady=10)
+        price_frame = tk.LabelFrame(main_frame, text="Base Price for the Group", padx=10, pady=10)
         price_frame.pack(fill="x", pady=(0, 15))
         
         # Obtener precio actual
@@ -635,7 +635,7 @@ class PriceEditorApp:
         price_input_frame = tk.Frame(price_frame)
         price_input_frame.pack(fill="x", pady=10)
         
-        tk.Label(price_input_frame, text="Precio Base:", width=15, anchor="w", font=("Arial", 12, "bold")).pack(side="left")
+        tk.Label(price_input_frame, text="Base Price:", width=15, anchor="w", font=("Arial", 12, "bold")).pack(side="left")
         tk.Label(price_input_frame, text="$", font=("Arial", 12, "bold")).pack(side="left", padx=(5, 0))
         
         price_var = tk.StringVar(value=str(current_base_price))
@@ -644,7 +644,7 @@ class PriceEditorApp:
         price_entry.focus_set()
         
         # Precios finales por tipo de cliente
-        preview_frame = tk.LabelFrame(main_frame, text="Vista Previa: Precios Finales por Tipo de Cliente", padx=10, pady=10)
+        preview_frame = tk.LabelFrame(main_frame, text="Preview: Final prices for type of client", padx=10, pady=10)
         preview_frame.pack(fill="both", expand=True, pady=(0, 15))
         
         # Obtener el tipo de cliente del grupo actual
@@ -670,18 +670,18 @@ class PriceEditorApp:
                     final_price = base_price * (1 - discount / 100)
                     
                     label = tk.Label(preview_frame, 
-                                   text=f"{client_type_info['nombre_tipo']}: ${final_price:.2f} (descuento: {discount}%)",
+                                   text=f"{client_type_info['nombre_tipo']}: ${final_price:.2f} (discount: {discount}%)",
                                    font=("Arial", 10))
                     label.pack(anchor="w", pady=2)
                     preview_labels.append(label)
                 elif base_price > 0 and not client_type_info:
                     label = tk.Label(preview_frame, 
-                                   text=f"Precio sin descuento: ${base_price:.2f} (grupo sin tipo de cliente asignado)",
+                                   text=f"Price without discount: ${base_price:.2f} (group without assigned client type)",
                                    font=("Arial", 10), fg="orange")
                     label.pack(anchor="w", pady=2)
                     preview_labels.append(label)
                 else:
-                    label = tk.Label(preview_frame, text="Ingrese un precio base para ver la vista previa", 
+                    label = tk.Label(preview_frame, text="Enter a base price to see the preview", 
                                    font=("Arial", 10), fg="gray")
                     label.pack(anchor="w")
                     preview_labels.append(label)
@@ -701,10 +701,10 @@ class PriceEditorApp:
                 try:
                     price = Decimal(price_var.get().strip())
                     if price < 0:
-                        messagebox.showerror("Error", "El precio no puede ser negativo", parent=popup)
+                        messagebox.showerror("Error", "Price cannot be negative", parent=popup)
                         return
                 except:
-                    messagebox.showerror("Error", "Ingrese un precio válido", parent=popup)
+                    messagebox.showerror("Error", "Enter a valid price", parent=popup)
                     return
                 
                 # Guardar precio
@@ -726,19 +726,19 @@ class PriceEditorApp:
                 self.changes_made = True
                 popup.destroy()
                 self.load_products()
-                self.status_var.set(f"✅ Precio base de '{product_name}' actualizado correctamente para grupo '{group_name}'")
+                self.status_var.set(f"✅ Base price of '{product_name}' successfully updated for the group'{group_name}'")
                 
             except Exception as e:
                 self.conn.rollback()
-                messagebox.showerror("Error", f"Error al actualizar: {str(e)}", parent=popup)
+                messagebox.showerror("Error", f"Error updating: {str(e)}", parent=popup)
         
         tk.Button(button_frame, 
-                text="💾 Guardar Cambios", 
+                text="💾 Save Changes", 
                 command=save_changes,
                 bg="#4CAF50", fg="white", width=15, pady=5).pack(side="left", padx=5)
         
         tk.Button(button_frame, 
-                text="❌ Cancelar", 
+                text="❌ Cancel", 
                 command=popup.destroy,
                 bg="#F44336", fg="white", width=15, pady=5).pack(side="right", padx=5)
         
@@ -749,7 +749,7 @@ class PriceEditorApp:
         """Eliminar un producto"""
         item = self.product_tree.focus()
         if not item:
-            messagebox.showwarning("Advertencia", "Seleccione un producto para eliminar")
+            messagebox.showwarning("Warning", "Select a product to delete")
             return
             
         values = self.product_tree.item(item, "values")
@@ -759,16 +759,16 @@ class PriceEditorApp:
         
         # Verificar permisos para productos especiales
         if is_special and not self.es_admin:
-            if not self.verify_admin_password(f"eliminar {product_name}"):
+            if not self.verify_admin_password(f"delete {product_name}"):
                 return
         
-        if not messagebox.askyesno("Confirmar Eliminación", 
-                                 f"¿Eliminar el producto '{product_name}'?\n\n"
-                                 f"Esta acción no se puede deshacer."):
+        if not messagebox.askyesno("Confirm Deletion", 
+                                 f"Delete product '{product_name}'?\n\n"
+                                 f"This action cannot be undone."):
             return
             
         try:
-            # Verificar si el producto está en facturas
+            # Verificar si el producto está en invoices
             self.cursor.execute("""
                 SELECT COUNT(*) as count FROM detalle_factura WHERE id_producto = %s
             """, (product_id,))
@@ -776,10 +776,10 @@ class PriceEditorApp:
             
             if result['count'] > 0:
                 confirm = messagebox.askyesno(
-                    "⚠️ Advertencia", 
-                    f"Este producto aparece en {result['count']} facturas.\n\n"
-                    f"Si lo elimina, podría afectar los reportes históricos.\n"
-                    f"¿Eliminar de todos modos?"
+                    "⚠️ Warning", 
+                    f"This product appears in {result['count']} invoices.\n\n"
+                    f"If you delete it, it may affect historical reports.\n"
+                    f"Delete anyway?"
                 )
                 if not confirm:
                     return
@@ -789,11 +789,11 @@ class PriceEditorApp:
             self.conn.commit()
             self.changes_made = True
             self.load_products()
-            self.status_var.set(f"🗑️ Producto '{product_name}' eliminado")
+            self.status_var.set(f"🗑️ Product '{product_name}' deleted")
             
         except Exception as e:
             self.conn.rollback()
-            messagebox.showerror("Error", f"No se pudo eliminar: {str(e)}")
+            messagebox.showerror("Error", f"Could not delete: {str(e)}")
     
     def verify_admin_password(self, action):
         """Verificar contraseña de administrador para productos especiales"""
@@ -801,7 +801,7 @@ class PriceEditorApp:
             def __init__(self, parent, action):
                 self.result = False
                 self.dialog = tk.Toplevel(parent)
-                self.dialog.title("Autenticación Requerida")
+                self.dialog.title("Authentication Required")
                 self.dialog.geometry("400x250")
                 self.dialog.transient(parent)
                 self.dialog.grab_set()
@@ -811,24 +811,24 @@ class PriceEditorApp:
                 main_frame.pack(fill="both", expand=True)
                 
                 # Title
-                tk.Label(main_frame, text="🔒 Autorización Requerida", 
+                tk.Label(main_frame, text="🔒 Authorization Required", 
                         font=("Arial", 14, "bold"), fg="#E74C3C").pack(pady=(0, 10))
                 
                 # Message
                 tk.Label(main_frame, 
-                        text=f"Para {action} se requieren\npermisos de administrador.",
+                        text=f"To {action} administrator privileges are required.",
                         font=("Arial", 11), justify="center").pack(pady=(0, 15))
                 
                 # Credentials
                 cred_frame = tk.Frame(main_frame)
                 cred_frame.pack(fill="x", pady=10)
                 
-                tk.Label(cred_frame, text="Usuario:", font=("Arial", 10)).pack(anchor="w")
+                tk.Label(cred_frame, text="Username:", font=("Arial", 10)).pack(anchor="w")
                 self.username_var = tk.StringVar()
                 self.username_entry = tk.Entry(cred_frame, textvariable=self.username_var, width=30)
                 self.username_entry.pack(fill="x", pady=(0, 10))
                 
-                tk.Label(cred_frame, text="Contraseña:", font=("Arial", 10)).pack(anchor="w")
+                tk.Label(cred_frame, text="Password:", font=("Arial", 10)).pack(anchor="w")
                 self.password_var = tk.StringVar()
                 self.password_entry = tk.Entry(cred_frame, textvariable=self.password_var, show="*", width=30)
                 self.password_entry.pack(fill="x")
@@ -837,9 +837,9 @@ class PriceEditorApp:
                 button_frame = tk.Frame(main_frame)
                 button_frame.pack(side="bottom", fill="x", pady=(15, 0))
                 
-                tk.Button(button_frame, text="Verificar", command=self.verify,
+                tk.Button(button_frame, text="Verify", command=self.verify,
                          bg="#4CAF50", fg="white", padx=15, pady=5).pack(side="left", padx=5)
-                tk.Button(button_frame, text="Cancelar", command=self.cancel,
+                tk.Button(button_frame, text="Cancel", command=self.cancel,
                          bg="#f44336", fg="white", padx=15, pady=5).pack(side="right", padx=5)
                 
                 # Focus and bindings
@@ -863,7 +863,7 @@ class PriceEditorApp:
                 password = self.password_var.get().strip()
                 
                 if not username or not password:
-                    messagebox.showerror("Error", "Por favor ingrese usuario y contraseña", parent=self.dialog)
+                    messagebox.showerror("Error", "Please enter username and password", parent=self.dialog)
                     return
                 
                 try:
@@ -876,12 +876,12 @@ class PriceEditorApp:
                         self.dialog.destroy()
                         return
                     
-                    messagebox.showerror("Error", "Credenciales incorrectas o permisos insuficientes", parent=self.dialog)
+                    messagebox.showerror("Error", "Incorrect credentials or insufficient permissions", parent=self.dialog)
                     self.password_entry.delete(0, tk.END)
                     self.password_entry.focus_set()
                     
                 except Exception as e:
-                    messagebox.showerror("Error", f"Error de autenticación: {str(e)}", parent=self.dialog)
+                    messagebox.showerror("Error", f"Authentication error: {str(e)}", parent=self.dialog)
             
             def cancel(self):
                 self.result = False
@@ -894,15 +894,15 @@ class PriceEditorApp:
     def on_closing(self):
         """Manejar el cierre de la ventana"""
         if self.changes_made:
-            result = messagebox.askyesnocancel("Cambios sin guardar", 
-                                              "Hay cambios sin guardar. ¿Desea guardarlos antes de salir?")
+            result = messagebox.askyesnocancel("Unsaved changes", 
+                                              "There are unsaved changes. Do you want to save them before exiting?")
             if result is True:  # Yes - save
                 try:
                     self.conn.commit()
                     self.conn.close()
                     self.root.destroy()
                 except:
-                    messagebox.showerror("Error", "Error al guardar cambios")
+                    messagebox.showerror("Error", "Error saving changes")
                     return
             elif result is False:  # No - don't save
                 try:

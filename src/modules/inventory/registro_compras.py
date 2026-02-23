@@ -11,7 +11,7 @@ from src.auth.auth_manager import AuthManager
 class ComprasApp:
     def __init__(self, root, user_data):
         self.root = root
-        self.root.title("Registro de Compras - Market")
+        self.root.title("Purchase Registry - Market")
         self.root.geometry("800x600")
 
         # Datos del usuario autenticado
@@ -44,7 +44,7 @@ class ComprasApp:
         title_frame = tk.Frame(self.root)
         title_frame.pack(fill="x", pady=10)
         
-        tk.Label(title_frame, text="REGISTRO DE COMPRAS", font=("Arial", 18, "bold")).pack()
+        tk.Label(title_frame, text="Purchase Registry", font=("Arial", 18, "bold")).pack()
         
         # Frame principal dividido en dos secciones
         main_frame = tk.Frame(self.root)
@@ -53,19 +53,19 @@ class ComprasApp:
         # SECCIÓN 1: Formulario de registro de compras
         self.create_registro_section(main_frame)
         
-        # SECCIÓN 2: Lista de compras registradas
+        # SECCIÓN 2: Lista de purchases registered
         self.create_lista_section(main_frame)
         
         # Barra de estado
         self.status_var = tk.StringVar()
-        self.status_var.set(f"Usuario: {self.user_data['nombre_completo']} | Rol: {self.user_data['rol']}")
+        self.status_var.set(f"Username: {self.user_data['nombre_completo']} | Rol: {self.user_data['rol']}")
         status_bar = tk.Label(self.root, textvariable=self.status_var, bd=1, relief=tk.SUNKEN, anchor=tk.W)
         status_bar.pack(side=tk.BOTTOM, fill=tk.X)
     
     def create_registro_section(self, parent):
         """Crear sección de registro de nuevas compras"""
         # Frame para registro de compras
-        registro_frame = tk.LabelFrame(parent, text="Registrar Nueva Compra", padx=10, pady=10)
+        registro_frame = tk.LabelFrame(parent, text="Register New Purchase", padx=10, pady=10)
         registro_frame.pack(fill="x", pady=(0, 10))
         
         # Primera fila: Producto y Fecha
@@ -73,7 +73,7 @@ class ComprasApp:
         row1.pack(fill="x", pady=5)
         
         # Producto
-        tk.Label(row1, text="Producto:", width=15, anchor="w").pack(side="left")
+        tk.Label(row1, text="Product:", width=15, anchor="w").pack(side="left")
         productos_nombres = [f"{p['nombre_producto']} ({p['unidad_producto']})" for p in self.productos]
         self.producto_combo = ttk.Combobox(row1, textvariable=self.selected_product, 
                                          values=productos_nombres, state="readonly", width=30)
@@ -89,12 +89,12 @@ class ComprasApp:
         row2.pack(fill="x", pady=5)
         
         # Cantidad
-        tk.Label(row2, text="Cantidad:", width=15, anchor="w").pack(side="left")
+        tk.Label(row2, text="Quantity:", width=15, anchor="w").pack(side="left")
         self.cantidad_entry = tk.Entry(row2, textvariable=self.cantidad_var, width=15)
         self.cantidad_entry.pack(side="left", padx=5)
         
         # Precio unitario
-        tk.Label(row2, text="Precio/Unidad:", anchor="w").pack(side="left", padx=(20, 5))
+        tk.Label(row2, text="Price/Unit:", anchor="w").pack(side="left", padx=(20, 5))
         tk.Label(row2, text="$").pack(side="left")
         self.precio_entry = tk.Entry(row2, textvariable=self.precio_var, width=15)
         self.precio_entry.pack(side="left", padx=5)
@@ -113,31 +113,31 @@ class ComprasApp:
         button_frame = tk.Frame(registro_frame)
         button_frame.pack(pady=10)
         
-        tk.Button(button_frame, text="Registrar Compra", command=self.registrar_compra, 
+        tk.Button(button_frame, text="Register purchase", command=self.registrar_compra, 
                   bg="#4CAF50", fg="white", padx=15, pady=5).pack(side="left", padx=5)
-        tk.Button(button_frame, text="Limpiar", command=self.limpiar_formulario, 
+        tk.Button(button_frame, text="Clear", command=self.limpiar_formulario, 
                   bg="#ff9800", fg="white", padx=15, pady=5).pack(side="left", padx=5)
     
     def create_lista_section(self, parent):
         """Crear sección de lista de compras"""
         # Frame para lista de compras
-        lista_frame = tk.LabelFrame(parent, text="Compras Registradas", padx=10, pady=10)
+        lista_frame = tk.LabelFrame(parent, text="Registered purchases", padx=10, pady=10)
         lista_frame.pack(fill="both", expand=True)
         
         # Filtros
         filtro_frame = tk.Frame(lista_frame)
         filtro_frame.pack(fill="x", pady=(0, 10))
         
-        tk.Label(filtro_frame, text="Filtrar por producto:").pack(side="left", padx=5)
+        tk.Label(filtro_frame, text="Filter by product:").pack(side="left", padx=5)
         self.filtro_var = tk.StringVar()
         self.filtro_entry = tk.Entry(filtro_frame, textvariable=self.filtro_var, width=30)
         self.filtro_entry.pack(side="left", padx=5)
         self.filtro_var.trace("w", self.filtrar_compras)
         
         # Botones de acción
-        tk.Button(filtro_frame, text="Editar", command=self.editar_compra, 
+        tk.Button(filtro_frame, text="Edit", command=self.editar_compra, 
                   bg="#2196F3", fg="white", padx=10, pady=3).pack(side="right", padx=5)
-        tk.Button(filtro_frame, text="Eliminar", command=self.eliminar_compra, 
+        tk.Button(filtro_frame, text="Delete", command=self.eliminar_compra, 
                   bg="#f44336", fg="white", padx=10, pady=3).pack(side="right", padx=5)
         
         # Tabla de compras
@@ -161,9 +161,9 @@ class ComprasApp:
         
         # Configurar columnas
         self.compras_tree.heading("id", text="ID")
-        self.compras_tree.heading("fecha", text="Fecha")
-        self.compras_tree.heading("producto", text="Producto")
-        self.compras_tree.heading("cantidad", text="Cantidad")
+        self.compras_tree.heading("fecha", text="Date")
+        self.compras_tree.heading("producto", text="Product")
+        self.compras_tree.heading("cantidad", text="Quantity")
         self.compras_tree.heading("precio", text="Precio Unit.")
         self.compras_tree.heading("total", text="Total")
         
@@ -193,7 +193,7 @@ class ComprasApp:
     def verificar_password_admin(self):
         """Verificar contraseña de administrador"""
         popup = tk.Toplevel(self.root)
-        popup.title("Autenticación de Administrador")
+        popup.title("Admin Authentication")
         popup.geometry("400x300")
         popup.transient(self.root)
         popup.grab_set()
@@ -207,18 +207,18 @@ class ComprasApp:
         popup.geometry('{}x{}+{}+{}'.format(width, height, x, y))
         
         # Contenido
-        tk.Label(popup, text="🔒 Producto Especial", 
+        tk.Label(popup, text="🔒 Special Product", 
                 font=("Arial", 14, "bold"), fg="#f44336").pack(pady=(20, 10))
         
-        tk.Label(popup, text="Este producto requiere permisos de administrador.\nIngrese las credenciales de un administrador:",
+        tk.Label(popup, text="This product requires admin permissions.\nEnter admin credentials:",
                 font=("Arial", 10), justify="center").pack(pady=(0, 20))
         
         # Campos de entrada
-        tk.Label(popup, text="Usuario:", font=("Arial", 11)).pack()
+        tk.Label(popup, text="Username:", font=("Arial", 11)).pack()
         username_var = tk.StringVar()
         tk.Entry(popup, textvariable=username_var, font=("Arial", 11)).pack(pady=(0, 10))
         
-        tk.Label(popup, text="Contraseña:", font=("Arial", 11)).pack()
+        tk.Label(popup, text="Password:", font=("Arial", 11)).pack()
         password_var = tk.StringVar()
         tk.Entry(popup, textvariable=password_var, show="*", font=("Arial", 11)).pack(pady=(0, 20))
         
@@ -230,7 +230,7 @@ class ComprasApp:
             password = password_var.get().strip()
             
             if not username or not password:
-                messagebox.showerror("Error", "Por favor ingrese usuario y contraseña")
+                messagebox.showerror("Error", "Please enter username and password")
                 return
             
             auth_result = self.auth_manager.authenticate(username, password)
@@ -246,9 +246,9 @@ class ComprasApp:
         button_frame = tk.Frame(popup)
         button_frame.pack(pady=10)
         
-        tk.Button(button_frame, text="Verificar", command=verificar,
+        tk.Button(button_frame, text="Verify", command=verificar,
                  bg="#4CAF50", fg="white", padx=15, pady=5).pack(side="left", padx=10)
-        tk.Button(button_frame, text="Cancelar", command=popup.destroy,
+        tk.Button(button_frame, text="Cancel", command=popup.destroy,
                  bg="#f44336", fg="white", padx=15, pady=5).pack(side="left", padx=10)
         
         popup.wait_window()
@@ -258,7 +258,7 @@ class ComprasApp:
         """Registrar una nueva compra"""
         # Validar campos existentes...
         if not self.selected_product.get():
-            messagebox.showerror("Error", "Debe seleccionar un producto")
+            messagebox.showerror("Error", "You must select a product")
             return
         
         # NUEVA VALIDACIÓN DE FECHA
@@ -266,11 +266,11 @@ class ComprasApp:
         fecha_valida, resultado = self.validar_fecha(fecha)
         
         if not fecha_valida:
-            messagebox.showerror("Error de Fecha", str(resultado))
+            messagebox.showerror("Date Error", str(resultado))
             return
         
         # Usar la fecha validada en lugar de la fecha actual
-        assert isinstance(resultado, datetime), "resultado debe ser datetime tras validación exitosa"
+        assert isinstance(resultado, datetime), "the result must be a datetime after succeddful validation"
         fecha_compra = resultado.strftime("%Y-%m-%d")
         
         try:
@@ -278,14 +278,14 @@ class ComprasApp:
             precio = Decimal(str(self.precio_var.get()))
             
             if cantidad <= Decimal('0'):
-                messagebox.showerror("Error", "La cantidad debe ser mayor que 0")
+                messagebox.showerror("Error", "Quantity must be greater than 0")
                 return
                 
             if precio <= Decimal('0'):
-                messagebox.showerror("Error", "El precio debe ser mayor que 0")
+                messagebox.showerror("Error", "Price must be greater than 0")
                 return
         except Exception as e:
-            messagebox.showerror("Error", f"Verifique que cantidad y precio sean números válidos: {str(e)}")
+            messagebox.showerror("Error", f"Verify that quantity and price are valid numbers: {str(e)}")
             return
         
         # Obtener ID del producto seleccionado
@@ -300,7 +300,7 @@ class ComprasApp:
                 break
         
         if not producto_id:
-            messagebox.showerror("Error", "No se pudo identificar el producto seleccionado")
+            messagebox.showerror("Error", "The selected product could not be identified")
             return
         
         # Verificar si es producto especial y el usuario no es admin
@@ -319,14 +319,14 @@ class ComprasApp:
             self.conn.commit()
             
             # Confirmar y limpiar
-            messagebox.showinfo("Éxito", "Compra registrada exitosamente")
-            self.status_var.set(f"Compra registrada - Total: ${cantidad * precio:.2f}")
+            messagebox.showinfo("Success", "Purchase registered successfully")
+            self.status_var.set(f"Purchase registered - Total: ${cantidad * precio:.2f}")
             self.limpiar_formulario()
             self.load_compras()
             
         except Exception as e:
             self.conn.rollback()
-            messagebox.showerror("Error", f"Error al registrar compra: {str(e)}")
+            messagebox.showerror("Error", f"Error registering purchase: {str(e)}")
     
     def limpiar_formulario(self):
         """Limpiar formulario"""
@@ -367,9 +367,9 @@ class ComprasApp:
                                           f"${compra['precio_unitario_compra']:.2f}",
                                           f"${compra['total']:.2f}"))
         
-        # Actualizar contador en barra de estado
+        # Refresh contador en barra de estado
         total_compras = sum(c['total'] for c in compras if c['total'])
-        self.status_var.set(f"Usuario: {self.user_data['nombre_completo']} | Compras: {len(compras)} registros - Total: ${total_compras:.2f}")
+        self.status_var.set(f"Username: {self.user_data['nombre_completo']} | Purchases: {len(compras)} registers - Total: ${total_compras:.2f}")
     
     def filtrar_compras(self, *args):
         """Filtrar compras por producto"""
@@ -394,7 +394,7 @@ class ComprasApp:
         """Editar compra seleccionada"""
         selected_item = self.compras_tree.focus()
         if not selected_item:
-            messagebox.showwarning("Advertencia", "Seleccione una compra para editar")
+            messagebox.showwarning("Warning", "Select a purchase to edit")
             return
         
         # Obtener datos de la compra
@@ -411,7 +411,7 @@ class ComprasApp:
         
         compra = self.cursor.fetchone()
         if not compra:
-            messagebox.showerror("Error", "Compra no encontrada")
+            messagebox.showerror("Error", "Purchase not found")
             return
         
         # Verificar si es producto especial y el usuario no es admin
@@ -425,7 +425,7 @@ class ComprasApp:
     def create_edit_dialog(self, compra):
         """Crear diálogo de edición"""
         popup = tk.Toplevel(self.root)
-        popup.title("Editar Compra")
+        popup.title("Edit Purchase")
         popup.geometry("500x350")
         popup.transient(self.root)
         popup.grab_set()
@@ -439,7 +439,7 @@ class ComprasApp:
         popup.geometry('{}x{}+{}+{}'.format(width, height, x, y))
         
         # Título
-        tk.Label(popup, text="Editar Compra", font=("Arial", 14, "bold")).pack(pady=10)
+        tk.Label(popup, text="Edit Purchase", font=("Arial", 14, "bold")).pack(pady=10)
         
         # Formulario
         form_frame = tk.Frame(popup)
@@ -448,14 +448,14 @@ class ComprasApp:
         # Producto (no editable)
         prod_frame = tk.Frame(form_frame)
         prod_frame.pack(fill="x", pady=5)
-        tk.Label(prod_frame, text="Producto:", width=15, anchor="w").pack(side="left")
+        tk.Label(prod_frame, text="Product:", width=15, anchor="w").pack(side="left")
         tk.Label(prod_frame, text=f"{compra['nombre_producto']} ({compra['unidad_producto']})", 
                 font=("Arial", 10, "bold")).pack(side="left")
         
         # Fecha
         fecha_frame = tk.Frame(form_frame)
         fecha_frame.pack(fill="x", pady=5)
-        tk.Label(fecha_frame, text="Fecha:", width=15, anchor="w").pack(side="left")
+        tk.Label(fecha_frame, text="Date:", width=15, anchor="w").pack(side="left")
         fecha_var = tk.StringVar(value=str(compra['fecha_compra']))
         fecha_entry = tk.Entry(fecha_frame, textvariable=fecha_var, width=20)
         fecha_entry.pack(side="left", fill="x", expand=True)
@@ -463,7 +463,7 @@ class ComprasApp:
         # Cantidad
         cant_frame = tk.Frame(form_frame)
         cant_frame.pack(fill="x", pady=5)
-        tk.Label(cant_frame, text="Cantidad:", width=15, anchor="w").pack(side="left")
+        tk.Label(cant_frame, text="Quantity:", width=15, anchor="w").pack(side="left")
         cantidad_var = tk.DoubleVar(value=float(compra['cantidad_compra']))
         cantidad_entry = tk.Entry(cant_frame, textvariable=cantidad_var, width=20)
         cantidad_entry.pack(side="left", fill="x", expand=True)
@@ -471,7 +471,7 @@ class ComprasApp:
         # Precio
         precio_frame = tk.Frame(form_frame)
         precio_frame.pack(fill="x", pady=5)
-        tk.Label(precio_frame, text="Precio unitario:", width=15, anchor="w").pack(side="left")
+        tk.Label(precio_frame, text="Unitary price:", width=15, anchor="w").pack(side="left")
         precio_var = tk.DoubleVar(value=float(compra['precio_unitario_compra']))
         precio_entry = tk.Entry(precio_frame, textvariable=precio_var, width=20)
         precio_entry.pack(side="left", fill="x", expand=True)
@@ -501,12 +501,12 @@ class ComprasApp:
         button_frame = tk.Frame(popup)
         button_frame.pack(side="bottom", fill="x", pady=15)
         
-        tk.Button(button_frame, text="Guardar Cambios", 
+        tk.Button(button_frame, text="Save changes", 
                  command=lambda: self.save_edit_compra(popup, compra['id_compra'], 
                                                      fecha_var.get(), cantidad_var.get(), precio_var.get()), 
                  bg="#4CAF50", fg="white", padx=15, pady=5).pack(side="left", padx=10)
         
-        tk.Button(button_frame, text="Cancelar", 
+        tk.Button(button_frame, text="Cancel", 
                  command=popup.destroy, 
                  bg="#f44336", fg="white", padx=15, pady=5).pack(side="left", padx=10)
     
@@ -520,9 +520,9 @@ class ComprasApp:
             if fecha <= fecha_actual:
                 return True, fecha
             else:
-                return False, "No se pueden registrar fechas futuras"
+                return False, "Future dates cannot be registered"
         except ValueError:
-            return False, "Formato de fecha inválido. Use YYYY-MM-DD"
+            return False, "Invalid date format. Use YYYY-MM-DD"
 
     def save_edit_compra(self, popup, compra_id, fecha, cantidad, precio):
         """Guardar cambios en la compra"""
@@ -533,10 +533,10 @@ class ComprasApp:
             
             # Validar
             if cantidad <= Decimal('0'):
-                messagebox.showerror("Error", "La cantidad debe ser mayor que 0")
+                messagebox.showerror("Error", "Quantity must be greater than 0")
                 return
             if precio <= Decimal('0'):
-                messagebox.showerror("Error", "El precio debe ser mayor que 0")
+                messagebox.showerror("Error", "Price must be greater than 0")
                 return
             
             # Obtener cantidad anterior para ajustar stock manualmente ya que no hay trigger para UPDATE
@@ -548,18 +548,18 @@ class ComprasApp:
             old_data = self.cursor.fetchone()
             
             if not old_data:
-                raise Exception("Compra no encontrada")
+                raise Exception("Purchase not found")
             
             diferencia_cantidad = cantidad - Decimal(str(old_data['cantidad_compra']))
             
-            # Actualizar en la base de datos
+            # Refresh en la base de datos
             self.cursor.execute("""
                 UPDATE compra 
                 SET fecha_compra = %s, cantidad_compra = %s, precio_unitario_compra = %s
                 WHERE id_compra = %s
             """, (fecha, float(cantidad), float(precio), compra_id))
             
-            # Actualizar stock del producto manualmente (no hay trigger para UPDATE en compra)
+            # Refresh stock del producto manualmente (no hay trigger para UPDATE en compra)
             if diferencia_cantidad != Decimal('0'):
                 self.cursor.execute("""
                     UPDATE producto 
@@ -569,19 +569,19 @@ class ComprasApp:
             
             self.conn.commit()
             
-            messagebox.showinfo("Éxito", "Compra actualizada exitosamente")
+            messagebox.showinfo("Success", "Purchase updated successfully")
             popup.destroy()
             self.load_compras()
             
         except Exception as e:
             self.conn.rollback()
-            messagebox.showerror("Error", f"Error al actualizar compra: {str(e)}")
+            messagebox.showerror("Error", f"Error updating purchase: {str(e)}")
 
     def eliminar_compra(self):
         """Eliminar compra seleccionada"""
         selected_item = self.compras_tree.focus()
         if not selected_item:
-            messagebox.showwarning("Advertencia", "Seleccione una compra para eliminar")
+            messagebox.showwarning("Warning", "Select a purchase to delete")
             return
         
         # Obtener datos de la compra
@@ -591,9 +591,9 @@ class ComprasApp:
         total = values[5]
         
         # Confirmar eliminación
-        if not messagebox.askyesno("Confirmar Eliminación", 
-                                 f"¿Está seguro de eliminar esta compra?\n\n"
-                                 f"Producto: {producto}\n"
+        if not messagebox.askyesno("Confirm Deletion", 
+                                 f"Are you sure you want to delete this purchase?\n\n"
+                                 f"Product: {producto}\n"
                                  f"Total: {total}"):
             return
         
@@ -619,12 +619,12 @@ class ComprasApp:
             
             self.conn.commit()
             
-            messagebox.showinfo("Éxito", "Compra eliminada exitosamente")
+            messagebox.showinfo("Success", "Purchase deleted successfully")
             self.load_compras()
             
         except Exception as e:
             self.conn.rollback()
-            messagebox.showerror("Error", f"Error al eliminar compra: {str(e)}")
+            messagebox.showerror("Error", f"Error deleting purchase: {str(e)}")
 
     def on_closing(self):
         """Cerrar aplicación"""

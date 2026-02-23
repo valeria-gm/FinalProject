@@ -10,7 +10,7 @@ import re
 class ClientManagerApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Administrador de Clientes - Market")
+        self.root.title("Client Manager - Market")
         self.root.geometry("800x600")
         
         # Connect to database
@@ -54,7 +54,7 @@ class ClientManagerApp:
         title_frame = tk.Frame(self.root)
         title_frame.pack(fill="x", pady=10)
         
-        tk.Label(title_frame, text="ADMINISTRADOR DE CLIENTES", font=("Arial", 18, "bold")).pack()
+        tk.Label(title_frame, text="Client Manager", font=("Arial", 18, "bold")).pack()
         
         # Search and actions frame
         action_frame = tk.Frame(self.root)
@@ -64,7 +64,7 @@ class ClientManagerApp:
         search_frame = tk.Frame(action_frame)
         search_frame.pack(side="left", fill="x", expand=True)
         
-        tk.Label(search_frame, text="Buscar:", font=("Arial", 12)).pack(side="left", padx=5)
+        tk.Label(search_frame, text="Search:", font=("Arial", 12)).pack(side="left", padx=5)
         self.search_entry = tk.Entry(search_frame, width=30, textvariable=self.search_var)
         self.search_entry.pack(side="left", padx=5)
         
@@ -72,11 +72,11 @@ class ClientManagerApp:
         buttons_frame = tk.Frame(action_frame)
         buttons_frame.pack(side="right")
         
-        tk.Button(buttons_frame, text="Agregar Cliente", command=self.add_client_dialog, 
+        tk.Button(buttons_frame, text="Add Client", command=self.add_client_dialog, 
                   bg="#2196F3", fg="white", padx=10, pady=3).pack(side="left", padx=5)
-        tk.Button(buttons_frame, text="Editar Cliente", command=self.edit_client_dialog, 
+        tk.Button(buttons_frame, text="Edit Client", command=self.edit_client_dialog, 
                   bg="#FFA500", fg="white", padx=10, pady=3).pack(side="left", padx=5)
-        tk.Button(buttons_frame, text="Eliminar Cliente", command=self.delete_client, 
+        tk.Button(buttons_frame, text="Delete Client", command=self.delete_client, 
                   bg="#f44336", fg="white", padx=10, pady=3).pack(side="left", padx=5)
         
         # Clients table
@@ -95,12 +95,12 @@ class ClientManagerApp:
         
         # Configure columns
         self.client_tree.heading("id", text="ID")
-        self.client_tree.heading("nombre", text="Nombre")
-        self.client_tree.heading("telefono", text="Teléfono")
-        self.client_tree.heading("correo", text="Correo")
-        self.client_tree.heading("grupo", text="Grupo")
-        self.client_tree.heading("tipo_cliente", text="Tipo Cliente")
-        self.client_tree.heading("descuento", text="Descuento (%)")
+        self.client_tree.heading("nombre", text="Name")
+        self.client_tree.heading("telefono", text="Phone")
+        self.client_tree.heading("correo", text="Email")
+        self.client_tree.heading("grupo", text="Group")
+        self.client_tree.heading("tipo_cliente", text="Client Type")
+        self.client_tree.heading("descuento", text="Discount (%)")
         
         self.client_tree.column("id", width=50)
         self.client_tree.column("nombre", width=150)
@@ -118,7 +118,7 @@ class ClientManagerApp:
         
         # Status bar
         self.status_var = tk.StringVar()
-        self.status_var.set("Listo")
+        self.status_var.set("Ready")
         status_bar = tk.Label(self.root, textvariable=self.status_var, bd=1, relief=tk.SUNKEN, anchor=tk.W)
         status_bar.pack(side=tk.BOTTOM, fill=tk.X)
         
@@ -126,11 +126,11 @@ class ClientManagerApp:
         manager_button_frame = tk.Frame(self.root)
         manager_button_frame.pack(fill="x", pady=5, padx=10)
         
-        tk.Button(manager_button_frame, text="Administrar Grupos", 
+        tk.Button(manager_button_frame, text="Manage Groups", 
                  command=self.manage_groups,
                  bg="#673AB7", fg="white", padx=10, pady=3).pack(side="left")
         
-        tk.Button(manager_button_frame, text="Administrar Tipos", 
+        tk.Button(manager_button_frame, text="Manage Types", 
                  command=self.manage_client_types,
                  bg="#009688", fg="white", padx=10, pady=3).pack(side="left", padx=5)
         
@@ -173,7 +173,7 @@ class ClientManagerApp:
                                          descuento),
                                   tags=(str(client.get('id_grupo', '')),))
             
-        self.status_var.set(f"Mostrando {len(clients)} clientes")
+        self.status_var.set(f"Showing {len(clients)} clients")
     
     def filter_clients(self, *args):
         """Filter clients based on search text"""
@@ -221,7 +221,7 @@ class ClientManagerApp:
         """Open dialog to add a new client"""
         # Create popup
         popup = tk.Toplevel(self.root)
-        popup.title("Agregar Nuevo Cliente")
+        popup.title("Add New Client")
         popup.geometry("500x450")
         popup.transient(self.root)
         popup.grab_set()
@@ -235,7 +235,7 @@ class ClientManagerApp:
         popup.geometry('{}x{}+{}+{}'.format(width, height, x, y))
         
         # Title
-        tk.Label(popup, text="Agregar Nuevo Cliente", font=("Arial", 14, "bold")).pack(pady=10)
+        tk.Label(popup, text="Add New Client", font=("Arial", 14, "bold")).pack(pady=10)
         
         # Form frame
         form_frame = tk.Frame(popup)
@@ -244,7 +244,7 @@ class ClientManagerApp:
         # Name field (REQUIRED)
         name_frame = tk.Frame(form_frame)
         name_frame.pack(fill="x", pady=5)
-        name_label = tk.Label(name_frame, text="Nombre: *", width=15, anchor="w", fg="#d32f2f")
+        name_label = tk.Label(name_frame, text="Name: *", width=15, anchor="w", fg="#d32f2f")
         name_label.pack(side="left")
         name_entry = tk.Entry(name_frame, width=30)
         name_entry.pack(side="left", fill="x", expand=True)
@@ -257,14 +257,14 @@ class ClientManagerApp:
         # Phone field (OPTIONAL)
         phone_frame = tk.Frame(form_frame)
         phone_frame.pack(fill="x", pady=5)
-        tk.Label(phone_frame, text="Teléfono:", width=15, anchor="w").pack(side="left")
+        tk.Label(phone_frame, text="Phone:", width=15, anchor="w").pack(side="left")
         phone_entry = tk.Entry(phone_frame, width=30)
         phone_entry.pack(side="left", fill="x", expand=True)
         
         # Email field (OPTIONAL but validated)
         email_frame = tk.Frame(form_frame)
         email_frame.pack(fill="x", pady=5)
-        tk.Label(email_frame, text="Correo:", width=15, anchor="w").pack(side="left")
+        tk.Label(email_frame, text="Email:", width=15, anchor="w").pack(side="left")
         email_entry = tk.Entry(email_frame, width=30)
         email_entry.pack(side="left", fill="x", expand=True)
         
@@ -275,7 +275,7 @@ class ClientManagerApp:
         # Group field (REQUIRED)
         group_frame = tk.Frame(form_frame)
         group_frame.pack(fill="x", pady=5)
-        tk.Label(group_frame, text="Grupo: *", width=15, anchor="w", fg="#d32f2f").pack(side="left")
+        tk.Label(group_frame, text="Group: *", width=15, anchor="w", fg="#d32f2f").pack(side="left")
         
         # Combobox for groups - show group name with client type info
         group_values = [(g['id_grupo'], g['clave_grupo']) for g in self.groups]
@@ -288,7 +288,7 @@ class ClientManagerApp:
             group_combo.current(0)
         
         # Required fields note
-        required_note = tk.Label(form_frame, text="* Campos obligatorios", font=("Arial", 9), fg="#666")
+        required_note = tk.Label(form_frame, text="* Required fields", font=("Arial", 9), fg="#666")
         required_note.pack(pady=(10, 0))
         
         # Real-time validation bindings
@@ -304,7 +304,7 @@ class ClientManagerApp:
             if not email:
                 email_error_label.config(text="")
             elif email and not self.validate_email(email):
-                email_error_label.config(text="Formato de correo inválido (debe contener @)")
+                email_error_label.config(text="Invalid email format (must contain @)")
             else:
                 email_error_label.config(text="")
         
@@ -331,22 +331,22 @@ class ClientManagerApp:
             
             # Validate name (required)
             if not name:
-                name_error_label.config(text="El nombre es obligatorio")
+                name_error_label.config(text="Name is required")
                 is_valid = False
             
             # Validate email (optional but must be valid if provided)
             if email and not self.validate_email(email):
-                email_error_label.config(text="Formato de correo inválido (debe contener @)")
+                email_error_label.config(text="Invalid email format (must contain @)")
                 is_valid = False
             
             if is_valid:
                 self.save_client(popup, name, phone, email, group_name, group_values, None)
         
-        tk.Button(button_frame, text="Guardar", 
+        tk.Button(button_frame, text="Save", 
                  command=save_client_with_validation, 
                  bg="#4CAF50", fg="white", padx=10, pady=5).pack(side="left", padx=10)
         
-        tk.Button(button_frame, text="Cancelar", 
+        tk.Button(button_frame, text="Cancel", 
                  command=popup.destroy, 
                  bg="#f44336", fg="white", padx=10, pady=5).pack(side="left", padx=10)
     
@@ -355,7 +355,7 @@ class ClientManagerApp:
         # Get selected client
         selected_item = self.client_tree.focus()
         if not selected_item:
-            messagebox.showwarning("Advertencia", "Por favor selecciona un cliente para editar")
+            messagebox.showwarning("Warning", "Please select a client to edit")
             return
         
         # Get client data
@@ -371,12 +371,12 @@ class ClientManagerApp:
         
         client = self.cursor.fetchone()
         if not client:
-            messagebox.showerror("Error", "Cliente no encontrado")
+            messagebox.showerror("Error", "Client not found")
             return
         
         # Create popup
         popup = tk.Toplevel(self.root)
-        popup.title("Editar Cliente")
+        popup.title("Edit Client")
         popup.geometry("500x450")
         popup.transient(self.root)
         popup.grab_set()
@@ -390,7 +390,7 @@ class ClientManagerApp:
         popup.geometry('{}x{}+{}+{}'.format(width, height, x, y))
         
         # Title
-        tk.Label(popup, text="Editar Cliente", font=("Arial", 14, "bold")).pack(pady=10)
+        tk.Label(popup, text="Edit Client", font=("Arial", 14, "bold")).pack(pady=10)
         
         # Form frame
         form_frame = tk.Frame(popup)
@@ -399,7 +399,7 @@ class ClientManagerApp:
         # Name field (REQUIRED)
         name_frame = tk.Frame(form_frame)
         name_frame.pack(fill="x", pady=5)
-        name_label = tk.Label(name_frame, text="Nombre: *", width=15, anchor="w", fg="#d32f2f")
+        name_label = tk.Label(name_frame, text="Name: *", width=15, anchor="w", fg="#d32f2f")
         name_label.pack(side="left")
         name_entry = tk.Entry(name_frame, width=30)
         name_entry.pack(side="left", fill="x", expand=True)
@@ -413,7 +413,7 @@ class ClientManagerApp:
         # Phone field (OPTIONAL)
         phone_frame = tk.Frame(form_frame)
         phone_frame.pack(fill="x", pady=5)
-        tk.Label(phone_frame, text="Teléfono:", width=15, anchor="w").pack(side="left")
+        tk.Label(phone_frame, text="Phone:", width=15, anchor="w").pack(side="left")
         phone_entry = tk.Entry(phone_frame, width=30)
         phone_entry.pack(side="left", fill="x", expand=True)
         if client.get("telefono"):
@@ -422,7 +422,7 @@ class ClientManagerApp:
         # Email field (OPTIONAL but validated)
         email_frame = tk.Frame(form_frame)
         email_frame.pack(fill="x", pady=5)
-        tk.Label(email_frame, text="Correo:", width=15, anchor="w").pack(side="left")
+        tk.Label(email_frame, text="Email:", width=15, anchor="w").pack(side="left")
         email_entry = tk.Entry(email_frame, width=30)
         email_entry.pack(side="left", fill="x", expand=True)
         if client.get("correo"):
@@ -435,7 +435,7 @@ class ClientManagerApp:
         # Group field (REQUIRED)
         group_frame = tk.Frame(form_frame)
         group_frame.pack(fill="x", pady=5)
-        tk.Label(group_frame, text="Grupo: *", width=15, anchor="w", fg="#d32f2f").pack(side="left")
+        tk.Label(group_frame, text="Group: *", width=15, anchor="w", fg="#d32f2f").pack(side="left")
         
         # Combobox for groups
         group_values = [(g['id_grupo'], g['clave_grupo']) for g in self.groups]
@@ -453,7 +453,7 @@ class ClientManagerApp:
                     break
         
         # Required fields note
-        required_note = tk.Label(form_frame, text="* Campos obligatorios", font=("Arial", 9), fg="#666")
+        required_note = tk.Label(form_frame, text="* Required fields", font=("Arial", 9), fg="#666")
         required_note.pack(pady=(10, 0))
         
         # Real-time validation bindings
@@ -469,7 +469,7 @@ class ClientManagerApp:
             if not email:
                 email_error_label.config(text="")
             elif email and not self.validate_email(email):
-                email_error_label.config(text="Formato de correo inválido (debe contener @)")
+                email_error_label.config(text="Invalid email format (must contain @)")
             else:
                 email_error_label.config(text="")
         
@@ -496,22 +496,22 @@ class ClientManagerApp:
             
             # Validate name (required)
             if not name:
-                name_error_label.config(text="El nombre es obligatorio")
+                name_error_label.config(text="Name is required")
                 is_valid = False
             
             # Validate email (optional but must be valid if provided)
             if email and not self.validate_email(email):
-                email_error_label.config(text="Formato de correo inválido (debe contener @)")
+                email_error_label.config(text="Invalid email format (must contain @)")
                 is_valid = False
             
             if is_valid:
                 self.save_client(popup, name, phone, email, group_name, group_values, client_id)
 
-        tk.Button(button_frame, text="Guardar Cambios", 
+        tk.Button(button_frame, text="Save Changes", 
                  command=save_client_with_validation, 
                  bg="#4CAF50", fg="white", padx=10, pady=5).pack(side="left", padx=10)
         
-        tk.Button(button_frame, text="Cancelar", 
+        tk.Button(button_frame, text="Cancel", 
                  command=popup.destroy, 
                  bg="#f44336", fg="white", padx=10, pady=5).pack(side="left", padx=10)
     
@@ -542,21 +542,21 @@ class ClientManagerApp:
                 action = "agregado"
             
             self.conn.commit()
-            self.status_var.set(f"Cliente {action} correctamente")
-            messagebox.showinfo("Éxito", f"Cliente {action} correctamente")
+            self.status_var.set(f"Client {action} successfully")
+            messagebox.showinfo("Success", f"Client {action} successfully")
             popup.destroy()
             self.load_clients()
             
         except Exception as e:
             self.conn.rollback()
-            messagebox.showerror("Error", f"Error al guardar cliente: {str(e)}")
+            messagebox.showerror("Error", f"Error saving client: {str(e)}")
 
     def delete_client(self):
         """Delete selected client"""
         # Get selected client
         selected_item = self.client_tree.focus()
         if not selected_item:
-            messagebox.showwarning("Advertencia", "Por favor selecciona un cliente para eliminar")
+            messagebox.showwarning("Warning", "Please select a client to delete")
             return
         
         # Get client data
@@ -565,9 +565,9 @@ class ClientManagerApp:
         client_name = values[1]
         
         # Confirm deletion
-        if not messagebox.askyesno("Confirmar Eliminación", 
-                                 f"¿Estás seguro de eliminar el cliente '{client_name}'?\n\n"
-                                 f"Esta acción eliminará todas las facturas asociadas a este cliente."):
+        if not messagebox.askyesno("Confirm Deletion", 
+                                 f"Are you sure you want to delete the client '{client_name}'?\n\n"
+                                 f"This action will delete all invoices associated with this client."):
             return
         
         # Check if client has invoices
@@ -575,10 +575,10 @@ class ClientManagerApp:
         result = self.cursor.fetchone()
         
         if result and result['count'] > 0:
-            if not messagebox.askyesno("Advertencia", 
-                                     f"El cliente '{client_name}' tiene {result['count']} facturas asociadas. "
-                                     f"Si eliminas este cliente, esas facturas también se eliminarán.\n\n"
-                                     f"¿Estás seguro de continuar?"):
+            if not messagebox.askyesno("Warning", 
+                                     f"The client '{client_name}' has {result['count']} associated invoices. "
+                                     f"If you delete this client, those invoices will also be deleted.\n\n"
+                                     f"Are you sure you want to continue?"):
                 return
         
         try:
@@ -622,20 +622,20 @@ class ClientManagerApp:
             self.conn.commit()
             self.conn.autocommit = True
             
-            self.status_var.set(f"Cliente '{client_name}' eliminado correctamente")
-            messagebox.showinfo("Éxito", f"Cliente '{client_name}' eliminado correctamente")
+            self.status_var.set(f"Client '{client_name}' deleted successfully")
+            messagebox.showinfo("Success", f"Client '{client_name}' deleted successfully")
             self.load_clients()
             
         except Exception as e:
             self.conn.rollback()
             self.conn.autocommit = True
-            messagebox.showerror("Error", f"Error al eliminar cliente: {str(e)}")
+            messagebox.showerror("Error", f"Error deleting client: {str(e)}")
     
     def manage_groups(self):
         """Manage client groups"""
         # Create popup
         popup = tk.Toplevel(self.root)
-        popup.title("Administrar Grupos")
+        popup.title("Manage Groups")
         popup.geometry("500x500")
         popup.transient(self.root)
         popup.grab_set()
@@ -649,7 +649,7 @@ class ClientManagerApp:
         popup.geometry('{}x{}+{}+{}'.format(width, height, x, y))
         
         # Title
-        tk.Label(popup, text="Grupos de Clientes", font=("Arial", 14, "bold")).pack(pady=10)
+        tk.Label(popup, text="Client Groups", font=("Arial", 14, "bold")).pack(pady=10)
         
         # Listbox for groups
         frame = tk.Frame(popup)
@@ -664,26 +664,26 @@ class ClientManagerApp:
         
         # Load groups into listbox with client type info
         for group in self.groups:
-            tipo_info = f" - {group['nombre_tipo']} ({group['descuento']}%)" if group['nombre_tipo'] else " - Sin tipo asignado"
+            tipo_info = f" - {group['nombre_tipo']} ({group['descuento']}%)" if group['nombre_tipo'] else " - No type assigned"
             group_listbox.insert(tk.END, f"{group['clave_grupo']}{tipo_info}")
 
         # Buttons frame
         button_frame = tk.Frame(popup)
         button_frame.pack(fill="x", pady=10, padx=20)
         
-        tk.Button(button_frame, text="Agregar Grupo", 
+        tk.Button(button_frame, text="Add Group", 
                  command=lambda: self.add_group(popup, group_listbox), 
                  bg="#4CAF50", fg="white", padx=10, pady=5).pack(side="left", padx=5)
                  
-        tk.Button(button_frame, text="Editar Grupo", 
+        tk.Button(button_frame, text="Edit Group", 
                  command=lambda: self.edit_group(popup, group_listbox), 
                  bg="#FFA500", fg="white", padx=10, pady=5).pack(side="left", padx=5)
                  
-        tk.Button(button_frame, text="Eliminar Grupo", 
+        tk.Button(button_frame, text="Delete Group", 
                  command=lambda: self.delete_group(popup, group_listbox), 
                  bg="#f44336", fg="white", padx=10, pady=5).pack(side="left", padx=5)
                  
-        tk.Button(button_frame, text="Cerrar", 
+        tk.Button(button_frame, text="Close", 
                  command=popup.destroy, 
                  bg="#607D8B", fg="white", padx=10, pady=5).pack(side="right", padx=5)
     
@@ -691,7 +691,7 @@ class ClientManagerApp:
         """Manage client types"""
         # Create popup
         popup = tk.Toplevel(self.root)
-        popup.title("Administrar Tipos de Cliente")
+        popup.title("Manage Client Types")
         popup.geometry("400x400")
         popup.transient(self.root)
         popup.grab_set()
@@ -705,7 +705,7 @@ class ClientManagerApp:
         popup.geometry('{}x{}+{}+{}'.format(width, height, x, y))
         
         # Title
-        tk.Label(popup, text="Tipos de Cliente", font=("Arial", 14, "bold")).pack(pady=10)
+        tk.Label(popup, text="Client Types", font=("Arial", 14, "bold")).pack(pady=10)
         
         # Listbox for types
         frame = tk.Frame(popup)
@@ -720,53 +720,53 @@ class ClientManagerApp:
         
         # Load types into listbox
         for client_type in self.client_types:
-            type_listbox.insert(tk.END, f"{client_type['nombre_tipo']} (Descuento: {client_type['descuento']}%)")
+            type_listbox.insert(tk.END, f"{client_type['nombre_tipo']} (Discount: {client_type['descuento']}%)")
         
         # Buttons frame
         button_frame = tk.Frame(popup)
         button_frame.pack(fill="x", pady=10, padx=20)
         
-        tk.Button(button_frame, text="Agregar Tipo", 
+        tk.Button(button_frame, text="Add Type", 
                  command=lambda: self.add_client_type(popup, type_listbox), 
                  bg="#4CAF50", fg="white", padx=10, pady=5).pack(side="left", padx=5)
                  
-        tk.Button(button_frame, text="Editar Tipo", 
+        tk.Button(button_frame, text="Edit Type", 
                  command=lambda: self.edit_client_type(popup, type_listbox), 
                  bg="#FFA500", fg="white", padx=10, pady=5).pack(side="left", padx=5)
                  
-        tk.Button(button_frame, text="Eliminar Tipo", 
+        tk.Button(button_frame, text="Delete Type", 
                  command=lambda: self.delete_client_type(popup, type_listbox), 
                  bg="#f44336", fg="white", padx=10, pady=5).pack(side="left", padx=5)
                  
-        tk.Button(button_frame, text="Cerrar", 
+        tk.Button(button_frame, text="Close", 
                  command=popup.destroy, 
                  bg="#607D8B", fg="white", padx=10, pady=5).pack(side="right", padx=5)
 
     def add_group(self, parent_popup, group_listbox):
         """Add a new group"""
         # Ask for new group name
-        group_name = simpledialog.askstring("Nuevo Grupo", "Clave del nuevo grupo:", parent=parent_popup)
+        group_name = simpledialog.askstring("New Group", "New group key:", parent=parent_popup)
         if not group_name or not group_name.strip():
             return
         
         # Ask for description
-        description = simpledialog.askstring("Descripción", "Descripción del grupo (opcional):", parent=parent_popup)
+        description = simpledialog.askstring("Description", "Group description (optional):", parent=parent_popup)
         if description == "":  # User pressed cancel
             description = None
         
         # Ask for client type
         if not self.client_types:
-            messagebox.showerror("Error", "No hay tipos de cliente disponibles. Debes crear al menos un tipo de cliente primero.", parent=parent_popup)
+            messagebox.showerror("Error", "No client types available. You must create at least one client type first.", parent=parent_popup)
             return
         
         # Show client types dialog
         type_popup = tk.Toplevel(parent_popup)
-        type_popup.title("Seleccionar Tipo de Cliente")
+        type_popup.title("Select Client Type")
         type_popup.geometry("350x300")
         type_popup.transient(parent_popup)
         type_popup.grab_set()
         
-        tk.Label(type_popup, text="Selecciona el tipo de cliente:", font=("Arial", 12)).pack(pady=10)
+        tk.Label(type_popup, text="Select client type:", font=("Arial", 12)).pack(pady=10)
         
         type_listbox_local = tk.Listbox(type_popup, selectmode=tk.SINGLE)
         type_listbox_local.pack(fill="both", expand=True, padx=20, pady=10)
@@ -785,7 +785,7 @@ class ClientManagerApp:
                 selected_type_id = self.client_types[selection[0]]['id_tipo_cliente']
                 type_popup.destroy()
         
-        tk.Button(type_popup, text="Confirmar", command=confirm_type, 
+        tk.Button(type_popup, text="Confirm", command=confirm_type, 
                  bg="#4CAF50", fg="white", padx=10, pady=5).pack(pady=10)
         
         type_popup.wait_window()  # Wait for the type selection window to close
@@ -807,21 +807,21 @@ class ClientManagerApp:
             # Update listbox
             group_listbox.delete(0, tk.END)
             for group in self.groups:
-                tipo_info = f" - {group['nombre_tipo']} ({group['descuento']}%)" if group['nombre_tipo'] else " - Sin tipo asignado"
+                tipo_info = f" - {group['nombre_tipo']} ({group['descuento']}%)" if group['nombre_tipo'] else " - No type assigned"
                 group_listbox.insert(tk.END, f"{group['clave_grupo']}{tipo_info}")
                 
-            self.status_var.set(f"Grupo '{group_name}' agregado correctamente")
+            self.status_var.set(f"Grupo '{group_name}' added successfully")
                 
         except Exception as e:
             self.conn.rollback()
-            messagebox.showerror("Error", f"Error al agregar grupo: {str(e)}")
+            messagebox.showerror("Error", f"Error adding group: {str(e)}")
 
     def edit_group(self, parent_popup, group_listbox):
         """Edit selected group"""
         # Get selected group
         selection = group_listbox.curselection()
         if not selection:
-            messagebox.showwarning("Advertencia", "Por favor selecciona un grupo para editar", parent=parent_popup)
+            messagebox.showwarning("Warning", "Please select a group to edit", parent=parent_popup)
             return
             
         # Get group info
@@ -829,14 +829,14 @@ class ClientManagerApp:
         selected_group = self.groups[selected_index]
         
         # Ask for new name
-        new_name = simpledialog.askstring("Editar Grupo", "Nueva clave:", 
+        new_name = simpledialog.askstring("Edit Group", "New key:", 
                                        initialvalue=selected_group['clave_grupo'], 
                                        parent=parent_popup)
         if not new_name or not new_name.strip():
             return
         
         # Ask for new description
-        new_description = simpledialog.askstring("Descripción", "Nueva descripción (opcional):", 
+        new_description = simpledialog.askstring("Description", "New description (optional):", 
                                                initialvalue=selected_group['descripcion'] or "", 
                                                parent=parent_popup)
         if new_description == "":  # User pressed cancel
@@ -844,17 +844,17 @@ class ClientManagerApp:
         
         # Ask for new client type
         if not self.client_types:
-            messagebox.showerror("Error", "No hay tipos de cliente disponibles.", parent=parent_popup)
+            messagebox.showerror("Error", "No client types available.", parent=parent_popup)
             return
         
         # Show client types dialog
         type_popup = tk.Toplevel(parent_popup)
-        type_popup.title("Seleccionar Tipo de Cliente")
+        type_popup.title("Select Client Type")
         type_popup.geometry("350x300")
         type_popup.transient(parent_popup)
         type_popup.grab_set()
         
-        tk.Label(type_popup, text="Selecciona el tipo de cliente:", font=("Arial", 12)).pack(pady=10)
+        tk.Label(type_popup, text="Select client type:", font=("Arial", 12)).pack(pady=10)
         
         type_listbox_local = tk.Listbox(type_popup, selectmode=tk.SINGLE)
         type_listbox_local.pack(fill="both", expand=True, padx=20, pady=10)
@@ -876,7 +876,7 @@ class ClientManagerApp:
                 selected_type_id = self.client_types[selection[0]]['id_tipo_cliente']
                 type_popup.destroy()
         
-        tk.Button(type_popup, text="Confirmar", command=confirm_type, 
+        tk.Button(type_popup, text="Confirm", command=confirm_type, 
                  bg="#4CAF50", fg="white", padx=10, pady=5).pack(pady=10)
         
         type_popup.wait_window()
@@ -899,21 +899,21 @@ class ClientManagerApp:
             # Update listbox
             group_listbox.delete(0, tk.END)
             for group in self.groups:
-                tipo_info = f" - {group['nombre_tipo']} ({group['descuento']}%)" if group['nombre_tipo'] else " - Sin tipo asignado"
+                tipo_info = f" - {group['nombre_tipo']} ({group['descuento']}%)" if group['nombre_tipo'] else " - No type assigned"
                 group_listbox.insert(tk.END, f"{group['clave_grupo']}{tipo_info}")
                 
-            self.status_var.set(f"Grupo actualizado correctamente")
+            self.status_var.set(f"Group updated successfully")
             
         except Exception as e:
             self.conn.rollback()
-            messagebox.showerror("Error", f"Error al actualizar grupo: {str(e)}")
+            messagebox.showerror("Error", f"Error updating group: {str(e)}")
 
     def delete_group(self, parent_popup, group_listbox):
         """Delete selected group"""
         # Get selected group
         selection = group_listbox.curselection()
         if not selection:
-            messagebox.showwarning("Advertencia", "Por favor selecciona un grupo para eliminar", parent=parent_popup)
+            messagebox.showwarning("Warning", "Please select group to delete", parent=parent_popup)
             return
             
         # Get group info
@@ -926,14 +926,14 @@ class ClientManagerApp:
         
         if clients_count > 0:
             messagebox.showerror("Error", 
-                              f"No se puede eliminar este grupo porque está en uso por {clients_count} clientes.\n"
-                              f"Debes reasignar o eliminar estos clientes primero.", 
+                              f"Cannot delete this group because it is used by {clients_count} clientes.\n"
+                              f"You must reassign or delete these clients first.", 
                               parent=parent_popup)
             return
             
         # Confirm deletion
-        if not messagebox.askyesno("Confirmar Eliminación", 
-                                 f"¿Estás seguro de eliminar el grupo '{selected_group['clave_grupo']}'?",
+        if not messagebox.askyesno("Confirm Deletion", 
+                                 f"Are you sure you want to delete the group '{selected_group['clave_grupo']}'?",
                                  parent=parent_popup):
             return
             
@@ -948,23 +948,23 @@ class ClientManagerApp:
             # Update listbox
             group_listbox.delete(0, tk.END)
             for group in self.groups:
-                tipo_info = f" - {group['nombre_tipo']} ({group['descuento']}%)" if group['nombre_tipo'] else " - Sin tipo asignado"
+                tipo_info = f" - {group['nombre_tipo']} ({group['descuento']}%)" if group['nombre_tipo'] else " - No type assigned"
                 group_listbox.insert(tk.END, f"{group['clave_grupo']}{tipo_info}")
                 
-            self.status_var.set(f"Grupo eliminado correctamente")
+            self.status_var.set(f"Group deleted successfully")
             
         except Exception as e:
             self.conn.rollback()
-            messagebox.showerror("Error", f"Error al eliminar grupo: {str(e)}")
+            messagebox.showerror("Error", f"Error deleting group: {str(e)}")
             
     def add_client_type(self, parent_popup, type_listbox):
         """Add a new client type"""
         # Ask for new type name and discount
-        type_name = simpledialog.askstring("Nuevo Tipo", "Nombre del nuevo tipo:", parent=parent_popup)
+        type_name = simpledialog.askstring("New Type", "New group name:", parent=parent_popup)
         if not type_name or not type_name.strip():
             return
             
-        discount = simpledialog.askfloat("Descuento", "Porcentaje de descuento (ej. 10.5):", 
+        discount = simpledialog.askfloat("Discount", "Discount percentage (ex. 10.5):", 
                                         parent=parent_popup, minvalue=0, maxvalue=100)
         if discount is None:  # User cancelled
             return
@@ -981,20 +981,20 @@ class ClientManagerApp:
             # Update listbox
             type_listbox.delete(0, tk.END)
             for client_type in self.client_types:
-                type_listbox.insert(tk.END, f"{client_type['nombre_tipo']} (Descuento: {client_type['descuento']}%)")
+                type_listbox.insert(tk.END, f"{client_type['nombre_tipo']} (Discount: {client_type['descuento']}%)")
                 
-            self.status_var.set(f"Tipo '{type_name}' agregado correctamente")
+            self.status_var.set(f"Type '{type_name}' added successfully")
                 
         except Exception as e:
             self.conn.rollback()
-            messagebox.showerror("Error", f"Error al agregar tipo: {str(e)}")
+            messagebox.showerror("Error", f"Error adding type: {str(e)}")
     
     def edit_client_type(self, parent_popup, type_listbox):
         """Edit selected client type"""
         # Get selected type
         selection = type_listbox.curselection()
         if not selection:
-            messagebox.showwarning("Advertencia", "Por favor selecciona un tipo para editar", parent=parent_popup)
+            messagebox.showwarning("Warning", "Please select a type to edit", parent=parent_popup)
             return
             
         # Get type info
@@ -1002,13 +1002,13 @@ class ClientManagerApp:
         selected_type = self.client_types[selected_index]
         
         # Ask for new name and discount
-        new_name = simpledialog.askstring("Editar Tipo", "Nuevo nombre:", 
+        new_name = simpledialog.askstring("Edit Type", "New name:", 
                                        initialvalue=selected_type['nombre_tipo'], 
                                        parent=parent_popup)
         if not new_name or not new_name.strip():
             return
             
-        new_discount = simpledialog.askfloat("Editar Descuento", "Nuevo porcentaje de descuento:", 
+        new_discount = simpledialog.askfloat("Edit Discount", "New discount percentage:", 
                                            initialvalue=float(selected_type['descuento']),
                                            parent=parent_popup, minvalue=0, maxvalue=100)
         if new_discount is None:  # User cancelled
@@ -1029,20 +1029,20 @@ class ClientManagerApp:
             # Update listbox
             type_listbox.delete(0, tk.END)
             for client_type in self.client_types:
-                type_listbox.insert(tk.END, f"{client_type['nombre_tipo']} (Descuento: {client_type['descuento']}%)")
+                type_listbox.insert(tk.END, f"{client_type['nombre_tipo']} (Discount: {client_type['descuento']}%)")
                 
-            self.status_var.set(f"Tipo actualizado correctamente")
+            self.status_var.set(f"Type updated successfully")
             
         except Exception as e:
             self.conn.rollback()
-            messagebox.showerror("Error", f"Error al actualizar tipo: {str(e)}")
+            messagebox.showerror("Error", f"Error updating type: {str(e)}")
     
     def delete_client_type(self, parent_popup, type_listbox):
         """Delete selected client type"""
         # Get selected type
         selection = type_listbox.curselection()
         if not selection:
-            messagebox.showwarning("Advertencia", "Por favor selecciona un tipo para eliminar", parent=parent_popup)
+            messagebox.showwarning("Warning", "Please select a type to delete", parent=parent_popup)
             return
             
         # Get type info
@@ -1055,14 +1055,14 @@ class ClientManagerApp:
         
         if groups_count > 0:
             messagebox.showerror("Error", 
-                              f"No se puede eliminar este tipo porque está en uso por {groups_count} grupos.\n"
-                              f"Debes reasignar o eliminar estos grupos primero.", 
+                              f"Cannot delete this type because it is used by {groups_count} grupos.\n"
+                              f"You must reassign or delete these groups first.", 
                               parent=parent_popup)
             return
             
         # Confirm deletion
-        if not messagebox.askyesno("Confirmar Eliminación", 
-                                 f"¿Estás seguro de eliminar el tipo '{selected_type['nombre_tipo']}'?",
+        if not messagebox.askyesno("Confirm Deletion", 
+                                 f"Are you sure you want to delete the type'{selected_type['nombre_tipo']}'?",
                                  parent=parent_popup):
             return
             
@@ -1077,13 +1077,13 @@ class ClientManagerApp:
             # Update listbox
             type_listbox.delete(0, tk.END)
             for client_type in self.client_types:
-                type_listbox.insert(tk.END, f"{client_type['nombre_tipo']} (Descuento: {client_type['descuento']}%)")
+                type_listbox.insert(tk.END, f"{client_type['nombre_tipo']} (Discount: {client_type['descuento']}%)")
                 
-            self.status_var.set(f"Tipo eliminado correctamente")
+            self.status_var.set(f"Type deleted successfully")
             
         except Exception as e:
             self.conn.rollback()
-            messagebox.showerror("Error", f"Error al eliminar tipo: {str(e)}")
+            messagebox.showerror("Error", f"Error deleting type: {str(e)}")
 
     def on_closing(self):
         """Clean up and close connection when closing the app"""

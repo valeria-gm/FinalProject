@@ -22,7 +22,7 @@ import numpy as np
 class AnalisisGananciasApp:
     def __init__(self, root, user_data):
         self.root = root
-        self.root.title("Análisis de Ganancias - Disfruleg")
+        self.root.title("Profit Analysis - Market")
         self.root.geometry("1000x700")
         
         self.user_data = user_data if isinstance(user_data, dict) else {}
@@ -33,7 +33,7 @@ class AnalisisGananciasApp:
             self.conn: Any = conectar()
             self.cursor: Any = self.conn.cursor(dictionary=True)
         except mysql.connector.Error as err:
-            messagebox.showerror("Error de conexión", f"No se pudo conectar a la base de datos:\n{err}")
+            messagebox.showerror("Connection Error", f"Could not connect to the database:\n{err}")
             self.root.destroy()
             return
         
@@ -46,20 +46,20 @@ class AnalisisGananciasApp:
         title_frame = tk.Frame(self.root)
         title_frame.pack(fill="x", pady=10)
         
-        tk.Label(title_frame, text="ANÁLISIS DE GANANCIAS POR PRODUCTO", 
+        tk.Label(title_frame, text="PRODUCT PROFIT ANALYSIS", 
                 font=("Arial", 18, "bold")).pack()
         
         # Buttons frame
         button_frame = tk.Frame(self.root)
         button_frame.pack(fill="x", pady=5, padx=10)
         
-        tk.Button(button_frame, text="Actualizar Análisis", command=self.load_analysis, 
+        tk.Button(button_frame, text="Refresh Analysis", command=self.load_analysis, 
                   bg="#4CAF50", fg="white", padx=10, pady=3).pack(side="left", padx=5)
         
-        tk.Button(button_frame, text="Exportar PDF", command=self.export_to_pdf, 
+        tk.Button(button_frame, text="Export PDF", command=self.export_to_pdf, 
                   bg="#2196F3", fg="white", padx=10, pady=3).pack(side="left", padx=5)
         
-        tk.Button(button_frame, text="Estadísticas Avanzadas", command=self.show_advanced_stats,
+        tk.Button(button_frame, text="Advanced Statistics", command=self.show_advanced_stats,
                   bg="#9C27B0", fg="white", padx=10, pady=3).pack(side="left", padx=5)
 
         # Create main container with two sections
@@ -74,13 +74,13 @@ class AnalisisGananciasApp:
         
         # Status bar
         self.status_var = tk.StringVar()
-        self.status_var.set(f"Usuario: {self.user_data.get('nombre_completo', '')} | Rol: {self.user_data.get('rol', '')} | Listo")
+        self.status_var.set(f"Username: {self.user_data.get('nombre_completo', '')} | Rol: {self.user_data.get('rol', '')} | Ready")
         status_bar = tk.Label(self.root, textvariable=self.status_var, bd=1, relief=tk.SUNKEN, anchor=tk.W)
         status_bar.pack(side=tk.BOTTOM, fill=tk.X)
     
     def create_summary_section(self, parent):
         # Summary frame
-        summary_frame = tk.LabelFrame(parent, text="Resumen General", padx=10, pady=10)
+        summary_frame = tk.LabelFrame(parent, text="General Summary", padx=10, pady=10)
         summary_frame.pack(fill="x", pady=(0, 10))
         
         # Create grid for summary cards
@@ -94,10 +94,10 @@ class AnalisisGananciasApp:
         self.margen_promedio_var = tk.StringVar(value="0%")
         
         # Create summary cards
-        self.create_summary_card(summary_grid, "Ventas Totales", self.total_ventas_var, "#4CAF50", 0, 0)
-        self.create_summary_card(summary_grid, "Costos Totales", self.total_costos_var, "#f44336", 0, 1)
-        self.create_summary_card(summary_grid, "Ganancia Total", self.ganancia_total_var, "#2196F3", 0, 2)
-        self.create_summary_card(summary_grid, "Margen Promedio", self.margen_promedio_var, "#FF5722", 0, 3)
+        self.create_summary_card(summary_grid, "Total sales", self.total_ventas_var, "#4CAF50", 0, 0)
+        self.create_summary_card(summary_grid, "Total costs", self.total_costos_var, "#f44336", 0, 1)
+        self.create_summary_card(summary_grid, "Total profit", self.ganancia_total_var, "#2196F3", 0, 2)
+        self.create_summary_card(summary_grid, "Average margin", self.margen_promedio_var, "#FF5722", 0, 3)
     
     def create_summary_card(self, parent, title, text_var, color, row, col):
         card = tk.Frame(parent, bg=color, relief=tk.RAISED, bd=2)
@@ -110,14 +110,14 @@ class AnalisisGananciasApp:
     
     def create_detail_section(self, parent):
         # Detail frame
-        detail_frame = tk.LabelFrame(parent, text="Detalles por Producto", padx=10, pady=10)
+        detail_frame = tk.LabelFrame(parent, text="Product Details", padx=10, pady=10)
         detail_frame.pack(fill="both", expand=True)
         
         # Search frame
         search_frame = tk.Frame(detail_frame)
         search_frame.pack(fill="x", pady=(0, 10))
         
-        tk.Label(search_frame, text="Buscar producto:").pack(side="left", padx=5)
+        tk.Label(search_frame, text="Search product:").pack(side="left", padx=5)
         self.search_var = tk.StringVar()
         search_entry = tk.Entry(search_frame, textvariable=self.search_var, width=30)
         search_entry.pack(side="left", padx=5)
@@ -127,11 +127,11 @@ class AnalisisGananciasApp:
         filter_frame = tk.Frame(search_frame)
         filter_frame.pack(side="right")
         
-        tk.Button(filter_frame, text="Solo con Ganancia", command=lambda: self.apply_filter("ganancia"),
+        tk.Button(filter_frame, text="Only Profitable", command=lambda: self.apply_filter("ganancia"),
                   bg="#4CAF50", fg="white", padx=10, pady=3).pack(side="left", padx=2)
-        tk.Button(filter_frame, text="Solo con Pérdida", command=lambda: self.apply_filter("perdida"),
+        tk.Button(filter_frame, text="Only Losses", command=lambda: self.apply_filter("perdida"),
                   bg="#f44336", fg="white", padx=10, pady=3).pack(side="left", padx=2)
-        tk.Button(filter_frame, text="Mostrar Todo", command=lambda: self.apply_filter("todos"),
+        tk.Button(filter_frame, text="Show everything", command=lambda: self.apply_filter("todos"),
                   bg="#607D8B", fg="white", padx=10, pady=3).pack(side="left", padx=2)
         
         # Create treeview
@@ -161,17 +161,17 @@ class AnalisisGananciasApp:
         # Configure columns
         column_configs = {
             "id": ("ID", 50),
-            "producto": ("Producto", 150),
-            "unidad": ("Unidad", 70),
-            "vendido": ("Cant. Vendida", 80),
-            "precio_venta": ("Precio Venta", 90),
-            "ingresos": ("Ingresos", 90),
-            "comprado": ("Cant. Comprada", 90),
-            "precio_compra": ("Precio Compra", 90),
-            "costos": ("Costos", 90),
-            "ganancia": ("Ganancia", 90),
-            "margen": ("Margen %", 80),
-            "stock": ("Stock Est.", 80)
+            "producto": ("Product", 150),
+            "unidad": ("Unit", 70),
+            "vendido": ("Qty. Sold", 80),
+            "precio_venta": ("Sale price", 90),
+            "ingresos": ("Revenue", 90),
+            "comprado": ("Qty. Purchased", 90),
+            "precio_compra": ("Purchase price", 90),
+            "costos": ("Costs", 90),
+            "ganancia": ("Profit", 90),
+            "margen": ("Margin %", 80),
+            "stock": ("Stock", 80)
         }
         
         for col, (heading, width) in column_configs.items():
@@ -269,10 +269,10 @@ class AnalisisGananciasApp:
             self.tree.tag_configure('negative', background='#FFEBEE')
             self.tree.tag_configure('neutral', background='#F5F5F5')
             
-            self.status_var.set(f"Análisis actualizado - {len(products)} productos analizados")
+            self.status_var.set(f"Analysis updated - {len(products)} products analyzed")
             
         except Exception as e:
-            messagebox.showerror("Error", f"Error al cargar análisis: {str(e)}")
+            messagebox.showerror("Error", f"Error loading analysis: {str(e)}")
             print(f"Error: {e}")
     
     def filter_products(self, *args):
@@ -359,7 +359,7 @@ class AnalisisGananciasApp:
                 self.cursor = db_cursor
                 self.conn = db_connection
                 self.window = tk.Toplevel(parent)
-                self.window.title("Estadísticas Avanzadas - Disfruleg")
+                self.window.title("Advanced Statistics - Market")
                 self.window.geometry("1300x900")
                 self.window.protocol("WM_DELETE_WINDOW", self.cleanup)
                 
@@ -401,11 +401,11 @@ class AnalisisGananciasApp:
                 
                 # Pestañas principales
                 self.tabs = {
-                    "sales": self.create_tab("Ventas y Pérdidas por Producto"),
-                    "profits": self.create_tab("Ganancias por Producto"),
-                    "temporal": self.create_tab("Tendencias Temporales"),
-                    "clients": self.create_tab("Clientes"),
-                    "groups": self.create_tab("Grupos de Clientes")
+                    "sales": self.create_tab("Sales and Losses by Product"),
+                    "profits": self.create_tab("Profits by Product"),
+                    "temporal": self.create_tab("Temporal Trends"),
+                    "clients": self.create_tab("Clients"),
+                    "groups": self.create_tab("Groups of Clients")
                 }
                 
                 # Barra de estado
@@ -441,7 +441,7 @@ class AnalisisGananciasApp:
                     # Cargar datos en segundo plano para no bloquear la UI
                     self.window.after(100, self.generate_all_charts)
                 except Exception as e:
-                    messagebox.showerror("Error", f"Error al cargar datos: {str(e)}")
+                    messagebox.showerror("Error", f"Error loading data: {str(e)}")
                     self.window.destroy()
                     
             def generate_all_charts(self):
@@ -452,10 +452,10 @@ class AnalisisGananciasApp:
                     self.generate_temporal_chart()
                     self.generate_clients_chart()
                     self.generate_groups_chart()
-                    self.status_var.set("Listo")
+                    self.status_var.set("Ready")
                 except Exception as e:
                     self.status_var.set(f"Error: {str(e)}")
-                    messagebox.showerror("Error", f"No se pudieron generar todos los gráficos: {str(e)}")
+                    messagebox.showerror("Error", f"Could not generate all charts: {str(e)}")
                     
             def generate_sales_chart(self):
                 """Genera gráficos de productos rentables y con pérdidas usando las vistas."""
@@ -493,8 +493,8 @@ class AnalisisGananciasApp:
                         ganancias = [float(p['ganancia_total']) for p in profitable_products]
                         
                         bars = ax1.barh(names, ganancias, color='#A5D6A7')
-                        ax1.set_title('Top 10 Productos Más Rentables', fontsize=14, fontweight='bold')
-                        ax1.set_xlabel('Ganancia ($)', fontsize=12)
+                        ax1.set_title('Top 10 Most Profitable Products', fontsize=14, fontweight='bold')
+                        ax1.set_xlabel('Profit ($)', fontsize=12)
                         
                         # Añadir etiquetas de valor mejoradas
                         max_val = max(abs(g) for g in ganancias) if ganancias else 0
@@ -515,8 +515,8 @@ class AnalisisGananciasApp:
                         perdidas = [abs(float(p['ganancia_total'])) for p in loss_products]
                         
                         bars = ax2.barh(names, perdidas, color='#EF9A9A')
-                        ax2.set_title('Top 10 Productos con Mayor Pérdida', fontsize=14, fontweight='bold')
-                        ax2.set_xlabel('Pérdida ($)', fontsize=12)
+                        ax2.set_title('Top 10 Products with the Highest Losses', fontsize=14, fontweight='bold')
+                        ax2.set_xlabel('Losses ($)', fontsize=12)
                         
                         # Añadir etiquetas de valor mejoradas
                         max_val = max(abs(g) for g in perdidas) if perdidas else 0
@@ -567,9 +567,9 @@ class AnalisisGananciasApp:
                     colors = ['#A5D6A7' if g >= 0 else '#EF9A9A' for g in ganancias]
                     
                     bars = ax.barh(nombres, ganancias, color=colors)
-                    ax.set_title("Ganancia por Producto (Top 15)\nVerde: Ganancia | Rojo: Pérdida", 
+                    ax.set_title("Porfit by Product (Top 15)\nGreen: Profit | Red: Losses", 
                                fontsize=14, fontweight='bold')
-                    ax.set_xlabel("Ganancia Total ($)", fontsize=12)
+                    ax.set_xlabel("Total Proft ($)", fontsize=12)
                     
                     # Añadir etiquetas de valor mejoradas
                     max_val = max(abs(g) for g in ganancias) if ganancias else 0
@@ -608,10 +608,10 @@ class AnalisisGananciasApp:
                     control_frame.pack(fill="x", padx=10, pady=5)
                     
                     # Primera fila de controles
-                    ttk.Label(control_frame, text="Agrupar por:").grid(row=0, column=0, padx=5, sticky="w")
+                    ttk.Label(control_frame, text="Group by:").grid(row=0, column=0, padx=5, sticky="w")
                     
                     self.time_var = tk.StringVar(value="Mes")
-                    time_options = ["Día", "Semana", "Mes", "Trimestre", "Año"]
+                    time_options = ["Day", "Week", "Month", "Quarter", "Year"]
                     
                     time_combo = ttk.Combobox(
                         control_frame,
@@ -622,10 +622,10 @@ class AnalisisGananciasApp:
                     )
                     time_combo.grid(row=0, column=1, padx=5)
                     
-                    ttk.Label(control_frame, text="Tipo de análisis:").grid(row=0, column=2, padx=5, sticky="w")
+                    ttk.Label(control_frame, text="Analysis type:").grid(row=0, column=2, padx=5, sticky="w")
                     
                     self.analysis_type_var = tk.StringVar(value="General")
-                    analysis_options = ["General", "Por Producto", "Por Grupo de Clientes"]
+                    analysis_options = ["General", "By Producto", "By Group of Clients"]
                     
                     analysis_combo = ttk.Combobox(
                         control_frame,
@@ -637,13 +637,13 @@ class AnalisisGananciasApp:
                     analysis_combo.grid(row=0, column=3, padx=5)
                     
                     # Botón para actualizar
-                    ttk.Button(control_frame, text="Actualizar", command=self.update_temporal_chart).grid(row=0, column=4, padx=10)
+                    ttk.Button(control_frame, text="Refresh", command=self.update_temporal_chart).grid(row=0, column=4, padx=10)
                     
                     # Segunda fila - Navegación histórica
                     nav_frame = ttk.Frame(control_frame)
                     nav_frame.grid(row=1, column=0, columnspan=5, pady=10, sticky="ew")
                     
-                    ttk.Label(nav_frame, text="Navegación:").pack(side="left", padx=5)
+                    ttk.Label(nav_frame, text="Navigation:").pack(side="left", padx=5)
                     
                     self.prev_button = ttk.Button(nav_frame, text="← Anterior", command=self.navigate_previous)
                     self.prev_button.pack(side="left", padx=5)
@@ -747,20 +747,20 @@ class AnalisisGananciasApp:
                     end_idx = min(start_idx + 5, len(self.available_periods))
                     current_periods = self.available_periods[start_idx:end_idx]
                     
-                    # Actualizar etiqueta de navegación
+                    # Refresh etiqueta de navegación
                     if current_periods:
                         period_range = f"{current_periods[-1]} - {current_periods[0]}"
                         self.period_label.config(text=f"Mostrando: {period_range}")
                     
-                    # Actualizar botones de navegación
+                    # Refresh botones de navegación
                     self.prev_button.config(state="normal" if self.current_period_index > 0 else "disabled")
                     self.next_button.config(state="normal" if end_idx < len(self.available_periods) else "disabled")
                     
                     if analysis_type == "General":
                         self.generate_general_temporal_chart(selected_period, current_periods)
-                    elif analysis_type == "Por Producto":
+                    elif analysis_type == "By Producto":
                         self.generate_product_temporal_chart(selected_period, current_periods)
-                    elif analysis_type == "Por Grupo de Clientes":
+                    elif analysis_type == "By Group of Clients":
                         self.generate_group_temporal_chart(selected_period, current_periods)
                         
                 except Exception as e:
@@ -818,7 +818,7 @@ class AnalisisGananciasApp:
                     width = 0.35
                     
                     # Barras para ventas (positivas) y compras (negativas)
-                    bars_ventas = ax.bar(x - width/2, ventas, width, label='Ingresos', color='#A5D6A7', alpha=0.8)
+                    bars_ventas = ax.bar(x - width/2, ventas, width, label='Revenue', color='#A5D6A7', alpha=0.8)
                     bars_compras = ax.bar(x + width/2, [-c for c in compras], width, label='Compras', color='#EF9A9A', alpha=0.8)
                     
                     # Línea de ganancia neta
@@ -841,8 +841,8 @@ class AnalisisGananciasApp:
                                color='#2196F3')
                     
                     ax.set_xlabel(f'{period_type}', fontsize=12)
-                    ax.set_ylabel('Monto ($)', fontsize=12)
-                    ax.set_title(f'Análisis General por {period_type}\nVerde: Ingresos | Rojo: Compras | Azul: Ganancia Neta', 
+                    ax.set_ylabel('Amount ($)', fontsize=12)
+                    ax.set_title(f'General Analysis by {period_type}\nGreen: Revenue | Red: Compras | Azul: Ganancia Neta', 
                                fontsize=14, fontweight='bold')
                     ax.set_xticks(x)
                     ax.set_xticklabels(periods_data, rotation=45 if len(periods_data) > 5 else 0)
@@ -952,8 +952,8 @@ class AnalisisGananciasApp:
                                     f'${value:,.0f}', ha='center', va='bottom', fontsize=8, rotation=90)
                     
                     ax.set_xlabel(f'{period_type}', fontsize=12)
-                    ax.set_ylabel('Ingresos ($)', fontsize=12)
-                    ax.set_title(f'Top 5 Productos por {period_type} - Ingresos', 
+                    ax.set_ylabel('Revenue ($)', fontsize=12)
+                    ax.set_title(f'Top 5 Products by {period_type} - Revenue', 
                             fontsize=14, fontweight='bold')
                     ax.set_xticks(x + width * 2)
                     ax.set_xticklabels(periods_sorted, rotation=45 if len(periods_sorted) > 3 else 0)
@@ -1050,8 +1050,8 @@ class AnalisisGananciasApp:
                                     ha='center', va='bottom', fontsize=8, fontweight='bold')
                     
                     ax.set_xlabel(f'{period_type}', fontsize=12)
-                    ax.set_ylabel('Ventas ($)', fontsize=12)
-                    ax.set_title(f'Ventas por Grupo de Clientes - {period_type}\nBarras separadas por grupo', 
+                    ax.set_ylabel('Profits ($)', fontsize=12)
+                    ax.set_title(f'Sales by Customer Group. - {period_type}\nBars separated by group', 
                             fontsize=14, fontweight='bold')
                     ax.set_xticks(x)
                     ax.set_xticklabels(periods_sorted, rotation=45 if len(periods_sorted) > 3 else 0)
@@ -1104,7 +1104,7 @@ class AnalisisGananciasApp:
                     label_frame = ttk.Frame(self.client_control_frame)
                     label_frame.pack(side="left")
                     
-                    ttk.Label(label_frame, text="Seleccionar clientes:").pack(side="top")
+                    ttk.Label(label_frame, text="Select clients:").pack(side="top")
                     
                     combo_frame = ttk.Frame(self.client_control_frame)
                     combo_frame.pack(side="left", padx=10)
@@ -1126,7 +1126,7 @@ class AnalisisGananciasApp:
                     button_frame = ttk.Frame(self.client_control_frame)
                     button_frame.pack(side="left", padx=10)
                     
-                    ttk.Button(button_frame, text="Top 5 Clientes", 
+                    ttk.Button(button_frame, text="Top 5 Clients", 
                             command=self.load_top_clients).pack(side="left", padx=2)
                     ttk.Button(button_frame, text="Limpiar Todo", 
                             command=self.clear_all_clients).pack(side="left", padx=2)
@@ -1174,7 +1174,7 @@ class AnalisisGananciasApp:
                     
                     # NO limpiar elementos None del final - mantener posiciones
                     
-                    # Actualizar combos y gráfico
+                    # Refresh combos y gráfico
                     self.refresh_client_combos()
                     self.update_clients_chart()
                     
@@ -1190,12 +1190,12 @@ class AnalisisGananciasApp:
                         if client:
                             selected_ids.add(client['id_cliente'])
                     
-                    # Actualizar cada combo manteniendo las selecciones actuales
+                    # Refresh cada combo manteniendo las selecciones actuales
                     for i, combo in enumerate(self.client_combos):
                         current_selection = self.client_vars[i].get()
                         options = ["Ninguno"]
                         
-                        # Agregar clientes disponibles
+                        # Add clients disponibles
                         for client in self.all_clients:
                             # Incluir cliente si:
                             # 1. No está seleccionado en ningún otro combo, O
@@ -1211,7 +1211,7 @@ class AnalisisGananciasApp:
                                 client_text = f"{client['nombre_cliente']} ({client['clave_grupo']})"
                                 options.append(client_text)
                         
-                        # Actualizar opciones
+                        # Refresh opciones
                         combo['values'] = options
                         
                         # Mantener selección actual si es válida, sino limpiar
@@ -1260,7 +1260,7 @@ class AnalisisGananciasApp:
                     self.update_clients_chart()
                     
                 except Exception as e:
-                    print(f"Error cargando top clientes: {e}")
+                    print(f"Error loading top customers: {e}")
 
             def clear_all_clients(self):
                 """Limpia todas las selecciones de clientes."""
@@ -1290,7 +1290,7 @@ class AnalisisGananciasApp:
                     if not clients_to_show:
                         label = ttk.Label(
                             self.tabs["clients"]["graph_frame"],
-                            text="Seleccione al menos un cliente para mostrar el gráfico",
+                            text="Select at least one client to show the chart",
                             font=('Arial', 12, 'italic'),
                             foreground='gray'
                         )
@@ -1322,7 +1322,7 @@ class AnalisisGananciasApp:
                     if not raw_data:
                         label = ttk.Label(
                             self.tabs["clients"]["graph_frame"],
-                            text="No hay datos de ventas para los clientes seleccionados",
+                            text="No sales data available for the selected customers",
                             font=('Arial', 12, 'italic'),
                             foreground='orange'
                         )
@@ -1370,9 +1370,9 @@ class AnalisisGananciasApp:
                             ha='center', va='center', fontsize=8,
                             bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8))
                     
-                    ax.set_title('Ventas por Cliente Seleccionado\n(Posiciones mantenidas por combo)', 
+                    ax.set_title('Sales by Selected Customer\n(Positions retained by combo)', 
                             fontsize=14, fontweight='bold')
-                    ax.set_ylabel('Total Vendido ($)', fontsize=12)
+                    ax.set_ylabel('Total sold ($)', fontsize=12)
                     ax.grid(axis='y', alpha=0.3)
                     
                     # Formato
@@ -1385,7 +1385,7 @@ class AnalisisGananciasApp:
                     self.embed_plot(fig, self.tabs["clients"]["graph_frame"])
                     
                 except Exception as e:
-                    print(f"Error actualizando gráfico clientes: {e}")
+                    print(f"Error updating customer chart: {e}")
                     self.show_error_message(self.tabs["clients"]["graph_frame"], str(e))
                     
             def update_combo_options(self):
@@ -1402,14 +1402,14 @@ class AnalisisGananciasApp:
                         if i > 0:
                             available_options.append("Ninguno")
                         
-                        # Agregar clientes no seleccionados
+                        # Add clients no seleccionados
                         for cliente in self.all_clients:
                             if cliente['id_cliente'] not in selected_ids or (i < len(self.selected_clients) and 
                                 self.selected_clients[i] and cliente['id_cliente'] == self.selected_clients[i]['id_cliente']):
                                 cliente_text = f"{cliente['nombre_cliente']} ({cliente['clave_grupo']})"
                                 available_options.append(cliente_text)
                         
-                        # Actualizar opciones del combo
+                        # Refresh opciones del combo
                         combo['values'] = available_options
                         
                         # Mantener selección actual si es válida
@@ -1418,7 +1418,7 @@ class AnalisisGananciasApp:
                             self.client_vars[i].set("Ninguno" if i > 0 else available_options[0] if available_options else "")
                             
                 except Exception as e:
-                    print(f"Error actualizando opciones: {e}")
+                    print(f"Error updating options: {e}")
 
             def update_client_selection(self, idx):
                 """Actualiza la selección de clientes cuando se cambia un combobox."""
@@ -1450,14 +1450,14 @@ class AnalisisGananciasApp:
                     while self.selected_clients and self.selected_clients[-1] is None:
                         self.selected_clients.pop()
                     
-                    # Actualizar opciones de combobox
+                    # Refresh opciones de combobox
                     self.update_combo_options()
                     
-                    # Actualizar el gráfico automáticamente
+                    # Refresh el gráfico automáticamente
                     self.update_clients_chart()
                     
                 except Exception as e:
-                    print(f"Error en update_client_selection: {e}")
+                    print(f"Error in update_client_selection: {e}")
 
             def generate_groups_chart(self):
                 """Genera gráfico simplificado de ventas por grupo de clientes."""
@@ -1517,9 +1517,9 @@ class AnalisisGananciasApp:
                                ha='center', va='center', fontsize=9, 
                                bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8))
                     
-                    ax.set_title("Ventas Totales por Grupo de Clientes\nMonto total por grupo (simplificado)", 
+                    ax.set_title("Total Sales by Customer Group\nTotal amount per group (simplified)", 
                                fontsize=14, fontweight='bold')
-                    ax.set_ylabel("Ventas Totales ($)", fontsize=12)
+                    ax.set_ylabel("Total sales ($)", fontsize=12)
                     ax.grid(axis='y', alpha=0.3)
                     
                     # Formatear eje Y
@@ -1556,7 +1556,7 @@ class AnalisisGananciasApp:
                     self.current_figure = (fig, canvas, toolbar)
                     
                 except Exception as e:
-                    self.show_error_message(container, f"Error al mostrar gráfico: {str(e)}")
+                    self.show_error_message(container, f"Error displaying chart: {str(e)}")
                     
             def show_no_data_message(self, container):
                 """Muestra mensaje cuando no hay datos disponibles."""
@@ -1565,7 +1565,7 @@ class AnalisisGananciasApp:
                     
                 label = ttk.Label(
                     container,
-                    text="No hay datos disponibles para esta visualización",
+                    text="No data available for this visualization",
                     font=('Arial', 10, 'italic'),
                     foreground='gray'
                 )
@@ -1593,7 +1593,7 @@ class AnalisisGananciasApp:
                     
                     self.window.destroy()
                 except Exception as e:
-                    print(f"Error durante cleanup: {e}")
+                    print(f"Error while cleanup: {e}")
                     self.window.destroy()
         
         # Crear e iniciar la ventana de estadísticas
@@ -1603,7 +1603,7 @@ class AnalisisGananciasApp:
         """Exporta las estadísticas del día a un archivo PDF usando las nuevas vistas."""
         try:
             # Crear la carpeta reportes si no existe
-            reportes_dir = "reportes"
+            reportes_dir = "reports"
             if not os.path.exists(reportes_dir):
                 os.makedirs(reportes_dir)
 
@@ -1611,7 +1611,7 @@ class AnalisisGananciasApp:
             fecha_actual = datetime.now().strftime("%Y-%m-%d")
             
             # Crear el nombre del archivo PDF
-            filename = os.path.join(reportes_dir, f"Reporte_Diario_{fecha_actual}.pdf")
+            filename = os.path.join(reportes_dir, f"Daily_report_{fecha_actual}.pdf")
             
             # Crear el documento PDF
             doc = SimpleDocTemplate(filename, pagesize=letter)
@@ -1619,7 +1619,7 @@ class AnalisisGananciasApp:
             story = []
             
             # Título del reporte
-            title = Paragraph(f"Reporte Diario - {fecha_actual}", styles['Title'])
+            title = Paragraph(f"Daily Report - {fecha_actual}", styles['Title'])
             story.append(title)
             story.append(Spacer(1, 12))
             
@@ -1664,11 +1664,11 @@ class AnalisisGananciasApp:
             ganancia_neta = total_ventas - total_compras
             
             # Sección de Ventas
-            story.append(Paragraph("Ventas del Día (con descuentos aplicados)", styles['Heading2']))
+            story.append(Paragraph("Today's Sales (with discounts applied)", styles['Heading2']))
             
             if ventas:
                 # Preparar datos para la tabla de ventas
-                ventas_data = [["Producto", "Cantidad", "Unidad", "Precio/U", "Descuento", "Subtotal", "Cliente", "Grupo"]]
+                ventas_data = [["Product", "Quantity", "Unit", "Price/U", "Discount", "Subtotal", "Client", "Group"]]
                 for v in ventas:
                     ventas_data.append([
                         v['nombre_producto'],
@@ -1697,18 +1697,18 @@ class AnalisisGananciasApp:
                 story.append(Spacer(1, 12))
                 
                 # Total ventas
-                story.append(Paragraph(f"Total Ventas (con descuentos): ${total_ventas:.2f}", styles['Heading3']))
+                story.append(Paragraph(f"Total sales (with discounts): ${total_ventas:.2f}", styles['Heading3']))
                 story.append(Spacer(1, 12))
             else:
-                story.append(Paragraph("No hubo ventas hoy.", styles['Normal']))
+                story.append(Paragraph("No sales today.", styles['Normal']))
                 story.append(Spacer(1, 12))
             
             # Sección de Compras
-            story.append(Paragraph("Compras del Día", styles['Heading2']))
+            story.append(Paragraph("Today's Purchases", styles['Heading2']))
             
             if compras:
                 # Preparar datos para la tabla de compras
-                compras_data = [["Producto", "Cantidad", "Unidad", "Precio/U", "Subtotal"]]
+                compras_data = [["Product", "Quantity", "Unit", "Price/U", "Subtotal"]]
                 for c in compras:
                     compras_data.append([
                         c['nombre_producto'],
@@ -1734,26 +1734,26 @@ class AnalisisGananciasApp:
                 story.append(Spacer(1, 12))
                 
                 # Total compras
-                story.append(Paragraph(f"Total Compras: ${total_compras:.2f}", styles['Heading3']))
+                story.append(Paragraph(f"Total sales: ${total_compras:.2f}", styles['Heading3']))
                 story.append(Spacer(1, 12))
             else:
-                story.append(Paragraph("No hubo compras hoy.", styles['Normal']))
+                story.append(Paragraph("No sales today.", styles['Normal']))
                 story.append(Spacer(1, 12))
             
             # Sección de Ganancias Netas
-            story.append(Paragraph("Resumen Financiero", styles['Heading2']))
-            story.append(Paragraph(f"Total Ventas (con descuentos): ${total_ventas:.2f}", styles['Normal']))
-            story.append(Paragraph(f"Total Compras: ${total_compras:.2f}", styles['Normal']))
+            story.append(Paragraph("Financial Summary", styles['Heading2']))
+            story.append(Paragraph(f"Total sales (with discounts): ${total_ventas:.2f}", styles['Normal']))
+            story.append(Paragraph(f"Total purchases: ${total_compras:.2f}", styles['Normal']))
             
             ganancia_style = styles['Heading3'] if ganancia_neta >= 0 else styles['Normal']
-            story.append(Paragraph(f"Ganancia Neta: ${ganancia_neta:.2f}", ganancia_style))
+            story.append(Paragraph(f"Net Profit: ${ganancia_neta:.2f}", ganancia_style))
             
             # Generar el PDF
             doc.build(story)
-            messagebox.showinfo("Éxito", f"Reporte generado exitosamente en: {filename}")
+            messagebox.showinfo("Success", f"Report generated successfully at: {filename}")
             
         except Exception as e:
-            messagebox.showerror("Error", f"No se pudo generar el PDF:\n{str(e)}")
+            messagebox.showerror("Error", f"Could not generate PDF:\n{str(e)}")
             
     def on_closing(self):
         """Clean up and close connection when closing the app"""
