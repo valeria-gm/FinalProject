@@ -810,7 +810,7 @@ class ClientManagerApp:
                 tipo_info = f" - {group['nombre_tipo']} ({group['descuento']}%)" if group['nombre_tipo'] else " - No type assigned"
                 group_listbox.insert(tk.END, f"{group['clave_grupo']}{tipo_info}")
                 
-            self.status_var.set(f"Grupo '{group_name}' added successfully")
+            self.status_var.set(f"Group '{group_name}' added successfully")
                 
         except Exception as e:
             self.conn.rollback()

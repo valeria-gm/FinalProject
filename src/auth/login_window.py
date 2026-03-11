@@ -282,7 +282,7 @@ class LoginWindow:
             return
             
         if not password:
-            self.show_error("Please, ingrese su contraseña")
+            self.show_error("Please, enter your password")
             self.password_entry.focus_set()
             return
         

@@ -232,7 +232,7 @@ class ReciboAppMejorado:
         # Información sobre secciones
         info_label = ttk.Label(
             frame_superior, 
-            text="💡 Tip: Active 'Enable Sections' to organize products by category",
+            text="💡 Tip: Activate 'Enable Sections' to organize products by category",
             font=("Arial", 9),
             foreground="gray"
         )

@@ -347,7 +347,7 @@ class UserManagerApp:
             return
         
         try:
-            new_active = current_status != "Activo"
+            new_active = current_status != "Active"
             self.cursor.execute("""
                 UPDATE usuarios_sistema 
                 SET activo = %s 
