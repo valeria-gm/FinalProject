@@ -58,7 +58,7 @@ class ComprasApp:
         
         # Barra de estado
         self.status_var = tk.StringVar()
-        self.status_var.set(f"Username: {self.user_data['nombre_completo']} | Rol: {self.user_data['rol']}")
+        self.status_var.set(f"Username: {self.user_data['nombre_completo']} | Role: {self.user_data['rol']}")
         status_bar = tk.Label(self.root, textvariable=self.status_var, bd=1, relief=tk.SUNKEN, anchor=tk.W)
         status_bar.pack(side=tk.BOTTOM, fill=tk.X)
     
@@ -80,7 +80,7 @@ class ComprasApp:
         self.producto_combo.pack(side="left", padx=5)
         
         # Fecha
-        tk.Label(row1, text="Fecha:", anchor="w").pack(side="left", padx=(20, 5))
+        tk.Label(row1, text="Date:", anchor="w").pack(side="left", padx=(20, 5))
         self.fecha_entry = tk.Entry(row1, textvariable=self.fecha_var, width=12)
         self.fecha_entry.pack(side="left", padx=5)
         
@@ -164,7 +164,7 @@ class ComprasApp:
         self.compras_tree.heading("fecha", text="Date")
         self.compras_tree.heading("producto", text="Product")
         self.compras_tree.heading("cantidad", text="Quantity")
-        self.compras_tree.heading("precio", text="Precio Unit.")
+        self.compras_tree.heading("precio", text="Unitary price")
         self.compras_tree.heading("total", text="Total")
         
         self.compras_tree.column("id", width=50)
@@ -239,7 +239,7 @@ class ComprasApp:
                 result['success'] = True
                 popup.destroy()
             else:
-                messagebox.showerror("Error", auth_result.get('message', 'Credenciales inválidas'))
+                messagebox.showerror("Error", auth_result.get('message', 'Invalid credentials'))
                 password_var.set("")
         
         # Botones

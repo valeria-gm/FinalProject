@@ -16,7 +16,7 @@ def hash_password(password):
 def main():
     """Generar hashes para las contraseñas existentes"""
     passwords = {
-        'valeria': 'proYect0.593'
+        'market_user': 'm4rK3t!!!'
     }
     
     print("Generando hashes de contraseñas...")

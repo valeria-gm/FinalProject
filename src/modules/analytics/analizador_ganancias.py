@@ -74,7 +74,7 @@ class AnalisisGananciasApp:
         
         # Status bar
         self.status_var = tk.StringVar()
-        self.status_var.set(f"Username: {self.user_data.get('nombre_completo', '')} | Rol: {self.user_data.get('rol', '')} | Ready")
+        self.status_var.set(f"Username: {self.user_data.get('nombre_completo', '')} | Role: {self.user_data.get('rol', '')} | Ready")
         status_bar = tk.Label(self.root, textvariable=self.status_var, bd=1, relief=tk.SUNKEN, anchor=tk.W)
         status_bar.pack(side=tk.BOTTOM, fill=tk.X)
     
@@ -610,7 +610,7 @@ class AnalisisGananciasApp:
                     # Primera fila de controles
                     ttk.Label(control_frame, text="Group by:").grid(row=0, column=0, padx=5, sticky="w")
                     
-                    self.time_var = tk.StringVar(value="Mes")
+                    self.time_var = tk.StringVar(value="Month")
                     time_options = ["Day", "Week", "Month", "Quarter", "Year"]
                     
                     time_combo = ttk.Combobox(
@@ -645,13 +645,13 @@ class AnalisisGananciasApp:
                     
                     ttk.Label(nav_frame, text="Navigation:").pack(side="left", padx=5)
                     
-                    self.prev_button = ttk.Button(nav_frame, text="← Anterior", command=self.navigate_previous)
+                    self.prev_button = ttk.Button(nav_frame, text="← Previous", command=self.navigate_previous)
                     self.prev_button.pack(side="left", padx=5)
                     
                     self.period_label = ttk.Label(nav_frame, text="", background="white", relief="sunken", width=30)
                     self.period_label.pack(side="left", padx=5)
                     
-                    self.next_button = ttk.Button(nav_frame, text="Siguiente →", command=self.navigate_next)
+                    self.next_button = ttk.Button(nav_frame, text="Next →", command=self.navigate_next)
                     self.next_button.pack(side="left", padx=5)
 
                     # Frame del gráfico

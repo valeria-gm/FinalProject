@@ -396,7 +396,7 @@ class ReciboAppMejorado:
         ttk.Label(frame_acciones, text="Total:", style="Total.TLabel").pack(side="right", padx=(20, 5))
         
         # Contador de productos
-        widgets['lbl_contador'] = ttk.Label(frame_acciones, text="0 productos")
+        widgets['lbl_contador'] = ttk.Label(frame_acciones, text="0 products")
         widgets['lbl_contador'].pack(side="left")
         
         # Frame de botones finales

@@ -50,7 +50,7 @@ class PriceEditorApp:
         
         # User info
         if self.user_data:
-            user_info = f"Username: {self.user_data.get('nombre_completo', '')} | Rol: {self.user_data.get('rol', '')}"
+            user_info = f"Username: {self.user_data.get('nombre_completo', '')} | Role: {self.user_data.get('rol', '')}"
             tk.Label(title_frame, 
                     text=user_info, 
                     font=("Arial", 10),
@@ -226,8 +226,8 @@ class PriceEditorApp:
             "id": ("ID", 50, "center"),
             "nombre": ("Product", 280, "w"),
             "unidad": ("Unit", 80, "center"),
-            "precio_base": ("Precio Base", 120, "e"),
-            "clientes_afectados": ("Clientes Afectados", 150, "center"),
+            "precio_base": ("Base Price", 120, "e"),
+            "clientes_afectados": ("Affected Clients", 150, "center"),
             "stock": ("Stock", 80, "e"),
             "especial": ("Special", 80, "center")
         }
@@ -317,7 +317,7 @@ class PriceEditorApp:
         result = self.cursor.fetchone()
         
         if result:
-            type_info = f"Tipo: {result['nombre_tipo']} (Descuento: {result['descuento']}%) - {result['num_clientes']} clientes"
+            type_info = f"Type: {result['nombre_tipo']} (Discount: {result['descuento']}%) - {result['num_clientes']} clientes"
             self.client_type_info_label.config(text=type_info, fg="blue")
         else:
             self.client_type_info_label.config(text="(Group without assigned client type)", fg="red")
@@ -546,7 +546,7 @@ class PriceEditorApp:
         
         # Verificar permisos para productos especiales
         if is_special and not self.es_admin:
-            if not self.verify_admin_password("crear producto especial"):
+            if not self.verify_admin_password("Create special product"):
                 return
         
         try:
@@ -588,7 +588,7 @@ class PriceEditorApp:
         
         # Verificar permisos para productos especiales
         if is_special and not self.es_admin:
-            if not self.verify_admin_password(f"editar {product_name}"):
+            if not self.verify_admin_password(f"edit {product_name}"):
                 return
         
         popup = tk.Toplevel(self.root)

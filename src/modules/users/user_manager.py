@@ -4,6 +4,7 @@ from tkinter import messagebox, ttk
 import mysql.connector
 from datetime import datetime
 import re
+from typing import Any, List
 from src.auth.auth_manager import AuthManager
 from src.auth.session_manager import session_manager
 from src.database.conexion import conectar
@@ -11,7 +12,7 @@ from src.database.conexion import conectar
 class UserManagerApp:
     def __init__(self, root, user_data=None):
         self.root = root
-        self.root.title("Administrador de Usuarios - Disfruleg")
+        self.root.title("User Manager - Market")
         self.root.geometry("900x700")
         self.root.configure(bg="#f5f5f5")
         
@@ -24,10 +25,10 @@ class UserManagerApp:
         
         # Connect to database
         try:
-            self.conn = conectar()
-            self.cursor = self.conn.cursor(dictionary=True)
+            self.conn: Any = conectar()
+            self.cursor: Any = self.conn.cursor(dictionary=True)
         except Exception as e:
-            messagebox.showerror("Error de Conexión", f"No se pudo conectar a la base de datos: {e}")
+            messagebox.showerror("Connection Error", f"Could not connect to the database: {e}")
             self.root.destroy()
             return
         
@@ -37,7 +38,7 @@ class UserManagerApp:
         
         # Check admin permissions
         if not self.current_user_is_admin:
-            messagebox.showerror("Acceso Denegado", "Este módulo requiere permisos de administrador.")
+            messagebox.showerror("Access Denied", "This module requires administrator permissions.")
             self.root.destroy()
             return
         
@@ -56,7 +57,7 @@ class UserManagerApp:
         title_frame.pack_propagate(False)
         
         tk.Label(title_frame, 
-                text="ADMINISTRADOR DE USUARIOS", 
+                text="USER MANAGER", 
                 font=("Arial", 18, "bold"),
                 fg="white", 
                 bg="#2C3E50").pack(expand=True)
@@ -66,7 +67,7 @@ class UserManagerApp:
         info_frame.pack(fill="x")
         info_frame.pack_propagate(False)
         
-        user_info = f"Usuario: {self.user_data.get('nombre_completo', '')} | Rol: {self.user_data.get('rol', '').upper()}"
+        user_info = f"User: {self.user_data.get('nombre_completo', '')} | Role: {self.user_data.get('rol', '').upper()}"
         tk.Label(info_frame, 
                 text=user_info,
                 font=("Arial", 10),
@@ -92,7 +93,7 @@ class UserManagerApp:
         search_frame.pack(fill="x", pady=(0, 20))
         
         tk.Label(search_frame, 
-                text="Buscar Usuario:", 
+                text="Search User:", 
                 font=("Arial", 12, "bold"),
                 bg="#f5f5f5").pack(side="left")
         
@@ -104,7 +105,7 @@ class UserManagerApp:
         
         # Refresh button
         tk.Button(search_frame,
-                 text="🔄 Actualizar",
+                 text="🔄 Refresh",
                  command=self.load_users,
                  font=("Arial", 10),
                  bg="#3498DB",
@@ -124,7 +125,7 @@ class UserManagerApp:
         h_scrollbar.pack(side="bottom", fill="x")
         
         # Treeview for users
-        columns = ("ID", "Usuario", "Nombre Completo", "Rol", "Estado", "Último Acceso", "Intentos Fallidos")
+        columns = ("ID", "Username", "Full Name", "Role", "Status", "Last Access", "Failed Attempts")
         self.users_tree = ttk.Treeview(table_frame,
                                       columns=columns,
                                       show="headings",
@@ -132,8 +133,8 @@ class UserManagerApp:
                                       xscrollcommand=h_scrollbar.set)
         
         # Configure columns
-        column_widths = {"ID": 50, "Usuario": 120, "Nombre Completo": 200, "Rol": 80, 
-                        "Estado": 80, "Último Acceso": 150, "Intentos Fallidos": 120}
+        column_widths = {"ID": 50, "Username": 120, "Full Name": 200, "Role": 80, 
+                        "Status": 80, "Last Access": 150, "Failed Attempts": 120}
         
         for col in columns:
             self.users_tree.heading(col, text=col)
@@ -164,7 +165,7 @@ class UserManagerApp:
         
         # Create User button
         tk.Button(button_frame,
-                 text="👤 Crear Usuario",
+                 text="👤 Create User",
                  command=self.create_new_user,
                  bg="#27AE60",
                  fg="white",
@@ -172,7 +173,7 @@ class UserManagerApp:
         
         # Edit User button
         tk.Button(button_frame,
-                 text="✏️ Editar Usuario",
+                 text="✏️ Edit User",
                  command=self.edit_selected_user,
                  bg="#3498DB",
                  fg="white",
@@ -180,7 +181,7 @@ class UserManagerApp:
         
         # Toggle Status button
         tk.Button(button_frame,
-                 text="🔄 Cambiar Estado",
+                 text="🔄 Toggle Status",
                  command=self.toggle_user_status,
                  bg="#F39C12",
                  fg="white",
@@ -188,7 +189,7 @@ class UserManagerApp:
         
         # Reset Failed Attempts button
         tk.Button(button_frame,
-                 text="🔓 Resetear Bloqueo",
+                 text="🔓 Reset Lock",
                  command=self.reset_failed_attempts,
                  bg="#9B59B6",
                  fg="white",
@@ -196,7 +197,7 @@ class UserManagerApp:
         
         # Delete User button
         tk.Button(button_frame,
-                 text="🗑️ Eliminar Usuario",
+                 text="🗑️ Delete User",
                  command=self.delete_user,
                  bg="#E74C3C",
                  fg="white",
@@ -217,18 +218,18 @@ class UserManagerApp:
                 ORDER BY username
             """)
             
-            users = self.cursor.fetchall()
+            users: List[Any] = self.cursor.fetchall()
             
             for user in users:
                 # Format last access
-                ultimo_acceso = "Nunca"
+                ultimo_acceso = "Never"
                 if user['ultimo_acceso']:
                     ultimo_acceso = user['ultimo_acceso'].strftime("%Y-%m-%d %H:%M")
                 
                 # Determine status
-                estado = "Activo" if user['activo'] else "Inactivo"
+                estado = "Active" if user['activo'] else "Inactive"
                 if user['bloqueado_hasta'] and user['bloqueado_hasta'] > datetime.now():
-                    estado = "Bloqueado"
+                    estado = "Blocked"
                 
                 # Insert into tree
                 self.users_tree.insert("", "end", values=(
@@ -242,7 +243,7 @@ class UserManagerApp:
                 ))
             
         except Exception as e:
-            messagebox.showerror("Error", f"Error al cargar usuarios: {e}")
+            messagebox.showerror("Error", f"Error loading users: {e}")
     
     def filter_users(self, *args):
         """Filter users based on search text"""
@@ -267,18 +268,18 @@ class UserManagerApp:
                 ORDER BY username
             """, (f"%{search_text}%", f"%{search_text}%"))
             
-            users = self.cursor.fetchall()
+            users: List[Any] = self.cursor.fetchall()
             
             for user in users:
                 # Format last access
-                ultimo_acceso = "Nunca"
+                ultimo_acceso = "Never"
                 if user['ultimo_acceso']:
                     ultimo_acceso = user['ultimo_acceso'].strftime("%Y-%m-%d %H:%M")
                 
                 # Determine status
-                estado = "Activo" if user['activo'] else "Inactivo"
+                estado = "Active" if user['activo'] else "Inactive"
                 if user['bloqueado_hasta'] and user['bloqueado_hasta'] > datetime.now():
-                    estado = "Bloqueado"
+                    estado = "Blocked"
                 
                 # Insert into tree
                 self.users_tree.insert("", "end", values=(
@@ -292,11 +293,11 @@ class UserManagerApp:
                 ))
         
         except Exception as e:
-            messagebox.showerror("Error", f"Error al filtrar usuarios: {e}")
+            messagebox.showerror("Error", f"Error filtering users: {e}")
     
     def create_new_user(self):
         """Create a new user"""
-        dialog = UserDialog(self.root, "Crear Nuevo Usuario", self.auth_manager)
+        dialog = UserDialog(self.root, "Create New User", self.auth_manager)
         if dialog.result:
             self.load_users()
     
@@ -304,45 +305,45 @@ class UserManagerApp:
         """Edit the selected user"""
         selection = self.users_tree.selection()
         if not selection:
-            messagebox.showwarning("Selección", "Por favor, seleccione un usuario para editar.")
+            messagebox.showwarning("Selection", "Please select a user to edit.")
             return
         
         item = self.users_tree.item(selection[0])
-        user_id = item['values'][0]
+        user_id = int(item['values'][0])
         
         # Get current user data
         try:
             user_info = self.auth_manager.get_user_info_by_id(user_id)
             if user_info:
-                dialog = UserDialog(self.root, "Editar Usuario", self.auth_manager, user_info)
+                dialog = UserDialog(self.root, "Edit User", self.auth_manager, user_info)
                 if dialog.result:
                     self.load_users()
             else:
-                messagebox.showerror("Error", "No se pudo cargar la información del usuario.")
+                messagebox.showerror("Error", "Could not load user information.")
         except Exception as e:
-            messagebox.showerror("Error", f"Error al cargar usuario: {e}")
+            messagebox.showerror("Error", f"Error loading user: {e}")
     
     def toggle_user_status(self):
         """Toggle user active/inactive status"""
         selection = self.users_tree.selection()
         if not selection:
-            messagebox.showwarning("Selección", "Por favor, seleccione un usuario.")
+            messagebox.showwarning("Selection", "Please select a user.")
             return
         
         item = self.users_tree.item(selection[0])
-        user_id = item['values'][0]
+        user_id = int(item['values'][0])
         username = item['values'][1]
         current_status = item['values'][4]
         
         # Prevent self-deactivation
         if username == self.user_data.get('username', ''):
-            messagebox.showwarning("Advertencia", "No puede desactivar su propia cuenta.")
+            messagebox.showwarning("Warning", "You cannot deactivate your own account.")
             return
         
         # Confirm action
-        new_status = "inactivo" if current_status == "Activo" else "activo"
-        if not messagebox.askyesno("Confirmar", 
-                                  f"¿Está seguro de que desea marcar al usuario '{username}' como {new_status}?"):
+        new_status = "inactive" if current_status == "Active" else "active"
+        if not messagebox.askyesno("Confirm", 
+                                  f"Are you sure you want to mark user '{username}' as {new_status}?"):
             return
         
         try:
@@ -354,26 +355,26 @@ class UserManagerApp:
             """, (new_active, user_id))
             
             self.conn.commit()
-            messagebox.showinfo("Éxito", f"Usuario '{username}' marcado como {new_status}.")
+            messagebox.showinfo("Success", f"User '{username}' marked as {new_status}.")
             self.load_users()
             
         except Exception as e:
             self.conn.rollback()
-            messagebox.showerror("Error", f"Error al cambiar estado: {e}")
+            messagebox.showerror("Error", f"Error changing status: {e}")
     
     def reset_failed_attempts(self):
         """Reset failed login attempts for selected user"""
         selection = self.users_tree.selection()
         if not selection:
-            messagebox.showwarning("Selección", "Por favor, seleccione un usuario.")
+            messagebox.showwarning("Selection", "Please select a user.")
             return
         
         item = self.users_tree.item(selection[0])
-        user_id = item['values'][0]
+        user_id = int(item['values'][0])
         username = item['values'][1]
         
-        if not messagebox.askyesno("Confirmar", 
-                                  f"¿Está seguro de que desea resetear los intentos fallidos para '{username}'?"):
+        if not messagebox.askyesno("Confirm", 
+                                  f"Are you sure you want to reset failed attempts for '{username}'?"):
             return
         
         try:
@@ -384,38 +385,38 @@ class UserManagerApp:
             """, (user_id,))
             
             self.conn.commit()
-            messagebox.showinfo("Éxito", f"Intentos fallidos reseteados para '{username}'.")
+            messagebox.showinfo("Success", f"Failed attempts reset for '{username}'.")
             self.load_users()
             
         except Exception as e:
             self.conn.rollback()
-            messagebox.showerror("Error", f"Error al resetear intentos: {e}")
+            messagebox.showerror("Error", f"Error resetting attempts: {e}")
     
     def delete_user(self):
         """Delete selected user"""
         selection = self.users_tree.selection()
         if not selection:
-            messagebox.showwarning("Selección", "Por favor, seleccione un usuario para eliminar.")
+            messagebox.showwarning("Selection", "Please select a user to delete.")
             return
         
         item = self.users_tree.item(selection[0])
-        user_id = item['values'][0]
+        user_id = int(item['values'][0])
         username = item['values'][1]
         
         # Prevent self-deletion
         if username == self.user_data.get('username', ''):
-            messagebox.showwarning("Advertencia", "No puede eliminar su propia cuenta.")
+            messagebox.showwarning("Warning", "You cannot delete your own account.")
             return
         
         # Double confirmation for deletion
-        if not messagebox.askyesno("CONFIRMAR ELIMINACIÓN", 
-                                  f"¿Está ABSOLUTAMENTE SEGURO de que desea eliminar al usuario '{username}'?\n\n" +
-                                  "Esta acción NO SE PUEDE DESHACER."):
+        if not messagebox.askyesno("CONFIRM DELETION", 
+                                  f"Are you ABSOLUTELY SURE you want to delete user '{username}'?\n\n" +
+                                  "This action CANNOT BE UNDONE."):
             return
         
         # Second confirmation
-        if not messagebox.askyesno("ÚLTIMA CONFIRMACIÓN", 
-                                  f"ÚLTIMA OPORTUNIDAD: ¿Eliminar permanentemente al usuario '{username}'?"):
+        if not messagebox.askyesno("FINAL CONFIRMATION", 
+                                  f"LAST CHANCE: Permanently delete user '{username}'?"):
             return
         
         try:
@@ -423,12 +424,12 @@ class UserManagerApp:
             self.cursor.execute("DELETE FROM usuarios_sistema WHERE id_usuario = %s", (user_id,))
             self.conn.commit()
             
-            messagebox.showinfo("Éxito", f"Usuario '{username}' eliminado exitosamente.")
+            messagebox.showinfo("Success", f"User '{username}' deleted successfully.")
             self.load_users()
             
         except Exception as e:
             self.conn.rollback()
-            messagebox.showerror("Error", f"Error al eliminar usuario: {e}")
+            messagebox.showerror("Error", f"Error deleting user: {e}")
     
     def on_closing(self):
         """Handle window closing"""
@@ -484,7 +485,7 @@ class UserDialog:
         main_frame.pack(fill="both", expand=True)
         
         # Title
-        title_text = "Editar Usuario" if self.editing else "Crear Nuevo Usuario"
+        title_text = "Edit User" if self.editing else "Create New User"
         tk.Label(main_frame, 
                 text=title_text,
                 font=("Arial", 16, "bold"),
@@ -492,7 +493,7 @@ class UserDialog:
                 fg="#2C3E50").pack(pady=(0, 20))
         
         # Username field
-        tk.Label(main_frame, text="Nombre de Usuario:", font=("Arial", 11, "bold"), bg="#f5f5f5").pack(anchor="w")
+        tk.Label(main_frame, text="Username:", font=("Arial", 11, "bold"), bg="#f5f5f5").pack(anchor="w")
         self.username_entry = tk.Entry(main_frame, textvariable=self.username_var, font=("Arial", 11))
         self.username_entry.pack(fill="x", pady=(5, 15))
         
@@ -500,22 +501,22 @@ class UserDialog:
             self.username_entry.config(state="disabled")  # Can't change username when editing
         
         # Full name field
-        tk.Label(main_frame, text="Nombre Completo:", font=("Arial", 11, "bold"), bg="#f5f5f5").pack(anchor="w")
+        tk.Label(main_frame, text="Full Name:", font=("Arial", 11, "bold"), bg="#f5f5f5").pack(anchor="w")
         self.fullname_entry = tk.Entry(main_frame, textvariable=self.fullname_var, font=("Arial", 11))
         self.fullname_entry.pack(fill="x", pady=(5, 15))
         
         # Password fields (only show if creating new user or if editing and want to change password)
         if not self.editing:
-            tk.Label(main_frame, text="Contraseña:", font=("Arial", 11, "bold"), bg="#f5f5f5").pack(anchor="w")
+            tk.Label(main_frame, text="Password:", font=("Arial", 11, "bold"), bg="#f5f5f5").pack(anchor="w")
             tk.Entry(main_frame, textvariable=self.password_var, font=("Arial", 11), show="*").pack(fill="x", pady=(5, 10))
             
-            tk.Label(main_frame, text="Confirmar Contraseña:", font=("Arial", 11, "bold"), bg="#f5f5f5").pack(anchor="w")
+            tk.Label(main_frame, text="Confirm Password:", font=("Arial", 11, "bold"), bg="#f5f5f5").pack(anchor="w")
             tk.Entry(main_frame, textvariable=self.confirm_password_var, font=("Arial", 11), show="*").pack(fill="x", pady=(5, 15))
         else:
             # Option to change password when editing
             self.change_password_var = tk.BooleanVar()
             tk.Checkbutton(main_frame, 
-                          text="Cambiar contraseña",
+                          text="Change password",
                           variable=self.change_password_var,
                           font=("Arial", 11),
                           bg="#f5f5f5",
@@ -525,19 +526,19 @@ class UserDialog:
             self.password_frame.pack(fill="x")
             
         # Role selection
-        tk.Label(main_frame, text="Rol:", font=("Arial", 11, "bold"), bg="#f5f5f5").pack(anchor="w")
+        tk.Label(main_frame, text="Role:", font=("Arial", 11, "bold"), bg="#f5f5f5").pack(anchor="w")
         role_frame = tk.Frame(main_frame, bg="#f5f5f5")
         role_frame.pack(fill="x", pady=(5, 15))
         
-        tk.Radiobutton(role_frame, text="Usuario", variable=self.role_var, value="usuario", 
+        tk.Radiobutton(role_frame, text="User", variable=self.role_var, value="usuario", 
                       font=("Arial", 11), bg="#f5f5f5").pack(side="left")
-        tk.Radiobutton(role_frame, text="Administrador", variable=self.role_var, value="admin", 
+        tk.Radiobutton(role_frame, text="Administrator", variable=self.role_var, value="admin", 
                       font=("Arial", 11), bg="#f5f5f5").pack(side="left", padx=(20, 0))
         
         # Active checkbox (only for editing)
         if self.editing:
             tk.Checkbutton(main_frame, 
-                          text="Usuario activo",
+                          text="Active user",
                           variable=self.active_var,
                           font=("Arial", 11),
                           bg="#f5f5f5").pack(anchor="w", pady=(0, 15))
@@ -547,7 +548,7 @@ class UserDialog:
         button_frame.pack(fill="x", pady=(20, 0))
         
         tk.Button(button_frame,
-                 text="Cancelar",
+                 text="Cancel",
                  command=self.dialog.destroy,
                  font=("Arial", 11),
                  bg="#95A5A6",
@@ -555,7 +556,7 @@ class UserDialog:
                  cursor="hand2",
                  padx=20).pack(side="right", padx=(10, 0))
         
-        save_text = "Actualizar" if self.editing else "Crear"
+        save_text = "Update" if self.editing else "Create"
         tk.Button(button_frame,
                  text=save_text,
                  command=self.save_user,
@@ -575,10 +576,10 @@ class UserDialog:
             widget.destroy()
         
         if self.change_password_var.get():
-            tk.Label(self.password_frame, text="Nueva Contraseña:", font=("Arial", 11, "bold"), bg="#f5f5f5").pack(anchor="w")
+            tk.Label(self.password_frame, text="New Password:", font=("Arial", 11, "bold"), bg="#f5f5f5").pack(anchor="w")
             tk.Entry(self.password_frame, textvariable=self.password_var, font=("Arial", 11), show="*").pack(fill="x", pady=(5, 10))
             
-            tk.Label(self.password_frame, text="Confirmar Nueva Contraseña:", font=("Arial", 11, "bold"), bg="#f5f5f5").pack(anchor="w")
+            tk.Label(self.password_frame, text="Confirm New Password:", font=("Arial", 11, "bold"), bg="#f5f5f5").pack(anchor="w")
             tk.Entry(self.password_frame, textvariable=self.confirm_password_var, font=("Arial", 11), show="*").pack(fill="x", pady=(5, 0))
     
     def validate_input(self):
@@ -590,20 +591,20 @@ class UserDialog:
         
         # Check required fields
         if not username:
-            messagebox.showerror("Error", "El nombre de usuario es requerido.")
+            messagebox.showerror("Error", "Username is required.")
             return False
         
         if not fullname:
-            messagebox.showerror("Error", "El nombre completo es requerido.")
+            messagebox.showerror("Error", "Full name is required.")
             return False
         
         # Username validation
         if not re.match(r'^[a-zA-Z0-9_]+$', username):
-            messagebox.showerror("Error", "El nombre de usuario solo puede contener letras, números y guiones bajos.")
+            messagebox.showerror("Error", "Username can only contain letters, numbers, and underscores.")
             return False
         
         if len(username) < 3:
-            messagebox.showerror("Error", "El nombre de usuario debe tener al menos 3 caracteres.")
+            messagebox.showerror("Error", "Username must be at least 3 characters.")
             return False
         
         # Password validation (for new users or when changing password)
@@ -611,15 +612,15 @@ class UserDialog:
         
         if need_password:
             if not password:
-                messagebox.showerror("Error", "La contraseña es requerida.")
+                messagebox.showerror("Error", "Password is required.")
                 return False
             
             if len(password) < 8:
-                messagebox.showerror("Error", "La contraseña debe tener al menos 8 caracteres.")
+                messagebox.showerror("Error", "Password must be at least 8 characters.")
                 return False
             
             if password != confirm_password:
-                messagebox.showerror("Error", "Las contraseñas no coinciden.")
+                messagebox.showerror("Error", "Passwords do not match.")
                 return False
         
         return True
@@ -648,13 +649,13 @@ class UserDialog:
             
             if result['success']:
                 self.result = True
-                messagebox.showinfo("Éxito", result['message'])
+                messagebox.showinfo("Success", result['message'])
                 self.dialog.destroy()
             else:
                 messagebox.showerror("Error", result['message'])
                 
         except Exception as e:
-            messagebox.showerror("Error", f"Error al guardar usuario: {e}")
+            messagebox.showerror("Error", f"Error saving user: {e}")
 
 
 def main(user_data=None):
@@ -675,8 +676,8 @@ def main(user_data=None):
 if __name__ == "__main__":
     # Test data for standalone running
     test_user_data = {
-        'username': 'jared',
-        'nombre_completo': 'Jared (Administrador)',
+        'username': 'Valeria',
+        'nombre_completo': 'Valeria (Administrator)',
         'rol': 'admin'
     }
     main(test_user_data)
