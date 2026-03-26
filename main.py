@@ -2,6 +2,8 @@
 """
 MARKET - Sistema de Gestión Comercial
 """
+import locale
+locale.setlocale(locale.LC_ALL, 'English_United States.1252')
 
 import sys
 from tkinter import messagebox

@@ -55,7 +55,7 @@ class CarritoConSecciones:
         self.sectioning_var = tk.BooleanVar()
         self.check_secciones = ttk.Checkbutton(
             self.frame_controles, 
-            text="Habilitar Secciones", 
+            text="Enable Sections", 
             variable=self.sectioning_var,
             command=self._toggle_sectioning
         )
@@ -63,7 +63,7 @@ class CarritoConSecciones:
         
         self.btn_gestionar = ttk.Button(
             self.frame_controles,
-            text="Gestionar Secciones",
+            text="Manage Sections",
             command=self._gestionar_secciones
         )
         
@@ -287,7 +287,7 @@ class CarritoConSecciones:
                 "Section with products",
                 f"Section '{self.secciones[seccion_id].nombre}' contains {len(items_en_seccion)} productos.\n\n"
                 "Yes = Move to another section\n"
-                "No = Eliminar products."
+                "No = Delete products."
                 "Cancel = Do not delete section"
             )
             
@@ -447,7 +447,7 @@ class GestorSecciones:
         frame_botones.pack(fill="x", padx=10, pady=10)
         
         ttk.Button(frame_botones, text="Add Section", command=self._agregar_seccion).pack(side="left", padx=5)
-        ttk.Button(frame_botones, text="Renamer", command=self._renombrar_seccion).pack(side="left", padx=5)
+        ttk.Button(frame_botones, text="Rename", command=self._renombrar_seccion).pack(side="left", padx=5)
         ttk.Button(frame_botones, text="Delete", command=self._eliminar_seccion).pack(side="left", padx=5)
         ttk.Button(frame_botones, text="Close", command=self.dialog.destroy).pack(side="right", padx=5)
 
@@ -458,7 +458,7 @@ class GestorSecciones:
         
         for seccion_id, seccion in self.carrito.secciones.items():
             count = sum(1 for item in self.carrito.items.values() if item.seccion_id == seccion_id)
-            display_text = f"{seccion.nombre} ({count} productos)"
+            display_text = f"{seccion.nombre} ({count} products)"
             self.listbox.insert(tk.END, display_text)
             self.seccion_ids.append(seccion_id)
 

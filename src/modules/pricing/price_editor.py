@@ -477,7 +477,7 @@ class PriceEditorApp:
             
             if widget_type == "combo" and label == "Unit of Measurement:":
                 combo = ttk.Combobox(frame, textvariable=var, width=25,
-                            values=["kg", "g", "lb", "pz", "unidad", "L", "ml", "dozen", "package", "bundle", "box", "bottle"])
+                            values=["kg", "g", "lb", "piece", "unit", "L", "ml", "dozen", "package", "bundle", "box", "bottle"])
                 combo.pack(side="left", fill="x", expand=True, padx=(5, 0))
                 if i == 0:  # First field gets focus
                     combo.focus_set()
@@ -923,7 +923,7 @@ if __name__ == "__main__":
     root = tk.Tk()
     # Datos de usuario de prueba
     user_data = {
-        'nombre_completo': 'Usuario Prueba',
+        'nombre_completo': 'Test User',
         'rol': 'admin'  # Cambiar a 'usuario' para probar sin permisos admin
     }
     app = PriceEditorApp(root, user_data)

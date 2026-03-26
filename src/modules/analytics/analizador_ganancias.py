@@ -625,7 +625,7 @@ class AnalisisGananciasApp:
                     ttk.Label(control_frame, text="Analysis type:").grid(row=0, column=2, padx=5, sticky="w")
                     
                     self.analysis_type_var = tk.StringVar(value="General")
-                    analysis_options = ["General", "By Producto", "By Group of Clients"]
+                    analysis_options = ["General", "By Product", "By Group of Clients"]
                     
                     analysis_combo = ttk.Combobox(
                         control_frame,
@@ -666,14 +666,14 @@ class AnalisisGananciasApp:
             def get_period_data(self, period_type):
                 """Obtiene los períodos disponibles según el tipo seleccionado."""
                 period_queries = {
-                    "Año": """
+                    "Year": """
                         SELECT DISTINCT YEAR(f.fecha_factura) AS periodo 
                         FROM factura f
                         WHERE f.fecha_factura IS NOT NULL
                         ORDER BY periodo DESC
                         LIMIT 5
                     """,
-                    "Trimestre": """
+                    "Quarter": """
                         SELECT DISTINCT CONCAT(YEAR(f.fecha_factura), '-Q', QUARTER(f.fecha_factura)) AS periodo 
                         FROM factura f
                         WHERE f.fecha_factura IS NOT NULL
@@ -681,7 +681,7 @@ class AnalisisGananciasApp:
                         ORDER BY periodo DESC
                         LIMIT 8
                     """,
-                    "Mes": """
+                    "Month": """
                         SELECT DISTINCT DATE_FORMAT(f.fecha_factura, '%Y-%m') AS periodo 
                         FROM factura f
                         WHERE f.fecha_factura IS NOT NULL
@@ -689,7 +689,7 @@ class AnalisisGananciasApp:
                         ORDER BY periodo DESC
                         LIMIT 12
                     """,
-                    "Semana": """
+                    "Week": """
                         SELECT DISTINCT DATE_FORMAT(f.fecha_factura, '%x-W%v') AS periodo 
                         FROM factura f
                         WHERE f.fecha_factura IS NOT NULL
@@ -697,7 +697,7 @@ class AnalisisGananciasApp:
                         ORDER BY periodo DESC
                         LIMIT 12
                     """,
-                    "Día": """
+                    "Day": """
                         SELECT DISTINCT DATE_FORMAT(f.fecha_factura, '%Y-%m-%d') AS periodo 
                         FROM factura f
                         WHERE f.fecha_factura IS NOT NULL
@@ -708,12 +708,12 @@ class AnalisisGananciasApp:
                 }
                 
                 try:
-                    query = period_queries.get(period_type, period_queries["Mes"])
+                    query = period_queries.get(period_type, period_queries["Month"])
                     self.cursor.execute(query)
                     periods = [str(row['periodo']) for row in self.cursor.fetchall()]
                     return periods
                 except Exception as e:
-                    print(f"Error obteniendo períodos: {e}")
+                    print(f"Error getting periods: {e}")
                     return []
             
             def navigate_previous(self):
@@ -750,7 +750,7 @@ class AnalisisGananciasApp:
                     # Refresh etiqueta de navegación
                     if current_periods:
                         period_range = f"{current_periods[-1]} - {current_periods[0]}"
-                        self.period_label.config(text=f"Mostrando: {period_range}")
+                        self.period_label.config(text=f"Showing: {period_range}")
                     
                     # Refresh botones de navegación
                     self.prev_button.config(state="normal" if self.current_period_index > 0 else "disabled")
@@ -758,7 +758,7 @@ class AnalisisGananciasApp:
                     
                     if analysis_type == "General":
                         self.generate_general_temporal_chart(selected_period, current_periods)
-                    elif analysis_type == "By Producto":
+                    elif analysis_type == "By Product":
                         self.generate_product_temporal_chart(selected_period, current_periods)
                     elif analysis_type == "By Group of Clients":
                         self.generate_group_temporal_chart(selected_period, current_periods)
@@ -770,11 +770,11 @@ class AnalisisGananciasApp:
                 """Genera gráfico temporal general con ganancias y pérdidas separadas."""
                 try:
                     period_func_map = {
-                        "Día": "DATE(f.fecha_factura)",
-                        "Semana": "DATE_FORMAT(f.fecha_factura, '%x-W%v')",
-                        "Mes": "DATE_FORMAT(f.fecha_factura, '%Y-%m')",
-                        "Trimestre": "CONCAT(YEAR(f.fecha_factura), '-Q', QUARTER(f.fecha_factura))",
-                        "Año": "YEAR(f.fecha_factura)"
+                        "Day": "DATE(f.fecha_factura)",
+                        "Week": "DATE_FORMAT(f.fecha_factura, '%x-W%v')",
+                        "Month": "DATE_FORMAT(f.fecha_factura, '%Y-%m')",
+                        "Quarter": "CONCAT(YEAR(f.fecha_factura), '-Q', QUARTER(f.fecha_factura))",
+                        "Year": "YEAR(f.fecha_factura)"
                     }
                     
                     period_func = period_func_map.get(period_type, "DATE_FORMAT(f.fecha_factura, '%Y-%m')")
@@ -819,10 +819,10 @@ class AnalisisGananciasApp:
                     
                     # Barras para ventas (positivas) y compras (negativas)
                     bars_ventas = ax.bar(x - width/2, ventas, width, label='Revenue', color='#A5D6A7', alpha=0.8)
-                    bars_compras = ax.bar(x + width/2, [-c for c in compras], width, label='Compras', color='#EF9A9A', alpha=0.8)
+                    bars_compras = ax.bar(x + width/2, [-c for c in compras], width, label='Purchase', color='#EF9A9A', alpha=0.8)
                     
                     # Línea de ganancia neta
-                    line = ax.plot(x, ganancias, marker='o', color='#2196F3', linewidth=3, markersize=8, label='Ganancia Neta')
+                    line = ax.plot(x, ganancias, marker='o', color='#2196F3', linewidth=3, markersize=8, label='Net profit')
                     
                     # Etiquetas de montos en todas las barras
                     for i, (bar_v, bar_c, v, c, g) in enumerate(zip(bars_ventas, bars_compras, ventas, compras, ganancias)):
@@ -842,7 +842,7 @@ class AnalisisGananciasApp:
                     
                     ax.set_xlabel(f'{period_type}', fontsize=12)
                     ax.set_ylabel('Amount ($)', fontsize=12)
-                    ax.set_title(f'General Analysis by {period_type}\nGreen: Revenue | Red: Compras | Azul: Ganancia Neta', 
+                    ax.set_title(f'General Analysis by {period_type}\nGreen: Revenue | Red: Purchase | Blue: Net profit', 
                                fontsize=14, fontweight='bold')
                     ax.set_xticks(x)
                     ax.set_xticklabels(periods_data, rotation=45 if len(periods_data) > 5 else 0)
@@ -865,11 +865,11 @@ class AnalisisGananciasApp:
                 try:
                     # Mapeo de funciones de período
                     period_func_map = {
-                        "Día": "DATE_FORMAT(f.fecha_factura, '%Y-%m-%d')",
-                        "Semana": "DATE_FORMAT(f.fecha_factura, '%x-W%v')",
-                        "Mes": "DATE_FORMAT(f.fecha_factura, '%Y-%m')",
-                        "Trimestre": "CONCAT(YEAR(f.fecha_factura), '-Q', QUARTER(f.fecha_factura))",
-                        "Año": "YEAR(f.fecha_factura)"
+                        "Day": "DATE_FORMAT(f.fecha_factura, '%Y-%m-%d')",
+                        "Week": "DATE_FORMAT(f.fecha_factura, '%x-W%v')",
+                        "Month": "DATE_FORMAT(f.fecha_factura, '%Y-%m')",
+                        "Quarter": "CONCAT(YEAR(f.fecha_factura), '-Q', QUARTER(f.fecha_factura))",
+                        "Year": "YEAR(f.fecha_factura)"
                     }
                     
                     period_func = period_func_map.get(period_type, "DATE_FORMAT(f.fecha_factura, '%Y-%m')")
@@ -969,17 +969,17 @@ class AnalisisGananciasApp:
                     
                 except Exception as e:
                     self.show_error_message(self.tabs["temporal"]["graph_frame"], str(e))
-                    print(f"Error en generate_product_temporal_chart: {e}")
+                    print(f"Error in generate_product_temporal_chart: {e}")
                     
             def generate_group_temporal_chart(self, period_type, periods):
                 """Genera gráfico temporal por grupo de clientes con barras separadas."""
                 try:
                     period_func_map = {
-                        "Día": "DATE_FORMAT(f.fecha_factura, '%Y-%m-%d')",
-                        "Semana": "DATE_FORMAT(f.fecha_factura, '%x-W%v')",
-                        "Mes": "DATE_FORMAT(f.fecha_factura, '%Y-%m')",
-                        "Trimestre": "CONCAT(YEAR(f.fecha_factura), '-Q', QUARTER(f.fecha_factura))",
-                        "Año": "YEAR(f.fecha_factura)"
+                        "Day": "DATE_FORMAT(f.fecha_factura, '%Y-%m-%d')",
+                        "Week": "DATE_FORMAT(f.fecha_factura, '%x-W%v')",
+                        "Month": "DATE_FORMAT(f.fecha_factura, '%Y-%m')",
+                        "Quarter": "CONCAT(YEAR(f.fecha_factura), '-Q', QUARTER(f.fecha_factura))",
+                        "Year": "YEAR(f.fecha_factura)"
                     }
                     
                     period_func = period_func_map.get(period_type, "DATE_FORMAT(f.fecha_factura, '%Y-%m')")
@@ -1067,7 +1067,7 @@ class AnalisisGananciasApp:
                     
                 except Exception as e:
                     self.show_error_message(self.tabs["temporal"]["graph_frame"], str(e))
-                    print(f"Error en generate_group_temporal_chart: {e}")
+                    print(f"Error in generate_group_temporal_chart: {e}")
                 
             def generate_clients_chart(self):
                 """Genera gráfico de ventas por cliente con colores según tipo de cliente."""
@@ -1128,7 +1128,7 @@ class AnalisisGananciasApp:
                     
                     ttk.Button(button_frame, text="Top 5 Clients", 
                             command=self.load_top_clients).pack(side="left", padx=2)
-                    ttk.Button(button_frame, text="Limpiar Todo", 
+                    ttk.Button(button_frame, text="Clean everything", 
                             command=self.clear_all_clients).pack(side="left", padx=2)
                     
                     # Frame del gráfico
@@ -1156,7 +1156,7 @@ class AnalisisGananciasApp:
                     while len(self.selected_clients) <= combo_index:
                         self.selected_clients.append(None)
                     
-                    if selected_value == "Ninguno" or not selected_value:
+                    if selected_value == "None" or not selected_value:
                         # Limpiar solo esta posición específica
                         self.selected_clients[combo_index] = None
                     else:
@@ -1179,7 +1179,7 @@ class AnalisisGananciasApp:
                     self.update_clients_chart()
                     
                 except Exception as e:
-                    print(f"Error en combo change: {e}")
+                    print(f"Error in combo change: {e}")
 
             def refresh_client_combos(self):
                 """Actualiza las opciones de todos los combos sin cambiar selecciones válidas."""
@@ -1193,7 +1193,7 @@ class AnalisisGananciasApp:
                     # Refresh cada combo manteniendo las selecciones actuales
                     for i, combo in enumerate(self.client_combos):
                         current_selection = self.client_vars[i].get()
-                        options = ["Ninguno"]
+                        options = ["None"]
                         
                         # Add clients disponibles
                         for client in self.all_clients:
@@ -1216,7 +1216,7 @@ class AnalisisGananciasApp:
                         
                         # Mantener selección actual si es válida, sino limpiar
                         if current_selection not in options:
-                            self.client_vars[i].set("Ninguno")
+                            self.client_vars[i].set("None")
                             if i < len(self.selected_clients):
                                 self.selected_clients[i] = None
                             
@@ -1254,7 +1254,7 @@ class AnalisisGananciasApp:
                             self.client_vars[i].set(client_text)
                         else:
                             self.selected_clients.append(None)
-                            self.client_vars[i].set("Ninguno")
+                            self.client_vars[i].set("None")
                     
                     self.refresh_client_combos()
                     self.update_clients_chart()
@@ -1267,7 +1267,7 @@ class AnalisisGananciasApp:
                 # Mantener la lista con 5 posiciones vacías
                 self.selected_clients = [None] * 5
                 for var in self.client_vars:
-                    var.set("Ninguno")
+                    var.set("None")
                 self.refresh_client_combos()
                 self.update_clients_chart()
 
@@ -1366,7 +1366,7 @@ class AnalisisGananciasApp:
                         
                         # Etiqueta de descuento
                         ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() * 0.5,
-                            f'Desc: {data["descuento"]}%\n{data["nombre_tipo"]}', 
+                            f'Disc: {data["descuento"]}%\n{data["nombre_tipo"]}', 
                             ha='center', va='center', fontsize=8,
                             bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8))
                     
@@ -1400,7 +1400,7 @@ class AnalisisGananciasApp:
                         
                         # Para el primer combo, no incluir "Ninguno"
                         if i > 0:
-                            available_options.append("Ninguno")
+                            available_options.append("None")
                         
                         # Add clients no seleccionados
                         for cliente in self.all_clients:
@@ -1415,7 +1415,7 @@ class AnalisisGananciasApp:
                         # Mantener selección actual si es válida
                         current_value = self.client_vars[i].get()
                         if current_value not in available_options:
-                            self.client_vars[i].set("Ninguno" if i > 0 else available_options[0] if available_options else "")
+                            self.client_vars[i].set("None" if i > 0 else available_options[0] if available_options else "")
                             
                 except Exception as e:
                     print(f"Error updating options: {e}")
@@ -1430,7 +1430,7 @@ class AnalisisGananciasApp:
                         self.selected_clients.append(None)
                     
                     # Si se selecciona "Ninguno", eliminar esa posición
-                    if selected_name == "Ninguno":
+                    if selected_name == "None":
                         self.selected_clients[idx] = None
                     else:
                         # Extraer nombre del cliente (antes del paréntesis)
@@ -1513,7 +1513,7 @@ class AnalisisGananciasApp:
                         
                         # Etiqueta secundaria con información del grupo
                         ax.text(bar.get_x() + bar.get_width()/2., height * 0.5,
-                               f"{clients} clientes\n{invoices} facturas\nDesc: {descuento}%",
+                               f"{clients} clients\n{invoices} invoices\nDisc: {descuento}%",
                                ha='center', va='center', fontsize=9, 
                                bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.8))
                     

@@ -482,6 +482,40 @@ class OrdenManager:
         finally:
             cursor.close()
     
+    def registrar_venta_directa(self, folio: int, id_cliente: int, usuario: str,
+                               datos_carrito: Dict[str, Any], total: float) -> bool:
+        """
+        Registra una venta directa en ordenes_guardadas con estado 'registrada'.
+        Se usa cuando la venta se hace sin guardar como orden primero.
+        """
+        conn = self._get_connection()
+        if not conn:
+            return False
+        
+        cursor = conn.cursor()
+        
+        try:
+            carrito_json = json.dumps(datos_carrito, ensure_ascii=False, indent=2)
+            
+            query = """
+                INSERT INTO ordenes_guardadas 
+                (folio_numero, id_cliente, usuario_creador, datos_carrito, total_estimado, estado)
+                VALUES (%s, %s, %s, %s, %s, 'registrada')
+            """
+            
+            cursor.execute(query, (folio, id_cliente, usuario, carrito_json, total))
+            conn.commit()
+            
+            print(f"Direct sale with folio {folio} registered in order history")
+            return True
+            
+        except Error as e:
+            print(f"Error registering direct sale {folio}: {e}")
+            conn.rollback()
+            return False
+        finally:
+            cursor.close()
+            
     # ==================== UTILIDADES DE CONVERSIÓN ====================
     
     @staticmethod

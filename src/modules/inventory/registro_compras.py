@@ -637,7 +637,7 @@ class ComprasApp:
 if __name__ == "__main__":
     root = tk.Tk()
     user_data = {
-        'nombre_completo': 'Usuario Prueba',
+        'nombre_completo': 'Test User',
         'rol': 'usuario'  # Cambiar a 'admin' para probar productos especiales
     }
     app = ComprasApp(root, user_data)

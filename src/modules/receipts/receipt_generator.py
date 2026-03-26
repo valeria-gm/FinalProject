@@ -871,6 +871,15 @@ class ReciboAppMejorado:
                         self._notificar_cambio_orden()
                     self.root.destroy()
                 else:
+                    # Register in order history so it shows in History tab
+                    try:
+                        datos_carrito = self._serializar_estado_carrito(widgets)
+                        self.orden_manager.registrar_venta_directa(
+                            folio_factura, id_cliente, self.username, datos_carrito, total
+                        )
+                    except Exception as ex:
+                        print(f"Warning: Could not register in order history: {ex}")
+                    
                     messagebox.showinfo("Sale Successful",
                                       f"Sale registered successfully\n"
                                       f"ID: {venta_id}\n"
