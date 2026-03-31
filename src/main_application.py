@@ -3,6 +3,7 @@ Main Application Module
 Contains the core application class and logic
 """
 
+from typing import Any
 import tkinter as tk
 from tkinter import messagebox
 import sys
@@ -18,10 +19,10 @@ class MainApplication:
     """Main application class"""
     
     def __init__(self):
-        self.root = None
-        self.user_data = None
-        self.ui_components = None
-        self.module_launcher = None
+        self.root: Any = None
+        self.user_data: Any = None
+        self.ui_components: Any = None
+        self.module_launcher: Any = None
         self.config = get_app_config()
         
     def start(self):
